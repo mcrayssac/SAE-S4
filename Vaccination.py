@@ -3,10 +3,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-print(pd.show_versions())
+#print(pd.show_versions())
 
 #----- Import File -----
-df_vaccin = pd.read_csv('data.csv')
+df_vaccin = pd.read_csv('data.csv', index_col="YearWeekISO")
+df_vaccin.sort_index()
 
 #----- Seaborn -----
 df_vaccin.info()
