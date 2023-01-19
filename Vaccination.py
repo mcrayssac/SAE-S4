@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+print(pd.show_versions())
+
 #----- Import File -----
 df_vaccin = pd.read_csv('data.csv')
 
