@@ -22,6 +22,12 @@ df_cases = df_cases.drop('date', axis=1)
 df_cases = df_cases.sort_values('start_date')
 print(df_cases.start_date.tail(10))"""
 
+df_cases = df_cases.rename(columns={'year_week':'YearWeekISO'})
+df_cases['YearWeekISO'] = df_cases['YearWeekISO'].str.replace('-','-W')
+print(df_cases.tail(10))
+
+
+
 """
 def globalContaByWeek():
     plt.figure(figsize=(35,25))

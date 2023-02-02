@@ -24,7 +24,7 @@ print(df_consta.isnull().sum().sum())
 print(df_vaccin.isnull().sum().sum())
 """
 #----- Overly complicated solution to the date -----
-
+"""
 def get_start_date(yyyyww):
     year = yyyyww[:4]
     week = yyyyww[-2:]
@@ -48,6 +48,8 @@ def get_end_date(yyyyww):
         d = d + timedelta(7-d.weekday())
     dlt = timedelta(days = (int(week)-1)*7)
     return (d + dlt + timedelta(days=6)).strftime('%Y-%m-%d')
+
+"""
 """
 #----- method test -----
 
