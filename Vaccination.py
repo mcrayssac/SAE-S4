@@ -1,5 +1,6 @@
 import importFile
 import readFile
+import convertDate
 
 sns = importFile.sns
 plt = importFile.plt
@@ -9,6 +10,12 @@ np = importFile.np
 #----- Import File -----
 df_vaccin = readFile.execution("vaccinations")
 df_vaccin = pd.DataFrame.from_records(df_vaccin['records'])
+print(df_vaccin)
+
+#----- Changing date format
+df_vaccin = df_vaccin.rename(columns={'YearWeekISO':'date'})
+df_vaccin['date'] = df_vaccin['date'].str.replace('-','')
+df_vaccin['date'] = df_vaccin['date'].apply(convertDate.get_start_end_dates)
 print(df_vaccin)
 
 """

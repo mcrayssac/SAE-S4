@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import timedelta
 from dateutil.parser import parse
 
+"""
 df_vaccin = pd.read_csv('data.csv')
 df_consta = pd.read_csv('data_conta.csv')
 
@@ -16,12 +17,12 @@ df_consta['YearWeekISO'] = df_consta['YearWeekISO'].str.replace('-','')
 df_consta = df_consta.drop(columns=['country_code', 'weekly_count', 'rate_14_day', 'source', 'note', 'cumulative_count'])
 df_vaccin = df_vaccin.drop(columns=['Denominator', 'UnknownDose', 'NumberDosesExported', 'FirstDoseRefused', 'DoseAdditional1', 'DoseAdditional2', 'DoseAdditional3', 'Population', 'ReportingCountry'])
 
-print(df_vaccin)
+#print(df_vaccin)
 print(df_consta)
 
 print(df_consta.isnull().sum().sum())
 print(df_vaccin.isnull().sum().sum())
-
+"""
 #----- Overly complicated solution to the date -----
 
 def get_start_end_dates(yyyyww):
@@ -36,9 +37,10 @@ def get_start_end_dates(yyyyww):
     dlt = timedelta(days = (int(week)-1)*7)
     return (d + dlt).strftime('%Y-%m-%d'),  (d + dlt + timedelta(days=6)).strftime('%Y-%m-%d')# run it
 
-
+"""
 #----- method test -----
 
+print("2018-W37 : ")
 print(get_start_end_dates('201837'))
 
 
@@ -47,7 +49,14 @@ print(get_start_end_dates('201837'))
 df_consta['YearWeekISO'] = df_consta['YearWeekISO'].apply(get_start_end_dates)
 df_vaccin['YearWeekISO'] = df_vaccin['YearWeekISO'].apply(get_start_end_dates)
 
-print(df_vaccin)
-print(df_consta)
+#print(df_vaccin)
+#print(df_consta)
 
+#----- Concat both dataframes
+
+df_consta.set_index('YearWeekISO')
+df_vaccin.set_index('YearWeekISO')
+covid = pd.concat([df_consta, df_vaccin], axis=1)
+print(covid)
+"""
 

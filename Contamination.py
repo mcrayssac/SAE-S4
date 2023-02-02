@@ -1,5 +1,6 @@
 import importFile
 import readFile
+import convertDate
 
 sns = importFile.sns
 plt = importFile.plt
@@ -9,6 +10,12 @@ np = importFile.np
 #----- Import File -----
 df_cases = readFile.execution("cases")
 df_cases = pd.DataFrame.from_records(df_cases)
+print(df_cases)
+
+#----- Changing date format
+df_cases = df_cases.rename(columns={'year_week':'date'})
+df_cases['date'] = df_cases['date'].str.replace('-','')
+df_cases['date'] = df_cases['date'].apply(convertDate.get_start_end_dates)
 print(df_cases)
 
 """
