@@ -1,15 +1,17 @@
-import itertools
-
 import importFile
+import readFile
 
 sns = importFile.sns
 plt = importFile.plt
 pd = importFile.pd
 np = importFile.np
-df_contamination = importFile.df_contamination
 
-print(df_contamination.isnull().sum().sum())
+#----- Import File -----
+df_cases = readFile.execution("cases")
+df_cases = pd.DataFrame.from_records(df_cases)
+print(df_cases)
 
+"""
 def globalContaByWeek():
     plt.figure(figsize=(35,25))
     sns.lineplot(data=df_contamination, x="year_week", y="cumulative_count")
@@ -37,3 +39,4 @@ def evolutionContaminationRateByWeek(country):
 #globalContaByWeek()
 #evolutionContaminationRateByWeek('Africa (total)')
 #evolutionContaminationRateByWeek('France')
+"""
