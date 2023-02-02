@@ -1,18 +1,41 @@
 import seaborn as sns
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import json
 
+#----- Show Versions -----
 #print(pd.show_versions())
 
 #----- Import File -----
-#df_vaccin = pd.read_csv('data.csv')
-print("Beginning")
-url = "https://opendata.ecdc.europa.eu/covid19/vaccine_tracker/json/"
-df_vaccin = pd.read_json(url)
-df_vaccin.sort_index()
-print(df_vaccin)
-print("Ending")
+def importation(type, url):
+    print("Beginning " + type + " importation")
+    df = pd.read_json(url)
+    print("Ending " + type + " importation")
+    return df
+
+
+#----- Storage File -----
+def storage(df, file, type):
+    print("Beginning " + type + " storage")
+    out_file = open(file, "w")
+    df = df.to_json()
+    json.dump(df, out_file, indent = 6)
+    out_file.close()
+    print("Ending " + type + " storage")
+
+#----- Variables -----
+vaccinationFile = "vaccination.json"
+vaccinationType = "vaccinations"
+vaccinationUrl = "https://opendata.ecdc.europa.eu/covid19/vaccine_tracker/json/"
+
+caseFile = "case.json"
+caseType = "cases"
+caseUrl = "https://opendata.ecdc.europa.eu/covid19/nationalcasedeath/json/"
+
+#----- Execution -----
+storage(importation(vaccinationType, vaccinationUrl), vaccinationFile, vaccinationType)
+storage(importation(caseType, caseUrl), caseFile, caseType)
+
 
 print("beginning cleaning")
 #df_vaccin['NumberDosesReceived'] = df_vaccin['NumberDosesReceived'].replace('', np.nan)
