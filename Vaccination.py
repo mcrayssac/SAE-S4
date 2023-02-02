@@ -1,3 +1,4 @@
+from datetime import datetime
 import importFile
 import readFile
 import convertDate
@@ -10,18 +11,22 @@ np = importFile.np
 #----- Import File -----
 df_vaccin = readFile.execution("vaccinations")
 df_vaccin = pd.DataFrame.from_records(df_vaccin['records'])
-#df_vaccin = df_vaccin.sort_values('YearWeekISO')
-#print(df_vaccin)
+df_vaccin = df_vaccin.sort_values('YearWeekISO')
+print(df_vaccin.tail(10))
 
 #----- Changing date format
+"""beginTime = datetime.now()
 df_vaccin = df_vaccin.rename(columns={'YearWeekISO':'date'})
 df_vaccin['date'] = df_vaccin['date'].str.replace('-','')
 df_vaccin['start_date'] = df_vaccin['date'].apply(convertDate.get_start_date)
 df_vaccin['end_date'] = df_vaccin['date'].apply(convertDate.get_end_date)
 df_vaccin = df_vaccin.drop('date', axis=1)
-
-print(df_vaccin)
-
+endTime = datetime.now()
+diffTime = endTime-beginTime
+diffMinSecTime = divmod(diffTime.total_seconds(), 60)
+print('Total time to load dataframe: ', diffMinSecTime[0], 'minutes', diffMinSecTime[1], 'seconds')
+df_vaccin = df_vaccin.sort_values('start_date')
+print(df_vaccin.start_date.tail(10))"""
 
 #----- See versions -----
 #print(pd.show_versions())
@@ -42,6 +47,7 @@ def regionFirstDose():
     plt.xticks(rotation=90)
     plt.show()
 
+"""
 fig2 = plt.figure(figsize=(35,25))
 sns.lineplot(data=df_vaccin, x="YearWeekISO", y="FirstDose")
 plt.xlabel("date as year and week")
@@ -50,6 +56,7 @@ plt.title("evolution of the number of first dose administered through the world 
 plt.xticks(rotation=90)
 plt.grid()
 plt.show()
+"""
 
 def regionFirstDoseSecondDose():
     is_FirstDose_50000 = df_vaccin["FirstDose"] > 50000
@@ -65,5 +72,5 @@ def regionFirstDoseSecondDose():
 
 
 #----- Execute -----
-regionFirstDose()
+#regionFirstDose()
 #regionFirstDoseSecondDose()
