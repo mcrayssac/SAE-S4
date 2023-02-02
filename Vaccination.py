@@ -10,7 +10,8 @@ np = importFile.np
 #----- Import File -----
 df_vaccin = readFile.execution("vaccinations")
 df_vaccin = pd.DataFrame.from_records(df_vaccin['records'])
-print(df_vaccin)
+#df_vaccin = df_vaccin.sort_values('YearWeekISO')
+#print(df_vaccin)
 
 #----- Changing date format
 df_vaccin = df_vaccin.rename(columns={'YearWeekISO':'date'})
@@ -21,7 +22,6 @@ df_vaccin = df_vaccin.drop('date', axis=1)
 
 print(df_vaccin)
 
-"""
 
 #----- See versions -----
 #print(pd.show_versions())
@@ -29,7 +29,6 @@ print(df_vaccin)
 #----- Seaborn -----
 def seeInfos():
     df_vaccin.info()
-    df_vaccin.describe
 
 #----- Number of first doses depending on the region -----
 def regionFirstDose():
@@ -66,7 +65,5 @@ def regionFirstDoseSecondDose():
 
 
 #----- Execute -----
-#regionFirstDose()
-regionFirstDoseSecondDose()
-
-"""
+regionFirstDose()
+#regionFirstDoseSecondDose()
