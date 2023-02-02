@@ -15,7 +15,9 @@ print(df_cases)
 #----- Changing date format
 df_cases = df_cases.rename(columns={'year_week':'date'})
 df_cases['date'] = df_cases['date'].str.replace('-','')
-df_cases['date'] = df_cases['date'].apply(convertDate.get_start_end_dates)
+df_cases['start_date'] = df_cases['date'].apply(convertDate.get_start_date)
+df_cases['end_date'] = df_cases['date'].apply(convertDate.get_end_date)
+df_cases = df_cases.drop('date', axis=1)
 print(df_cases)
 
 """

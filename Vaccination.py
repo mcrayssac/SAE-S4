@@ -15,7 +15,10 @@ print(df_vaccin)
 #----- Changing date format
 df_vaccin = df_vaccin.rename(columns={'YearWeekISO':'date'})
 df_vaccin['date'] = df_vaccin['date'].str.replace('-','')
-df_vaccin['date'] = df_vaccin['date'].apply(convertDate.get_start_end_dates)
+df_vaccin['start_date'] = df_vaccin['date'].apply(convertDate.get_start_date)
+df_vaccin['end_date'] = df_vaccin['date'].apply(convertDate.get_end_date)
+df_vaccin = df_vaccin.drop('date', axis=1)
+
 print(df_vaccin)
 
 """
