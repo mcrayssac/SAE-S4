@@ -1,10 +1,14 @@
 import importFile
+import readFile
 
 sns = importFile.sns
 plt = importFile.plt
 pd = importFile.pd
 np = importFile.np
-df_vaccin = importFile.df_vaccin
+df_vaccin = readFile.execution("vaccinations")
+print(df_vaccin)
+print(type(df_vaccin))
+"""
 
 #----- See versions -----
 #print(pd.show_versions())
@@ -51,3 +55,5 @@ def regionFirstDoseSecondDose():
 #----- Execute -----
 #regionFirstDose()
 regionFirstDoseSecondDose()
+
+"""

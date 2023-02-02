@@ -4,9 +4,9 @@ from datetime import datetime
 #----- Load File -----
 def load(type, path):
     beginTime = datetime.now()
-    print("Beginning " + type + " importation")
+    print("Beginning " + type + " loading")
     df = json.load(open(path))
-    print("Ending " + type + " importation")
+    print("Ending " + type + " loading")
     endTime = datetime.now()
     diffTime = endTime-beginTime
     diffMinSecTime = divmod(diffTime.total_seconds(), 60)
