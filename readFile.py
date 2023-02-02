@@ -21,5 +21,10 @@ casePath = "case.json"
 caseType = "cases"
 
 #----- Execution -----
-print(load(caseType, casePath))
-print(load(vaccinationType, vaccinationPath))
+def execution(type):
+    if type == caseType:
+        return load(caseType, casePath)
+    elif type == vaccinationType:
+        return load(vaccinationType, vaccinationPath)
+    else:
+        return

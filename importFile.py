@@ -39,8 +39,9 @@ caseType = "cases"
 caseUrl = "https://opendata.ecdc.europa.eu/covid19/nationalcasedeath/json/"
 
 #----- Execution -----
-storage(importation(caseType, caseUrl), caseFile, caseType)
-storage(importation(vaccinationType, vaccinationUrl), vaccinationFile, vaccinationType)
+def execution():
+    storage(importation(caseType, caseUrl), caseFile, caseType)
+    storage(importation(vaccinationType, vaccinationUrl), vaccinationFile, vaccinationType)
 
 
 #print("beginning cleaning")
