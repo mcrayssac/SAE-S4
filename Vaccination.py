@@ -5,9 +5,12 @@ sns = importFile.sns
 plt = importFile.plt
 pd = importFile.pd
 np = importFile.np
+
+#----- Import File -----
 df_vaccin = readFile.execution("vaccinations")
+df_vaccin = pd.DataFrame.from_records(df_vaccin['records'])
 print(df_vaccin)
-print(type(df_vaccin))
+
 """
 
 #----- See versions -----
