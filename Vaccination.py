@@ -2,6 +2,7 @@ from datetime import datetime
 import importFile
 import readFile
 import convertDate
+import cleanFile
 
 sns = importFile.sns
 plt = importFile.plt
@@ -12,6 +13,7 @@ np = importFile.np
 df_vaccin = readFile.execution("vaccinations")
 df_vaccin = pd.DataFrame.from_records(df_vaccin['records'])
 df_vaccin = df_vaccin.sort_values('YearWeekISO')
+df_vaccin = cleanFile.clean(readFile.vaccinationType, df_vaccin)
 print(df_vaccin.tail(10))
 
 #----- Changing date format

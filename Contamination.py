@@ -1,6 +1,7 @@
 import importFile
 import readFile
 import convertDate
+import cleanFile
 
 sns = importFile.sns
 plt = importFile.plt
@@ -11,6 +12,7 @@ np = importFile.np
 df_cases = readFile.execution("cases")
 df_cases = pd.DataFrame.from_records(df_cases)
 df_cases = df_cases.sort_values('year_week')
+df_cases = cleanFile.clean(importFile.caseType, df_cases)
 print(df_cases.tail(10))
 
 #----- Changing date format
