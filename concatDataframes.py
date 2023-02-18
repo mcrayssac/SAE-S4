@@ -54,7 +54,6 @@ def Concat(indicator, TargetGroup, Vaccine):
 tabVaccine = df_vaccin["Vaccine"].unique()
 tabTargetGroup = df_vaccin["TargetGroup"].unique()
 tabIndicator = df_cases["indicator"].unique()
-print(tabIndicator)
 
 
 print("Full First Concat beginning !")
