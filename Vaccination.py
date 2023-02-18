@@ -31,9 +31,10 @@ print(df_vaccin.start_date.tail(10))"""
 #----- See versions -----
 #print(pd.show_versions())
 
-#----- Seaborn -----
+#----- See infos -----
 def seeInfos():
     df_vaccin.info()
+seeInfos()
 
 #----- Number of first doses depending on the region -----
 def regionFirstDose():

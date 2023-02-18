@@ -11,7 +11,14 @@ np = importFile.np
 df_cases = readFile.execution("cases")
 df_cases = pd.DataFrame.from_records(df_cases)
 df_cases = df_cases.sort_values('year_week')
+df_cases = df_cases.rename(columns={'year_week':'YearWeekISO'})
+df_cases['YearWeekISO'] = df_cases['YearWeekISO'].str.replace('-','-W')
 print(df_cases.tail(10))
+
+#----- See infos -----
+def seeInfos():
+    df_cases.info()
+seeInfos()
 
 #----- Changing date format
 """df_cases = df_cases.rename(columns={'year_week':'date'})
@@ -21,10 +28,6 @@ df_cases['end_date'] = df_cases['date'].apply(convertDate.get_end_date)
 df_cases = df_cases.drop('date', axis=1)
 df_cases = df_cases.sort_values('start_date')
 print(df_cases.start_date.tail(10))"""
-
-df_cases = df_cases.rename(columns={'year_week':'YearWeekISO'})
-df_cases['YearWeekISO'] = df_cases['YearWeekISO'].str.replace('-','-W')
-print(df_cases.tail(10))
 
 
 
