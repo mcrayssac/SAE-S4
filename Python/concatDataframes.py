@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import datetime
+import cleanFile
 
 import pycountry
 def trans_alpha_country(x):
@@ -67,6 +68,7 @@ pd.set_option('display.max_columns', None)
 df_concat_full = df_concat_full.sort_index()
 print(df_concat_full.tail(50))
 print(df_concat_full.shape)
+cleanFile.clean(df_concat_full)
 endTime = datetime.now()
 diffTime = endTime-beginTime
 diffMinSecTime = divmod(diffTime.total_seconds(), 60)
