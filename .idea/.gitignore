@@ -11,3 +11,4 @@
 ../Files/*.json
 ../API/node_modules
 ../API/package_lock.json
+../API/.env
