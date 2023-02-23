@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 from datetime import datetime
 import cleanFile
 
@@ -51,26 +52,43 @@ def Concat(indicator, TargetGroup, Vaccine):
     return df_concat
 
 
-tabVaccine = df_vaccin["Vaccine"].unique()
-tabTargetGroup = df_vaccin["TargetGroup"].unique()
-tabIndicator = df_cases["indicator"].unique()
+def concat_full():
+    tabVaccine = df_vaccin["Vaccine"].unique()
+    tabTargetGroup = df_vaccin["TargetGroup"].unique()
+    tabIndicator = df_cases["indicator"].unique()
 
+    print("Full First Concat beginning !")
+    beginTime = datetime.now()
+    tabConcat = []
+    for elt in tabIndicator:
+        for elt1 in tabTargetGroup:
+            for elt2 in tabVaccine:
+                tabConcat.append(Concat(elt, elt1, elt2))
+    df_concat_full = pd.concat(tabConcat)
+    pd.set_option('display.max_columns', None)
+    df_concat_full = df_concat_full.sort_index()
+    print(df_concat_full.tail(50))
+    print(df_concat_full.shape)
+    endTime = datetime.now()
+    diffTime = endTime-beginTime
+    diffMinSecTime = divmod(diffTime.total_seconds(), 60)
+    print('Total time to df_concat_full: ', diffMinSecTime[0], 'minutes', diffMinSecTime[1], 'seconds')
+    print("\n\n\n")
+    return df_concat_full
 
-print("Full First Concat beginning !")
-beginTime = datetime.now()
-tabConcat = []
-for elt in tabIndicator:
-    for elt1 in tabTargetGroup:
-        for elt2 in tabVaccine:
-            tabConcat.append(Concat(elt, elt1, elt2))
-df_concat_full = pd.concat(tabConcat)
-pd.set_option('display.max_columns', None)
-df_concat_full = df_concat_full.sort_index()
-print(df_concat_full.tail(50))
-print(df_concat_full.shape)
-cleanFile.clean(df_concat_full)
-endTime = datetime.now()
-diffTime = endTime-beginTime
-diffMinSecTime = divmod(diffTime.total_seconds(), 60)
-print('Total time to df_concat_full: ', diffMinSecTime[0], 'minutes', diffMinSecTime[1], 'seconds')
-print("\n\n\n")
+#----- Storage File -----
+def storage(df, file):
+    print("Beginning storage")
+    out_file = open(file, "w")
+    json.dump(df, out_file, indent = 6)
+    out_file.close()
+    print("Ending storage")
+
+#----- Variables -----
+fullDataframeFile = "../Files/full_df.json"
+
+#----- Execution -----
+def execution():
+    storage(concat_full(), fullDataframeFile)
+
+execution()
