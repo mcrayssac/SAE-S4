@@ -78,11 +78,11 @@ def concat_full():
 
 #----- Storage File -----
 def storage(df, file):
-    print("Beginning " + type + " storage")
+    print("Beginning storage")
     out_file = open(file, "w")
     json.dump(df, out_file, indent = 6)
     out_file.close()
-    print("Ending " + type + " storage")
+    print("Ending storage")
 
 #----- Variables -----
 fullDataframeFile = "../Files/full_df.json"
