@@ -1,14 +1,20 @@
-// hello_python.js
-const { loadPyodide } = require("pyodide");
+const { spawn } = require('child_process');
+const chalk = require('chalk');
 
-async function hello_python() {
-  let pyodide = await loadPyodide();
-  return await pyodide.runPythonAsync(`
-        import math
-        math.sqrt(16)
-    `);
-}
+const pythonFile = '../Python/Web_importation/importFile.py';
+const args = ['argument1', 'argument2'];
 
-hello_python().then((result) => {
-  console.log("Python says : ", result);
+const pythonProcessWebImporation = spawn('python', [pythonFile/*, ...args*/]);
+console.log(chalk.inverse.blue.bold.bgBlack(` Web imporation child process begin ! `));
+
+pythonProcessWebImporation.stdout.on('data', (data) => {
+  console.log(chalk.inverse.black.bold.bgBlue(`STDOUT:\n ${data}`));
+});
+
+pythonProcessWebImporation.stderr.on('data', (data) => {
+  console.error(`stderr:\n ${data}`);
+});
+
+pythonProcessWebImporation.on('close', (code) => {
+  console.log(chalk.inverse.black.bold.bgBlue(`Web imporation child process exited with code ${code}`));
 });
