@@ -27,43 +27,67 @@ if (timestand_update === undefined || new Date(timestand_update) == "Invalid Dat
 }
 
 function setEnvValue(key, value) {
-
   let ENV_VARS = [];
   let target = -1;
 
   // Check if the file exists
   if (fs.existsSync("./.env")) {
-    // read file from hdd & split it from a linebreak to an array
+    // Read file & split it to an array
     ENV_VARS = fs.readFileSync("./.env", "utf8").split(os.EOL);
 
-    // find the env we want based on the key
+    // Find the env we want based on the key
     target = ENV_VARS.indexOf(ENV_VARS.find((line) => {
         return line.match(new RegExp(key));
     }));
   } else {
-    // create the file if it doesn't exist
+    // Create the file if it doesn't exist
     fs.writeFileSync("./.env", "");
   }
 
-  // if the key was found, replace its value
+  // If the key was found, replace its value
   if (target > -1) {
     ENV_VARS.splice(target, 1, `${key}=${value}`);
   } else {
-    // if the key was not found, add it to the end of the file
+    // If the key was not found, add it to the end of the file
     ENV_VARS.push(`${key}=${value}`);
   }
 
-  // write everything back to the file system
+  // Write everything back to the file system
   fs.writeFileSync("./.env", ENV_VARS.join(os.EOL));
 }
 
+async function giveMeanMinutesUpdate() {
+  if (fs.existsSync("../Files/mean_minutes_update.json")) {
+    try {
+      const data = await fs.promises.readFile('../Files/mean_minutes_update.json', 'utf8');
+      let minutesMean = 0;
+      let secondsMean = 0;
+      obj = JSON.parse(data);
+      obj.numbers.forEach( elt => {
+        minutesMean += elt.minutes;
+        secondsMean += elt.seconds;
+      });
+      minutesMean /= obj.numbers.length;
+      secondsMean /= obj.numbers.length;
+      return {"minutes": minutesMean.toFixed(0), "seconds": secondsMean.toFixed(0)};
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  } else return null;
+}
+
 function webImportation() {
-  const pythonFile = '../Python/Web_importation/importFile.py';
+  const pythonFile = '../Python/concatDataframes.py';
   const pythonProcessWebImporation = spawn('python', [pythonFile]);
 
   pythonProcessWebImporation.on('spawn', () => {
     currentImportation = true;
-    console.log(chalk.inverse.blue.bold.bgBlack(`Web imporation child process begin !`));
+    console.log(chalk.green.bold.bgBlack(`Web imporation child process begin !`));
+    giveMeanMinutesUpdate().then(result => {
+      if (result) console.log(chalk.yellowBright.bold.bgBlack(`Waiting time is around ${result.minutes} minutes and ${result.seconds} seconds calculated from your last data imports. \nThank you for waiting !`));
+      else console.log(chalk.yellowBright.bold.bgBlack(`No imports found before this importation. Waiting time will be short or long... \nThank you for waiting !`));
+    });
   });
 
   pythonProcessWebImporation.stdout.on('data', (data) => {
@@ -85,10 +109,6 @@ function webImportation() {
   numbers: []
 };
 obj.numbers.push({value: 13});
-obj.numbers.push({value: 12});
-obj.numbers.push({value: 11});
-obj.numbers.push({value: 10});
-obj.numbers.push({value: 8});
 var json = JSON.stringify(obj);
 fs.writeFile('../Files/mean_minutes_update.json', json, 'utf-8', (err) => {
   if (err) throw err;
@@ -96,22 +116,3 @@ fs.writeFile('../Files/mean_minutes_update.json', json, 'utf-8', (err) => {
   const data = fs.readFileSync('../Files/mean_minutes_update.json');
   console.log(JSON.parse(data));
 });*/
-
-function giveMeanMinutesUpdate() {
-  if (fs.existsSync("../Files/mean_minutes_update.json")) {
-    fs.readFile('../Files/mean_minutes_update.json', 'utf8', (err, data) => {
-      if (err) console.log(err);
-      else {
-        let mean = 0;
-        obj = JSON.parse(data);
-        obj.numbers.forEach( elt => {
-          mean += elt.value;
-        });
-        mean /= obj.numbers.length;
-        return mean;
-      }
-    });
-  } else return null
-}
-
-//giveMeanMinutesUpdate()
