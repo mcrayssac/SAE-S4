@@ -4,8 +4,8 @@ const { loadPyodide } = require("pyodide");
 async function hello_python() {
   let pyodide = await loadPyodide();
   return await pyodide.runPythonAsync(`
-        import math
-        math.sqrt(16)
+        import lol
+        print(lol.loo)
     `);
 }
 
