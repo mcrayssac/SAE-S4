@@ -12,7 +12,7 @@ pythonProcessWebImporation.stdout.on('data', (data) => {
 });
 
 pythonProcessWebImporation.stderr.on('data', (data) => {
-  console.error(`stderr:\n ${data}`);
+  console.error(chalk.inverse.black.bold.bgRed(`stderr:\n ${data}`));
 });
 
 pythonProcessWebImporation.on('close', (code) => {
