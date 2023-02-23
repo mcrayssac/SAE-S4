@@ -1,4 +1,3 @@
-import readFile as rf
 import importFile
 import numpy as np
 
