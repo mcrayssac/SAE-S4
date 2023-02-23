@@ -1,4 +1,4 @@
-import importFile
+import Web_importation.importFile as importFile
 import readFile
 import cleanFile
 
@@ -11,7 +11,6 @@ np = importFile.np
 df_vaccin = readFile.execution("vaccinations")
 df_vaccin = pd.DataFrame.from_records(df_vaccin['records'])
 df_vaccin = df_vaccin.sort_values('YearWeekISO')
-df_vaccin = cleanFile.clean(readFile.vaccinationType, df_vaccin)
 print(df_vaccin.tail(10))
 
 #----- Changing date format
