@@ -8,3 +8,6 @@
 /dataSources.local.xml
 
 ../*.json
+../Files/*.json
+../API/node_modules
+../API/package_lock.json
