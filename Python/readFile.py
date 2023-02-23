@@ -14,10 +14,10 @@ def load(type, path):
     return df
 
 #----- Variables -----
-vaccinationPath = "vaccination.json"
+vaccinationPath = "../Files/vaccination.json"
 vaccinationType = "vaccinations"
 
-casePath = "case.json"
+casePath = "../Files/case.json"
 caseType = "cases"
 
 #----- Execution -----
