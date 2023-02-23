@@ -77,7 +77,7 @@ def concat_full():
     return df_concat_full
 
 #----- Storage File -----
-def storage(df, file, type):
+def storage(df, file):
     print("Beginning " + type + " storage")
     out_file = open(file, "w")
     json.dump(df, out_file, indent = 6)
