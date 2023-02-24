@@ -3,11 +3,16 @@ const chalk = require('chalk');
 const fs = require("fs");
 const os = require("os");
 
+/**
+ * Usage
+ */
+console.log(chalk.cyan.bold.bgBlack(`Usage : \nLunch nodeJS server : \nnpm start \nLunch nodeJS server and force update : \nnpm run start_update\n`));
 
 /**
  * Environment and Port configuration
  */
 const dotEnv = require("dotenv");
+const { measureMemory } = require('vm');
 dotEnv.config();
 const timestand_update = process.env.TIMESTAND_UPDATE;
 
@@ -15,15 +20,19 @@ const timestand_update = process.env.TIMESTAND_UPDATE;
 /**
  * If
  */
+let currentError = false;
 let currentImportation = false;
-if (timestand_update === undefined || new Date(timestand_update) == "Invalid Date"){
-  console.log(chalk.inverse.red.bold.bgBlack(`No timestand_update found !`));
+if (process.env.npm_lifecycle_script.substring(15, process.env.npm_lifecycle_script.length) === "update") {
+  console.log(chalk.red.bold.bgBlack(`Force update detected !\n`));
+  webImportation();
+} else if (timestand_update === undefined || new Date(timestand_update) == "Invalid Date"){
+  console.log(chalk.red.bold.bgBlack(`No timestand_update found !\n`));
   webImportation();
 } else {
   const dateNow = new Date();
   if ((new Date(timestand_update)) - dateNow < -86400000) {
     webImportation();
-  }
+  } else console.log(chalk.green.bold.bgBlack(`All your files are up to date !`));
 }
 
 function setEnvValue(key, value) {
@@ -60,16 +69,20 @@ async function giveMeanMinutesUpdate() {
   if (fs.existsSync("../Files/mean_minutes_update.json")) {
     try {
       const data = await fs.promises.readFile('../Files/mean_minutes_update.json', 'utf8');
+      if (data.trim() === '') return null;
       let minutesMean = 0;
       let secondsMean = 0;
       obj = JSON.parse(data);
-      obj.numbers.forEach( elt => {
-        minutesMean += elt.minutes;
-        secondsMean += elt.seconds;
-      });
-      minutesMean /= obj.numbers.length;
-      secondsMean /= obj.numbers.length;
-      return {"minutes": minutesMean.toFixed(0), "seconds": secondsMean.toFixed(0)};
+      if (obj.numbers && obj.numbers.length > 0){
+        obj.numbers.forEach( elt => {
+          minutesMean += elt.minutes;
+          secondsMean += elt.seconds;
+        });
+        minutesMean /= obj.numbers.length;
+        secondsMean /= obj.numbers.length;
+        return {"minutes": minutesMean.toFixed(0), "seconds": secondsMean.toFixed(0)};
+      }
+      return null;
     } catch (err) {
       console.log(err);
       return null;
@@ -86,7 +99,7 @@ function webImportation() {
     console.log(chalk.green.bold.bgBlack(`Web imporation child process begin !`));
     giveMeanMinutesUpdate().then(result => {
       if (result) console.log(chalk.yellowBright.bold.bgBlack(`Waiting time is around ${result.minutes} minutes and ${result.seconds} seconds calculated from your last data imports. \nThank you for waiting !`));
-      else console.log(chalk.yellowBright.bold.bgBlack(`No imports found before this importation. Waiting time will be short or long... \nThank you for waiting !`));
+      else console.log(chalk.yellowBright.bold.bgBlack(`No imports found before this importation. \nWaiting time will be short or long... \nThank you for waiting !`));
     });
   });
 
@@ -95,15 +108,39 @@ function webImportation() {
   });
 
   pythonProcessWebImporation.stderr.on('data', (data) => {
+    currentError = true;
     console.error(chalk.inverse.black.bold.bgRed(`stderr:\n ${data}`));
   });
 
   pythonProcessWebImporation.on('close', (code) => {
     currentImportation = false;
     console.log(chalk.inverse.blue.bold.bgBlack(`Web imporation child process exited with code ${code}`));
-    setEnvValue("TIMESTAND_UPDATE", new Date());
+    if (!currentError) setEnvValue("TIMESTAND_UPDATE", new Date());
   });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*var obj = {
   numbers: []

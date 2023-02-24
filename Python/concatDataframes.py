@@ -1,5 +1,9 @@
-from datetime import datetime
+import pandas as pd
+import json
+import os
+
 #----- Time -----
+from datetime import datetime
 
 #----- Start Time -----
 def startTime():
@@ -17,17 +21,20 @@ def endTime(beginTime):
 
 #----- Storage Time -----
 def storageTime():
-    in_file = open("../Files/mean_minutes_update.json")
-    obj = json.load(in_file)
-    obj["numbers"].append({"minutes": diffMinSecTime[0], "seconds": float("%.2f" % diffMinSecTime[1])})
-    out_file = open("../Files/mean_minutes_update.json", "w")
-    json.dump(obj, out_file, indent = 6)
-    in_file.close()
-    out_file.close()
+    file_path = "../Files/mean_minutes_update.json"
+    data = {"numbers": []}
+    if os.path.exists(file_path):
+        with open(file_path, "r") as in_file:
+            file_size = os.stat(file_path).st_size
+            if file_size > 0:
+                data = json.load(in_file)
+    if "numbers" not in data:
+        data = {"numbers": []}
+    data["numbers"].append({"minutes": diffMinSecTime[0], "seconds": float("%.2f" % diffMinSecTime[1])})
+    with open(file_path, "w") as out_file:
+        json.dump(data, out_file, indent=4)
     print("Ending time storage")
 
-import pandas as pd
-import json
 import readFile
 from Web_importation import importFile
 
