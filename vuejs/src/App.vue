@@ -10,9 +10,14 @@
             mdi-home
           </v-icon>
         </v-btn>
-        <v-btn text fab @click="$router.push('/test')">
+        <v-btn text fab @click="$router.push('/graphics')">
           <v-icon color="#32D9CB" size="30">
             mdi-poll
+          </v-icon>
+        </v-btn>
+        <v-btn text fab @click="$router.push('/graphics')">
+          <v-icon color="#32D9CB" size="30">
+            mdi-file-refresh
           </v-icon>
         </v-btn>
       </v-app-bar>
@@ -45,13 +50,23 @@
 </template>
 
 <script>
+import axios from 'axios';
 
 export default {
   name: 'App',
-
   data: () => ({
     drawer: false,
+    refresh: false,
   }),
+  methods:{
+    async dataRefresh() {
+      await axios.get('http://localhost:3000/refresh').then(function (response) {
+        console.log(response.data);
+      }).catch(function (error) {
+        console.log(error.data);
+      })
+    }
+  }
 };
 </script>
 
