@@ -2,6 +2,22 @@ const { spawn } = require('child_process');
 const chalk = require('chalk');
 const fs = require("fs");
 const os = require("os");
+const AppError = require("./utils/appError");
+const express = require('express');
+const app = express();
+const router = require("./Routes/GraphRoutes");
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/", router);
+
+app.all("*", (req, res,next) => {
+  throw new AppError(`Requested URL ${req.path} not found !`, 404)
+})
+
+app.listen(process.env.PORT, () => {
+  console.log(`The server listening on port http://localhost:${process.env.PORT}`)
+})
 
 /**
  * Usage
