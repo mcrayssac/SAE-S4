@@ -7,6 +7,13 @@ const express = require('express');
 const app = express();
 const router = require("./Routes/GraphRoutes");
 
+/**
+ * Environment and Port configuration
+ */
+const dotEnv = require("dotenv");
+dotEnv.config();
+const timestand_update = process.env.TIMESTAND_UPDATE;
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/", router);
@@ -23,13 +30,6 @@ app.listen(process.env.PORT, () => {
  * Usage
  */
 console.log(chalk.cyan.bold.bgBlack(`Usage : \nLunch nodeJS server : \nnpm start \nLunch nodeJS server and force update : \nnpm run start_update\n`));
-
-/**
- * Environment and Port configuration
- */
-const dotEnv = require("dotenv");
-dotEnv.config();
-const timestand_update = process.env.TIMESTAND_UPDATE;
 
 
 /**
