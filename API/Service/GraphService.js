@@ -20,9 +20,8 @@ const getVaccinationPays = async (countryCode, callback) => {
     return callback(null, result)
 }
 
-const getContaminationPays = async (countryCode, callback) => {
-    let data = read()
-    await new Promise((resolve,reject) =>{
+function createProcess(){
+    new Promise((resolve,reject) =>{
         let result = spawn('python', ['loadGraphDf.py/getContamination']);
         let results = ""
         result.stdout.on('data', (data)=>{
@@ -35,12 +34,13 @@ const getContaminationPays = async (countryCode, callback) => {
             reject(err)
         })
     })
-        .then(result=>{
-            return callback(null, result)
-        })
-        .catch(error=>{
-            return callback(error, null)
-        })
+}
+
+const getContaminationPays = async (countryCode, callback) => {
+    let data = read()
+    const res = await createProcess()
+    console.log(res)
+    return callback(null, res)
 }
 
 const getComparisonContaminationVaccination = async (countryCode, callback) => {
