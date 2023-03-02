@@ -2,16 +2,14 @@ const PythonShell = require('python-shell')
 const fs = require('fs')
 
 const read = ()=>{
-    let file = fs.open('../../Files/full_df.json')
-    const dataBuffer = fs.readFileSync(file);
-    let dataJSON = dataBuffer.toString();
-    dataJSON = JSON.parse(dataJSON);
-    console.log(dataJSON)
+    const path = "C:\\Users\\aurel\\OneDrive\\Documents\\GitHub\\SAE-S4\\Files\\full_df.json";
+    let dataBuffer = fs.readFileSync(path);
+    const dataJSON = JSON.parse(dataBuffer.toString());
     return dataJSON
 }
 
 const accueil =()=>{
-    let data = read()
+    const data = read()
     return data;
 }
 
@@ -19,10 +17,10 @@ const getVaccinationPays = async (countryCode, callback) => {
     let data = read()
     await PythonShell.run('file.py/getVaccination', [countryCode])
         .then(results=>{
-            return callback(null, results)
+            return callback(null, results);
         })
         .catch(error=>{
-            return callback(error, null)
+            return callback(error, null);
         })
 }
 
