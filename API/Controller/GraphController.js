@@ -2,25 +2,44 @@ const graphService = require("../Service/GraphService")
 
 exports.accueil = (req, res) => {
     console.log("il est passé par ici");
-    return ("IT'S ALIIIIIIIIIIIVE");
+    data = graphService.accueil()
+    return res.status(200).send({success: 1, data: data})
 }
 
 exports.graphVaccination = (req, res) => {
     let codeCountry = req.params.codeCountry;
-    return ("okaaaaayyyyyyy1 : "+codeCountry);
+    graphService.getVaccinationPays(codeCountry, (error, results)=>{
+        if(error){
+            console.log(error);
+            return res.status(400).send({success: 0, data: error});
+        }
+        return res.status(200).send({success: 1, data: results})
+    });
 }
 
 exports.graphContamination = (req, res) => {
     let codeCountry = req.params.codeCountry;
-    return ("okaaaaayyyyyyy2 : "+codeCountry);
+    graphService.getContaminationPays(codeCountry, (error, results)=>{
+        if(error){
+            console.log(error);
+            return res.status(400).send({success: 0, data: error});
+        }
+        return res.status(200).send({success: 1, data: results})
+    });
 }
 
 exports.graphComparison = (req, res) => {
     let codeCountry = req.params.codeCountry;
-    return ("okaaaaayyyyyyy3 : "+codeCountry)
+    graphService.getComparisonContaminationVaccination(codeCountry, (error, results)=>{
+        if(error){
+            console.log(error);
+            return res.status(400).send({success: 0, data: error});
+        }
+        return res.status(200).send({success: 1, data: results})
+    });
 }
 
 exports.prediction = (req, res) =>{
     let codeCountry = req.params.codeCountry;
-    return ("okayyyyyyyyy4 : "+codeCountry)
+    return ("okayyyyyyyyy4 : "+codeCountry);
 }

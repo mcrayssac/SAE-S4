@@ -2,6 +2,8 @@ const { spawn } = require('child_process');
 const chalk = require('chalk');
 const fs = require("fs");
 const os = require("os");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 const AppError = require("./utils/appError");
 const express = require('express');
 const app = express();
@@ -14,8 +16,24 @@ const dotEnv = require("dotenv");
 dotEnv.config();
 const timestand_update = process.env.TIMESTAND_UPDATE;
 
+const swaggerOption = {
+  swaggerDefinition: (swaggerJsdoc.Options = {
+    info: {
+      title: "API REST",
+      description: "API documentation",
+      contact: {
+        name: "Groupe 13",
+      },
+      servers: ["http://localhost:3000/"],
+    },
+  }),
+  apis: ["app.js", "./routes/*.js"],
+};
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+const swaggerDocs = swaggerJsdoc(swaggerOption);
+app.use("/api-docs", swaggerUi.serve,swaggerUi.setup(swaggerDocs));
 app.use("/", router);
 
 app.all("*", (req, res,next) => {
