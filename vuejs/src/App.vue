@@ -5,13 +5,11 @@
         <v-app-bar-nav-icon class="bar-icon" @click="drawer = true" color="#D6FFF6"></v-app-bar-nav-icon>
         <v-toolbar-title><span class="toolbar-title-left">Belfort </span><span class="toolbar-title-right">Analytica</span></v-toolbar-title>
         <v-spacer />
-        <NavBar :titles="itemNav">
-          <template #link-to="link">
-            <v-btn class="mx-1 btn" :color="link.link.color"><span class="button-text">{{link.link.text}}</span></v-btn>
-          </template>
-        </NavBar>
-
-
+        <v-btn text fab @click="$router.push('/test')">
+          <v-icon color="#32D9CB" size="30">
+            mdi-gold
+          </v-icon>
+        </v-btn>
       </v-app-bar>
     </section>
 
