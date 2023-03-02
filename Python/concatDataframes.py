@@ -1,7 +1,5 @@
 import pandas as pd
 import json
-import os
-import cleanFile as cleanFile
 
 #----- Time -----
 from datetime import datetime
@@ -92,6 +90,7 @@ def Concat(indicator, TargetGroup, Vaccine):
     #print("Concat ending !")
     return df_concat
 
+import cleanFile as cleanFile
 
 def concat_full():
     tabVaccine = df_vaccin["Vaccine"].unique()

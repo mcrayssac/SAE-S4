@@ -1,9 +1,10 @@
 const PythonShell = require('python-shell')
 const fs = require('fs')
+const path = require('path')
 
 const read = ()=>{
-    const path = "C:\\Users\\aurel\\OneDrive\\Documents\\GitHub\\SAE-S4\\Files\\full_df.json";
-    let dataBuffer = fs.readFileSync(path);
+    const absolutePath = path.resolve("../Files/full_df.json");
+    let dataBuffer = fs.readFileSync(absolutePath);
     const dataJSON = JSON.parse(dataBuffer.toString());
     return dataJSON
 }
