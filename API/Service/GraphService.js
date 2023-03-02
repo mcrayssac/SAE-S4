@@ -1,5 +1,12 @@
 const PythonShell = require('python-shell')
 
+const lecture = (file)=>{
+    const dataBuffer = fs.readFileSync(file);
+    let dataJSON = dataBuffer.toString();
+    dataJSON = JSON.parse(dataJSON);
+    return dataJSON
+}
+
 const getVaccinationPays = async (countryCode, callback) => {
     await PythonShell.run('file.py/getVaccination', [countryCode])
         .then(results=>{
