@@ -1,6 +1,6 @@
 const PythonShell = require('python-shell')
 
-const lecture = (file)=>{
+const read = (file)=>{
     const dataBuffer = fs.readFileSync(file);
     let dataJSON = dataBuffer.toString();
     dataJSON = JSON.parse(dataJSON);
@@ -8,6 +8,7 @@ const lecture = (file)=>{
 }
 
 const getVaccinationPays = async (countryCode, callback) => {
+    data = read("../../Files/full_df.json")
     await PythonShell.run('file.py/getVaccination', [countryCode])
         .then(results=>{
             return callback(null, results)
@@ -18,6 +19,7 @@ const getVaccinationPays = async (countryCode, callback) => {
 }
 
 const getContaminationPays = async (countryCode, callback) => {
+    data = read("../../Files/full_df.json")
     await PythonShell.run('file.py/getContamination', [countryCode])
         .then(results=>{
             return callback(null, results)
@@ -28,6 +30,7 @@ const getContaminationPays = async (countryCode, callback) => {
 }
 
 const getComparisonContaminationVaccination = async (countryCode, callback) => {
+    data = read("../../Files/full_df.json")
     await PythonShell.run('file.py/getComparison', [countryCode])
         .then(results=>{
             return callback(null, results)
@@ -38,6 +41,7 @@ const getComparisonContaminationVaccination = async (countryCode, callback) => {
 }
 
 const getWeekContamination = async (countryCode,weekNum, callback) =>{
+    data = read("../../Files/full_df.json")
     await PythonShell.run('file.py/getContaminationNumber', [countryCode, weekNum])
         .then(results=>{
             return callback(null, results)
@@ -48,6 +52,7 @@ const getWeekContamination = async (countryCode,weekNum, callback) =>{
 }
 
 const getWeekVaccination = async (countryCode,weekNum, callback) =>{
+    data = read("../../Files/full_df.json")
     await PythonShell.run('file.py/getContaminationNumber', [countryCode, weekNum])
         .then(results=>{
             return callback(null, results)
