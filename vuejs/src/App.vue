@@ -5,9 +5,14 @@
         <v-app-bar-nav-icon class="bar-icon" @click="drawer = true" color="#D6FFF6"></v-app-bar-nav-icon>
         <v-toolbar-title><span class="toolbar-title-left">Belfort </span><span class="toolbar-title-right">Analytica</span></v-toolbar-title>
         <v-spacer />
+        <v-btn text fab @click="$router.push('/')">
+          <v-icon color="#A5E65A" size="30">
+            mdi-home
+          </v-icon>
+        </v-btn>
         <v-btn text fab @click="$router.push('/test')">
           <v-icon color="#32D9CB" size="30">
-            mdi-gold
+            mdi-poll
           </v-icon>
         </v-btn>
       </v-app-bar>

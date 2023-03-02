@@ -55,7 +55,7 @@ console.log(chalk.cyan.bold.bgBlack(`Usage : \nLunch nodeJS server : \nnpm start
  */
 let currentError = false;
 let currentImportation = false;
-if (process.env.npm_lifecycle_script.substring(15, process.env.npm_lifecycle_script.length) === "update") {
+if (process.env.npm_lifecycle_script.substring(process.env.npm_lifecycle_script.length - 6, process.env.npm_lifecycle_script.length) === "update") {
   console.log(chalk.red.bold.bgBlack(`Force update detected !\n`));
   webImportation();
 } else if (timestand_update === undefined || new Date(timestand_update) == "Invalid Date"){
