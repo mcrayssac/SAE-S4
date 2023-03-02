@@ -1,0 +1,58 @@
+::-webkit-scrollbar-track {
+    background-color: #5F7174;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 15px;
+    background-color: #A5E65A;
+}
+
+.app{
+    background-color: #6A888C !important;
+}
+
+.toolbar-title-left{
+    color: #A5E65A !important;
+    font-size: 1.3em !important;
+    font-family: "Montserrat Medium" !important;
+    font-weight: bold !important;
+    letter-spacing: 2px !important;
+}
+
+.toolbar-title-right{
+    color: #32D9CB !important;
+    font-size: 1.3em !important;
+    font-family: "Montserrat Medium" !important;
+    font-weight: bold !important;
+    letter-spacing: 2px !important;
+}
+
+.bar-icon{
+    color: #D6FFF6;
+}
+
+.button-text{
+    color: #A5E65A !important;
+    font-family: 'Montserrat Medium' !important;
+    font-weight: bold !important;
+}
+
+.avatar-text{
+    color: #A5E65A !important;
+    font-size: 0.9em !important;
+    font-family: "Montserrat Medium" !important;
+    font-weight: bold !important;
+    letter-spacing: 2px !important;
+}
+
+.avatar-text-secondary{
+    color: #32D9CB !important;
+    font-size: 0.7em !important;
+    font-family: "Montserrat Medium" !important;
+    font-weight: bold !important;
+    letter-spacing: 2px !important;
+}
