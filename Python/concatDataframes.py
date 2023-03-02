@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import os
+import cleanFile as cleanFile
 
 #----- Time -----
 from datetime import datetime
@@ -104,6 +105,7 @@ def concat_full():
             for elt2 in tabVaccine:
                 tabConcat.append(Concat(elt, elt1, elt2))
     df_concat_full = pd.concat(tabConcat)
+    df_concat_full = cleanFile.clean(df_concat_full)
     pd.set_option('display.max_columns', None)
     df_concat_full = df_concat_full.sort_index()
     #print(df_concat_full.tail(50))
