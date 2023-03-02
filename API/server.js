@@ -12,7 +12,6 @@ console.log(chalk.cyan.bold.bgBlack(`Usage : \nLunch nodeJS server : \nnpm start
  * Environment and Port configuration
  */
 const dotEnv = require("dotenv");
-const { measureMemory } = require('vm');
 dotEnv.config();
 const timestand_update = process.env.TIMESTAND_UPDATE;
 
