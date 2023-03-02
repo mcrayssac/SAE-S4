@@ -2,7 +2,8 @@ const graphService = require("../Service/GraphService")
 
 exports.accueil = (req, res) => {
     console.log("il est passé par ici");
-    return res.status(200).send({success: 1, data: "IT'S ALIIIIIIIIIIVE"})
+    data = graphService.accueil()
+    return res.status(200).send({success: 1, data: data})
 }
 
 exports.graphVaccination = (req, res) => {
