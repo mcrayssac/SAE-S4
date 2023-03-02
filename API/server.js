@@ -97,8 +97,8 @@ function webImportation() {
     currentImportation = true;
     console.log(chalk.green.bold.bgBlack(`Web imporation child process begin !`));
     giveMeanMinutesUpdate().then(result => {
-      if (result) console.log(chalk.yellowBright.bold.bgBlack(`Waiting time is around ${result.minutes} minutes and ${result.seconds} seconds calculated from your last data imports. \nThank you for waiting !`));
-      else console.log(chalk.yellowBright.bold.bgBlack(`No imports found before this importation. \nWaiting time will be short or long... \nThank you for waiting !`));
+      if (result) console.log(chalk.yellowBright.bold.bgBlack(`Waiting time is around ${result.minutes} minutes and ${result.seconds} seconds calculated from your last data imports. \nPlease wait !`));
+      else console.log(chalk.yellowBright.bold.bgBlack(`No imports found before this importation. \nWaiting time will be short or long... \nPlease wait !`));
     });
   });
 

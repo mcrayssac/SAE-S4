@@ -1,45 +1,43 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+  <v-app class="app">
+    <section class="NavBar">
+      <v-app-bar app color="#5F7174" dark elevate-on-scroll>
+        <v-app-bar-nav-icon class="bar-icon" @click="drawer = true" color="#D6FFF6"></v-app-bar-nav-icon>
+        <v-toolbar-title><span class="toolbar-title-left">Belfort </span><span class="toolbar-title-right">Analytica</span></v-toolbar-title>
+        <v-spacer />
+        <NavBar :titles="itemNav">
+          <template #link-to="link">
+            <v-btn class="mx-1 btn" :color="link.link.color"><span class="button-text">{{link.link.text}}</span></v-btn>
+          </template>
+        </NavBar>
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
 
-      <v-spacer></v-spacer>
+      </v-app-bar>
+    </section>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
+    <section class="Drawer">
+      <v-navigation-drawer v-model="drawer" absolute temporary color="#5F7174">
+        <v-row class="mt-3" align="center" no-gutters>
+          <v-col cols="3" align="center" no-gutters>
+            <v-avatar size="45"><img src="https://cdn.discordapp.com/attachments/711867110221152278/1068090823478100008/PHOTO-2022-09-08-16-15-24_2.jpg" alt="Maxime"></v-avatar>
+          </v-col>
+          <v-col align="start" align-self="center" no-gutters>
+            <v-col class="pa-0" cols="12" align="start" no-gutters>
+              <span class="avatar-text">Maxime CRAYSSAC</span>
+            </v-col>
+            <v-col class="pa-0" cols="12" align="start" no-gutters>
+              <span class="avatar-text-secondary">Créateur</span>
+            </v-col>
+          </v-col>
+        </v-row>
+      </v-navigation-drawer>
+    </section>
 
-    <v-main>
-      <router-view/>
-    </v-main>
+    <section class="Main">
+      <v-main>
+        <router-view/>
+      </v-main>
+    </section>
   </v-app>
 </template>
 
@@ -49,7 +47,11 @@ export default {
   name: 'App',
 
   data: () => ({
-    //
+    drawer: false,
   }),
 };
 </script>
+
+<style>
+@import '@/../public/css/App.css';
+</style>
