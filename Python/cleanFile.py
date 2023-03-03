@@ -1,5 +1,4 @@
 import readFile as rf
-import Web_importation.importFile as importFile
 import numpy as np
 
 def replaceEu(data):
@@ -9,9 +8,9 @@ def replaceEu(data):
 def clean(data):
     print(data.isnull().sum())
     print("début du nettoyage")
-    data['weekly_count'] = data['weekly_count'].replace('', np.nan)
+    data.loc[data['weekly_count'] == '', 'weekly_count'] = np.nan
     data = data.dropna(subset=['weekly_count'])
-    data['rate_14_day'] = data['rate_14_day'].replace('', np.nan)
+    data.loc[data['rate_14_day'] == '', 'rate_14_day'] = np.nan
     data = data.dropna(subset=['rate_14_day'])
     print("nettoyage terminé")
     print(data.shape)
