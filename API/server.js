@@ -12,9 +12,16 @@ const router = require("./Routes/GraphRoutes");
 /**
  * Environment and Port configuration
  */
-const dotEnv = require("dotenv");
-dotEnv.config();
+require('dotenv').config();
 const timestand_update = process.env.TIMESTAND_UPDATE;
+
+const cors = require('cors');
+const corsOptions ={
+  origin:process.env.LOCALHOST_PORT,
+  credentials:true,
+  optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
 
 const swaggerOption = {
   swaggerDefinition: (swaggerJsdoc.Options = {
@@ -55,7 +62,7 @@ console.log(chalk.cyan.bold.bgBlack(`Usage : \nLunch nodeJS server : \nnpm start
  */
 let currentError = false;
 let currentImportation = false;
-if (process.env.npm_lifecycle_script.substring(process.env.npm_lifecycle_script.length - 6, process.env.npm_lifecycle_script.length) === "update") {
+/*if (process.env.npm_lifecycle_script.substring(process.env.npm_lifecycle_script.length - 6, process.env.npm_lifecycle_script.length) === "update") {
   console.log(chalk.red.bold.bgBlack(`Force update detected !\n`));
   webImportation();
 } else if (timestand_update === undefined || new Date(timestand_update) == "Invalid Date"){
@@ -66,7 +73,7 @@ if (process.env.npm_lifecycle_script.substring(process.env.npm_lifecycle_script.
   if ((new Date(timestand_update)) - dateNow < -86400000) {
     webImportation();
   } else console.log(chalk.green.bold.bgBlack(`All your files are up to date !`));
-}
+}*/
 
 function setEnvValue(key, value) {
   let ENV_VARS = [];

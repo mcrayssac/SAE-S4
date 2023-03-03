@@ -4,16 +4,11 @@ const fs = require("fs");
 const os = require("os");
 
 /**
- * Environment and Port configuration
- */
-const dotEnv = require("dotenv");
-dotEnv.config();
-
-/**
  * If
  */
 
 exports.main = (req, res) => {
+    require('dotenv').config();
     const timestand_update = process.env.TIMESTAND_UPDATE;
     let importation = false;
     if (process.env.npm_lifecycle_script.substring(process.env.npm_lifecycle_script.length - 6, process.env.npm_lifecycle_script.length) === "update") {
@@ -31,12 +26,27 @@ exports.main = (req, res) => {
     if (importation){
         webImportation().then(function (response) {
             console.log(response.data);
-            return res.status(200).send({success:1, data: response.data});
+            return res.status(200).send({success:1, data: `SUCCESS : ${response.data} !`});
         }).catch(function (error) {
             console.log(error.data);
-            return res.status(401).send({success:0, data: `ERROR : Importation error !`});
+            console.log('Error.')
+            return res.status(401).send({success:0, data: `ERROR : ${error.data} !`});
         })
-    } else return res.status(200).send({success:1, data: `All your files are up to date !`});
+    } else return res.status(204).send({success:1, data: `All your files are up to date !`});
+}
+
+exports.meanMinutesUpdate = (req, res) => {
+    let data;
+    giveMeanMinutesUpdate().then(result => {
+        if (result) {
+            data = {"minutes": result.minutes, "seconds": result.seconds}
+            return res.status(200).send({success:1, data});
+        }
+        else {
+            data = null;
+            return res.status(401).send({success:0, data});
+        }
+    });
 }
 
 async function setEnvValue(key, value) {
@@ -67,9 +77,9 @@ async function setEnvValue(key, value) {
 }
 
 async function giveMeanMinutesUpdate() {
-    if (fs.existsSync("../../Files/mean_minutes_update.json")) {
+    if (fs.existsSync("../Files/mean_minutes_update.json")) {
         try {
-            const data = await fs.promises.readFile('../../Files/mean_minutes_update.json', 'utf8');
+            const data = await fs.promises.readFile('../Files/mean_minutes_update.json', 'utf8');
             if (data.trim() === '') return null;
             let minutesMean = 0;
             let secondsMean = 0;
@@ -92,11 +102,11 @@ async function giveMeanMinutesUpdate() {
 }
 
 async function webImportation() {
-    const pythonFile = '../../Python/concatDataframes.py';
-    const pythonProcessWebImporation = spawn('python', [pythonFile]);
+    const pythonFile = '../Python/concatDataframes.py';
+    const pythonProcessWebImportation = spawn('python', [pythonFile]);
 
-    await new Promise((resolve, reject) => {
-        pythonProcessWebImporation.on('spawn', () => {
+    return await new Promise((resolve, reject) => {
+        pythonProcessWebImportation.on('spawn', () => {
             currentImportation = true;
             console.log(chalk.green.bold.bgBlack(`Web imporation child process begin !`));
             giveMeanMinutesUpdate().then(result => {
@@ -105,60 +115,24 @@ async function webImportation() {
             });
         });
 
-        pythonProcessWebImporation.stdout.on('data', (data) => {
+        pythonProcessWebImportation.stdout.on('data', (data) => {
             console.log(chalk.inverse.black.bold.bgBlue(`STDOUT:\n ${data}`));
         });
 
-        pythonProcessWebImporation.stderr.on('data', (data) => {
+        pythonProcessWebImportation.stderr.on('data', (data) => {
             console.error(chalk.inverse.black.bold.bgRed(`stderr:\n ${data}`));
-            reject();
+            reject(`Python running error`);
         });
 
-        pythonProcessWebImporation.on('close', (code) => {
+        pythonProcessWebImportation.on('close', (code) => {
             console.log(chalk.inverse.blue.bold.bgBlack(`Web importation child process exited with code ${code}.`));
             setEnvValue("TIMESTAND_UPDATE", new Date()).then(function (response) {
-                console.log(`Storing success ! `);
+                console.log(`Storing success !`);
+                resolve(`Data importation success`);
             }).catch(function (error) {
                 console.log(error.data);
-                reject();
-            })
-            resolve();
+                reject(`Storing error`);
+            });
         });
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*var obj = {
-  numbers: []
-};
-obj.numbers.push({value: 13});
-var json = JSON.stringify(obj);
-fs.writeFile('../Files/mean_minutes_update.json', json, 'utf-8', (err) => {
-  if (err) throw err;
-  console.log('Saved!');
-  const data = fs.readFileSync('../Files/mean_minutes_update.json');
-  console.log(JSON.parse(data));
-});*/

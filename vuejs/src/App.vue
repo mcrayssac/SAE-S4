@@ -44,8 +44,21 @@
     <section class="Main">
       <v-main>
         <router-view/>
+
+        <v-snackbar color="#32D9CB" v-model="snackbar" timeout="-1">
+          <span class="tooltip-text">{{ snackbarText }}</span>
+          <template #action="{ attrs }">
+            <v-btn fab class="mx-0 px-0" text v-bind="attrs" @click="snackbar = false">
+              <v-icon color="#5F7174" size="28">
+                mdi-close-box
+              </v-icon>
+            </v-btn>
+          </template>
+        </v-snackbar>
       </v-main>
     </section>
+
+    <h1 v-if="data">{{ data }}</h1>
   </v-app>
 </template>
 
@@ -57,14 +70,37 @@ export default {
   data: () => ({
     drawer: false,
     refresh: false,
+    data: null,
+    callback: null,
+    snackbar: false,
+    snackbarText: null,
   }),
   methods:{
-    async dataRefresh() {
-      await axios.get('http://localhost:3000/refresh').then(function (response) {
-        console.log(response.data);
+    dataRefresh() {
+      let self = this;
+      axios.get('http://localhost:3000/refresh').then(function (response) {
+        self.callback = true;
+        if (response.status === 204) self.snackbarText = `All your files are up to date !`;
+        else self.snackbarText = `Updating data successful !`;
+        self.snackbar = true;
+        console.log(response);
       }).catch(function (error) {
+        self.callback = true;
+        self.snackbar = true;
+        self.snackbarText = error.data;
         console.log(error.data);
       })
+      setTimeout(() => {
+        if (!self.callback) {
+          axios.get('http://localhost:3000/mean/minutes').then(function (response) {
+            self.snackbar = true;
+            self.snackbarText = `Waiting time is around ${response.data.data.minutes} minutes and ${response.data.data.seconds} seconds calculated from your last data imports. Please wait !`;
+          }).catch(function (error) {
+            self.snackbar = true;
+            if (error.data === null) self.snackbarText = `No imports found before this importation. Waiting time will be short or long... Please wait !`;
+          })
+        }
+      }, 500);
     }
   }
 };

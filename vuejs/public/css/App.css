@@ -56,3 +56,11 @@
     font-weight: bold !important;
     letter-spacing: 2px !important;
 }
+
+.tooltip-text{
+    color: #5F7174 !important;
+    font-size: 1.2em !important;
+    font-family: "Montserrat Medium" !important;
+    font-weight: bold !important;
+    letter-spacing: 2px !important;
+}
