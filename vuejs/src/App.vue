@@ -15,7 +15,7 @@
             mdi-poll
           </v-icon>
         </v-btn>
-        <v-btn text fab @click="$router.push('/graphics')">
+        <v-btn text fab @click="dataRefresh">
           <v-icon color="#32D9CB" size="30">
             mdi-file-refresh
           </v-icon>

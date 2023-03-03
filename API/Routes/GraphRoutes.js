@@ -8,4 +8,7 @@ router.get('/contamination/:codeCountry', graphController.graphContamination)
 router.get('/comparison/:codeCountry', graphController.graphComparison)
 router.get('/prediction/:codeCountry', graphController.prediction)
 
+const dataRefresh = require("../DataRefresh/dataRefresh")
+router.get('/refresh', dataRefresh.main)
+
 module.exports = router;
