@@ -7,11 +7,41 @@ const os = require("os");
  * If
  */
 
-exports.main = (req, res) => {
+exports.serverUpdate = () => {
     let timestand_update;
 
     giveJsonValue().then(function (response) {
-        console.log(response);
+        timestand_update = response;
+        let importation = false;
+        if (process.env.npm_lifecycle_script.substring(process.env.npm_lifecycle_script.length - 6, process.env.npm_lifecycle_script.length) === "update") {
+            console.log(chalk.red.bold.bgBlack(`Force update detected !\n`));
+            importation = true;
+        } else if (timestand_update === undefined || new Date(timestand_update) == "Invalid Date"){
+            console.log(chalk.red.bold.bgBlack(`No timestand_update found !\n`));
+            importation = true;
+        } else {
+            const dateNow = new Date();
+            if ((new Date(timestand_update)) - dateNow < -86400000) {
+                importation = true;
+            } else console.log(chalk.green.bold.bgBlack(`All your files are up to date !`));
+        }
+        if (importation){
+            webImportation().then(function (response) {
+                console.log(response.data);
+            }).catch(function (error) {
+                console.log(error.data);
+            })
+        }
+    }).catch(function (error) {
+        console.log(error);
+        timestand_update = error;
+    })
+}
+
+exports.routerUpdate = (req, res) => {
+    let timestand_update;
+
+    giveJsonValue().then(function (response) {
         timestand_update = response;
         let importation = false;
         if (process.env.npm_lifecycle_script.substring(process.env.npm_lifecycle_script.length - 6, process.env.npm_lifecycle_script.length) === "update") {

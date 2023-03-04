@@ -60,6 +60,10 @@ console.log(chalk.cyan.bold.bgBlack(`Usage : \nLunch nodeJS server : \nnpm start
 /**
  * If
  */
+
+const dataRefresh = require('./DataRefresh/dataRefresh');
+dataRefresh.serverUpdate();
+
 let currentError = false;
 let currentImportation = false;
 /*if (process.env.npm_lifecycle_script.substring(process.env.npm_lifecycle_script.length - 6, process.env.npm_lifecycle_script.length) === "update") {

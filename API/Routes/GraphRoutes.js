@@ -9,7 +9,7 @@ router.get('/comparison/:codeCountry', graphController.graphComparison)
 router.get('/prediction/:codeCountry', graphController.prediction)
 
 const dataRefresh = require("../DataRefresh/dataRefresh")
-router.get('/refresh', dataRefresh.main)
+router.get('/refresh', dataRefresh.routerUpdate)
 router.get('/mean/minutes', dataRefresh.meanMinutesUpdate)
 
 module.exports = router;
