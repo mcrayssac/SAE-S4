@@ -48,7 +48,7 @@
         <v-snackbar color="#32D9CB" v-model="snackbar" timeout="-1">
           <span class="tooltip-text">{{ snackbarText }}</span>
           <template #action="{ attrs }">
-            <v-btn fab class="mx-0 px-0" text v-bind="attrs" @click="snackbar = false">
+            <v-btn fab class="mx-0 px-0" text v-bind="attrs" @click="snackbar = false;">
               <v-icon color="#5F7174" size="28">
                 mdi-close-box
               </v-icon>
@@ -57,8 +57,6 @@
         </v-snackbar>
       </v-main>
     </section>
-
-    <h1 v-if="data">{{ data }}</h1>
   </v-app>
 </template>
 
@@ -70,7 +68,6 @@ export default {
   data: () => ({
     drawer: false,
     refresh: false,
-    data: null,
     callback: null,
     snackbar: false,
     snackbarText: null,
@@ -87,10 +84,11 @@ export default {
       }).catch(function (error) {
         self.callback = true;
         self.snackbar = true;
-        self.snackbarText = error.data;
-        console.log(error.data);
+        self.snackbarText = error;
+        console.log(error);
       })
       setTimeout(() => {
+        console.log(self.callback);
         if (!self.callback) {
           axios.get('http://localhost:3000/mean/minutes').then(function (response) {
             self.snackbar = true;
@@ -99,7 +97,7 @@ export default {
             self.snackbar = true;
             if (error.data === null) self.snackbarText = `No imports found before this importation. Waiting time will be short or long... Please wait !`;
           })
-        }
+        } else self.callback = false;
       }, 500);
     }
   }
