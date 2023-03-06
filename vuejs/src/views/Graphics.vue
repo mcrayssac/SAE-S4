@@ -47,7 +47,7 @@
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Accumulative vaccination number
+                Vaccinations and cases number
             </span>
           </v-col>
           <v-spacer/>
@@ -57,10 +57,11 @@
         </v-row>
       </v-banner>
 
-      <v-banner v-if="chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0" class="mt-5" color="#5F7174" rounded elevation="6">
+      <v-banner class="mt-5" color="#5F7174" rounded elevation="6">
         <v-row>
-          <v-col cols="auto" align-self="center" style="width: 100%; height: 500px;">
-            <JSCharting :options="chartOptions1" style="width: 100%; height: 100%;"/>
+          <v-col cols="12" align="center" style="width: 100%; ">
+            <JSCharting v-if="chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0" :options="chartOptions1" style="width: 100%; height: 500px;"/>
+            <Loading v-else color="#32D9CB" />
           </v-col>
         </v-row>
       </v-banner>
@@ -70,7 +71,9 @@
 </template>
 
 <script>
+////chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0
 import JSCharting from 'jscharting-vue';
+import Loading from "@/components/Loading";
 import axios from "axios";
 
 export default {
@@ -92,10 +95,11 @@ export default {
     },
     chartOptions1: {
       type: 'area spline',
-      legend_visible: false,
+      legend_visible: true,
+      legend_position: 'inside top left',
+      palette: ['#32D9CB', '#A5E65A'],
       defaultSeries: {
         shape_opacity: 0.2,
-        color: '#32D9CB',
         defaultPoint_marker: {
           size: 0
         }
@@ -110,37 +114,23 @@ export default {
       yAxis: [
         {
           scale_type: 'auto',
-          markers: [
-            {
-              value: [0, 3],
-              label: {
-                text: '<icon name=linear/ecommerce/graph-decrease size=15 verticalAlign=center margin_right=4> Peu de clics',
-                style_fontSize: 14,
-                align: 'center'
-              },
-              color: ['#d9231a', 0.5]
-            },
-            {
-              value: (4+1+8+5+11)/5,
-              label_text: '<icon name=linear/ecommerce/graph-increase size=15 verticalAlign=center margin_right=4> Moyenne de clics',
-              label_style_fontSize: 13,
-              line_width: 5,
-              color: ['#495388', 0.5],
-              label_align: 'left'
-            }
-          ]
         }
       ],
       series: [
         {
-          name: 'Clics',
+          name: 'Vaccinations number',
+          points: null
+        },
+        {
+          name: 'Cases number',
           points: null
         }
       ]
     }
   }),
   components: {
-    JSCharting
+    JSCharting,
+    Loading,
   },
   methods:{
     async updateVaccination(){
@@ -149,6 +139,7 @@ export default {
         console.log(response.data);
         self.countries = response.data.data.countries
         self.chartOptions1.series[0].points = response.data.data.data;
+        self.chartOptions1.series[1].points = response.data.data.data2;
       }).catch(function (error) {
         console.log(error);
       })
@@ -156,10 +147,9 @@ export default {
   },
   mounted() {
     let self = this;
-    axios.get('http://localhost:3000/vaccination/France').then(function (response) {
+    axios.get('http://localhost:3000/vaccination/null').then(function (response) {
       console.log(response.data);
       self.countries = response.data.data.countries
-      self.chartOptions1.series[0].points = response.data.data.data;
     }).catch(function (error) {
       console.log(error);
     })
