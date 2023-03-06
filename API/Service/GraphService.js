@@ -24,9 +24,9 @@ async function giveJsonValue(path) {
 exports.getVaccinationPays = async (country, callback) => {
     if (country){
         let data = await giveJsonValue("../Files/full_df.json");
-        data = await data.filter(elt => elt.country && elt.country === country);
-        //console.log(data);
-        const filteredData = await data.map(({ YearWeekISO, cumulative_count }) => ({ YearWeekISO, cumulative_count }));
+        let filterData = await data.filter(elt => elt.country && elt.country === country);
+        //console.log(filterData);
+        const filteredData = await filterData.map(({ YearWeekISO, cumulative_count }) => ({ YearWeekISO, cumulative_count }));
         //console.log(filteredData);
         const uniqueData = Object.values(await filteredData.reduce((acc, curr) => {
             const key = curr.YearWeekISO + curr.cumulative_count;
@@ -45,15 +45,27 @@ exports.getVaccinationPays = async (country, callback) => {
             }
             return acc;
         }, []);
-
-        console.log(result);
+        //console.log(result);
 
         const renamedData = await result.map(obj => {
             return { x: obj.YearWeekISO, y: obj.cumulative_count };
         });
+        //console.log(renamedData);
 
-        console.log(renamedData);
-        if (renamedData.length > 0) return callback(null, renamedData);
+        const filteredCountry = await data.map(({ country }) => (`${country}`));
+        //console.log(filteredCountry)
+        const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
+            const index = acc.findIndex(item => item === obj);
+            if (index === -1) {
+                acc.push(obj);
+            } else {
+                acc[index].cumulative_count += obj.cumulative_count;
+            }
+            return acc;
+        }, []);
+        console.log(uniqueCountry);
+
+        if (renamedData.length > 0 && uniqueCountry.length > 0) return callback(null, {data: renamedData, countries: uniqueCountry});
         else return callback("Country given not in database");
     } else return callback("No country given");
 

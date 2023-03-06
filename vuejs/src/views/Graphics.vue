@@ -45,15 +45,19 @@
               mdi-poll
             </v-icon>
           </v-col>
-          <v-col class="pb-1" cols="auto" align-self="center">
+          <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Here our title
+                Accumulative vaccination number
             </span>
+          </v-col>
+          <v-spacer/>
+          <v-col v-if="countries" class="pb-1" cols="auto" align-self="center">
+            <v-select color="white" dark :items="countries" label="Region" v-model="selectedCountry" @change="updateVaccination()" style="max-width: 100px;" />
           </v-col>
         </v-row>
       </v-banner>
 
-      <v-banner v-if="chartOptions1.series[0].points.length > 0" class="mt-5" color="#5F7174" rounded elevation="6">
+      <v-banner v-if="chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0" class="mt-5" color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="auto" align-self="center" style="width: 100%; height: 500px;">
             <JSCharting :options="chartOptions1" style="width: 100%; height: 100%;"/>
@@ -72,6 +76,8 @@ import axios from "axios";
 export default {
   name: 'Test',
   data: () => ({
+    countries: null,
+    selectedCountry: null,
     chartOptions: {
       type: 'horizontal column',
       series: [
@@ -89,13 +95,16 @@ export default {
       legend_visible: false,
       defaultSeries: {
         shape_opacity: 0.2,
-        color: '#32D9CB'
+        color: '#32D9CB',
+        defaultPoint_marker: {
+          size: 0
+        }
       },
       xAxis: {
         scale_type: 'auto',
         crosshair_enabled: true,
         defaultTick: {
-          label_rotate: -30
+          label_rotate: -90
         }
       },
       yAxis: [
@@ -133,12 +142,24 @@ export default {
   components: {
     JSCharting
   },
+  methods:{
+    async updateVaccination(){
+      let self = this;
+      await axios.get(`http://localhost:3000/vaccination/${self.selectedCountry}`).then(function (response) {
+        console.log(response.data);
+        self.countries = response.data.data.countries
+        self.chartOptions1.series[0].points = response.data.data.data;
+      }).catch(function (error) {
+        console.log(error);
+      })
+    }
+  },
   mounted() {
     let self = this;
     axios.get('http://localhost:3000/vaccination/France').then(function (response) {
       console.log(response.data);
-      //self.chartOptions1.series[0].points = [['2022-04-04', 4],['2022-04-05', 1],['2022-04-06', 8],['2022-04-07', 5],['2022-04-08', 11],]
-      self.chartOptions1.series[0].points = response.data.data;
+      self.countries = response.data.data.countries
+      self.chartOptions1.series[0].points = response.data.data.data;
     }).catch(function (error) {
       console.log(error);
     })
@@ -149,7 +170,7 @@ export default {
 <style scoped>
 .select-bar{
   color: #A5E65A !important;
-  font-size: 2em !important;
+  font-size: 1.5em !important;
   font-family: "Montserrat Medium" !important;
   font-weight: bold !important;
   letter-spacing: 2px !important;
