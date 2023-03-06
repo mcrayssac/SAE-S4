@@ -7,11 +7,12 @@ const os = require("os");
  * If
  */
 
-exports.serverUpdate = () => {
+exports.serverUpdate = async () => {
     let timestand_update;
 
-    giveJsonValue().then(function (response) {
-        timestand_update = response;
+    try {
+        timestand_update = await giveJsonValue();
+        console.log("Time : ", timestand_update);
         let importation = false;
         if (process.env.npm_lifecycle_script.substring(process.env.npm_lifecycle_script.length - 6, process.env.npm_lifecycle_script.length) === "update") {
             console.log(chalk.red.bold.bgBlack(`Force update detected !\n`));
@@ -26,17 +27,16 @@ exports.serverUpdate = () => {
             } else console.log(chalk.green.bold.bgBlack(`All your files are up to date !`));
         }
         if (importation){
-            webImportation().then(function (response) {
-                console.log(response.data);
-            }).catch(function (error) {
-                console.log(error.data);
-            })
-        }
-    }).catch(function (error) {
+            const response = await webImportation();
+            console.log(response.data);
+            return response.data;
+        } else return `All your files are up to date !`;
+    } catch (error) {
         console.log(error);
-        timestand_update = error;
-    })
+        return null;
+    }
 }
+
 
 exports.routerUpdate = (req, res) => {
     let timestand_update;
