@@ -26,9 +26,9 @@
 
       <v-banner class="mt-5" color="#5F7174" rounded elevation="6">
         <v-row>
-          <v-col cols="auto" align-self="center" style="width: 100%; height: 100%;">
+          <v-col cols="auto" align-self="center" style="width: 100%; height: 500px;">
             <section class="Graph">
-              <JSCharting :options="chartOptions"/>
+              <JSCharting :options="chartOptions" style="width: 100%; height: 100%;"/>
             </section>
           </v-col>
         </v-row>
@@ -53,12 +53,10 @@
         </v-row>
       </v-banner>
 
-      <v-banner class="mt-5" color="#5F7174" rounded elevation="6">
+      <v-banner v-if="chartOptions1.series[0].points.length > 0" class="mt-5" color="#5F7174" rounded elevation="6">
         <v-row>
-          <v-col cols="auto" align-self="center" style="width: 100%; height: 100%;">
-            <section class="Graph">
-              <JSCharting :options="chartOptions1"/>
-            </section>
+          <v-col cols="auto" align-self="center" style="width: 100%; height: 500px;">
+            <JSCharting :options="chartOptions1" style="width: 100%; height: 100%;"/>
           </v-col>
         </v-row>
       </v-banner>
@@ -69,6 +67,7 @@
 
 <script>
 import JSCharting from 'jscharting-vue';
+import axios from "axios";
 
 export default {
   name: 'Test',
@@ -89,16 +88,11 @@ export default {
       type: 'area spline',
       legend_visible: false,
       defaultSeries: {
-        shape_opacity: 0.3,
-        color: '#6ec8cb',
-        defaultPoint_marker: {
-          type: 'linear/basic/magic-mouse',
-          size: 15,
-          outline: {color: 'white', width: 1.5}
-        }
+        shape_opacity: 0.2,
+        color: '#32D9CB'
       },
       xAxis: {
-        scale_type: 'date',
+        scale_type: 'auto',
         crosshair_enabled: true,
         defaultTick: {
           label_rotate: -30
@@ -131,19 +125,23 @@ export default {
       series: [
         {
           name: 'Clics',
-          points: [
-              ['2022-04-04', 4],
-              ['2022-04-05', 1],
-              ['2022-04-06', 8],
-              ['2022-04-07', 5],
-              ['2022-04-08', 11],
-          ]
+          points: null
         }
       ]
     }
   }),
   components: {
     JSCharting
+  },
+  mounted() {
+    let self = this;
+    axios.get('http://localhost:3000/vaccination/France').then(function (response) {
+      console.log(response.data);
+      //self.chartOptions1.series[0].points = [['2022-04-04', 4],['2022-04-05', 1],['2022-04-06', 8],['2022-04-07', 5],['2022-04-08', 11],]
+      self.chartOptions1.series[0].points = response.data.data;
+    }).catch(function (error) {
+      console.log(error);
+    })
   }
 };
 </script>

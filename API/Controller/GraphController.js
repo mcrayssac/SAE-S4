@@ -7,8 +7,8 @@ exports.accueil = (req, res) => {
 }
 
 exports.graphVaccination = (req, res) => {
-    let codeCountry = req.params.codeCountry;
-    graphService.getVaccinationPays(codeCountry, (error, results)=>{
+    let country = req.params.country;
+    graphService.getVaccinationPays(country, (error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});

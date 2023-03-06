@@ -37,7 +37,6 @@ exports.serverUpdate = async () => {
     }
 }
 
-
 exports.routerUpdate = (req, res) => {
     let timestand_update;
 

@@ -5,8 +5,9 @@ const AppError = require("./utils/appError");
 const express = require('express');
 const app = express();
 const router = require("./Routes/GraphRoutes");
-const graphicRouteur = require("./Routes/GraphRoutes");
 const fs = require("fs");
+const dotEnv = require('dotenv');
+dotEnv.config();
 
 /**
  * CORS definition to communicate with VueJS server
@@ -44,7 +45,6 @@ app.use("/api-docs", swaggerUi.serve,swaggerUi.setup(swaggerDocs));
  * Router definition
  */
 app.use("/", router);
-app.use("/graphic", graphicRouteur)
 
 /**
  * For all not defined routes
@@ -66,34 +66,11 @@ app.listen(process.env.PORT, () => {
 console.log(chalk.cyan.bold.bgBlack(`Usage : \nLunch nodeJS server : \nnpm start \nLunch nodeJS server and force update : \nnpm run start_update\n`));
 
 /**
- * Import data.json
- * @returns {Promise<null|*>}
- */
-async function giveJsonValue(path) {
-  if (fs.existsSync(path)) {
-    try {
-      const data = await fs.promises.readFile(path, 'utf8');
-      if (data.trim() === '') return null;
-      let obj = JSON.parse(data);
-      return obj;
-    } catch (err) {
-      console.log(err);
-      return null;
-    }
-  } else return null;
-}
-
-/**
  * Data refresh
  */
 const dataRefresh = require('./DataRefresh/dataRefresh');
 dataRefresh.serverUpdate().then(async function (response) {
   console.log(response);
-  let data = await giveJsonValue("../Files/full_df.json");
-  data = await data.filter(elt => elt.country && elt.country === "France");
-  //console.log(data);
-  const filteredData = data.map(({ YearWeekISO, cumulative_count }) => ({ YearWeekISO, cumulative_count }));
-  console.log(filteredData);
 }).catch(function (error) {
   console.log(error);
 })

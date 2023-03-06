@@ -3,9 +3,13 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', graphController.accueil)
-router.get('/vaccination/:codeCountry', graphController.graphVaccination)
+
+router.get('/vaccination/:country', graphController.graphVaccination)
+
 router.get('/contamination/:codeCountry', graphController.graphContamination)
+
 router.get('/comparison/:codeCountry', graphController.graphComparison)
+
 router.get('/prediction/:codeCountry', graphController.prediction)
 
 const dataRefresh = require("../DataRefresh/dataRefresh")
