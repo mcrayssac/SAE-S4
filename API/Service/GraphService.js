@@ -21,21 +21,51 @@ async function giveJsonValue(path) {
     } else return null;
 }
 
-async function giveCountriesValues(country) {
-    if (country){
-        const data = await giveJsonValue("../Files/full_df.json");
-        const filteredCountry = await data.map(({ country }) => (`${country}`));
-        const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
-            const index = acc.findIndex(item => item === obj);
-            if (index === -1) {
-                acc.push(obj);
-            } else {
-                acc[index].cumulative_count += obj.cumulative_count;
-            }
-            return acc;
-        }, []);
-        return uniqueCountry;
-    } else return null
+/**
+ * Give unique countries in full_df.json
+ * @returns {Promise<*>}
+ */
+async function giveCountriesValues() {
+    const data = await giveJsonValue("../Files/full_df.json");
+    const filteredCountry = await data.map(({ country }) => (`${country}`));
+    const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item === obj);
+        if (index === -1) {
+            acc.push(obj);
+        }
+        return acc;
+    }, []);
+    //console.log(uniqueCountry);
+    return uniqueCountry;
+}
+
+
+async function giveIntervalValues() {
+    const data = await giveJsonValue("../Files/full_df.json");
+    const filteredCountry = await data.map(({ YearWeekISO }) => (`${YearWeekISO}`));
+    const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item === obj);
+        if (index === -1) {
+            acc.push(obj);
+        }
+        return acc;
+    }, []);
+    //console.log(uniqueCountry);
+    return uniqueCountry;
+}
+
+async function giveIntervalValues() {
+    const data = await giveJsonValue("../Files/full_df.json");
+    const filteredCountry = await data.map(({ YearWeekISO }) => (`${YearWeekISO}`));
+    const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item === obj);
+        if (index === -1) {
+            acc.push(obj);
+        }
+        return acc;
+    }, []);
+    //console.log(uniqueCountry);
+    return uniqueCountry;
 }
 
 exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callback) => {
@@ -51,7 +81,7 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
         });
 
         let filterData = await data.filter(elt => elt.country && elt.country === country);
-        console.log(filterData);
+        //console.log(filterData);
         const filteredData = await filterData.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
         //console.log(filteredData);
         const cleanedData = filteredData.map(d => ({
@@ -97,20 +127,21 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
         renamedData = await result.map(obj => {
             return { x: obj.YearWeekISO, y: obj.TotalDoses };
         });
-        console.log(renamedData);
+        //console.log(renamedData);
 
     }
 
-    let countries = null;
-    await giveCountriesValues(country).then(function (resolve) {
-        countries = resolve;
-    })
+    const countries = await giveCountriesValues();
+    //console.log(countries)
+
+    const interval = await giveIntervalValues()
+    //console.log(interval);
 
     if (renamedData && renamedData.length > 0) {
-        if (countries && countries.length > 0) return callback(null, {data: renamedData, data2: temp3, countries});
+        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {data: renamedData, data2: temp3, countries, interval});
         else return callback("No countries found");
     } else {
-        if (countries && countries.length > 0) return callback(null, {data: null, data2: null, countries});
+        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {data: null, data2: null, countries, interval});
         else return callback("Country given not in database");
     }
 
