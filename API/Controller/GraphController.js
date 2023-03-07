@@ -8,7 +8,9 @@ exports.accueil = (req, res) => {
 
 exports.graphVaccination = (req, res) => {
     let country = req.params.country;
-    graphService.getVaccinationPays(country, (error, results)=>{
+    let intervalStart = req.params.intervalStart;
+    let intervalEnd = req.params.intervalEnd;
+    graphService.getVaccinationPays(country, intervalStart, intervalEnd, (error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});

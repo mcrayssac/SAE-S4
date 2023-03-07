@@ -21,16 +21,33 @@ async function giveJsonValue(path) {
     } else return null;
 }
 
-exports.getVaccinationPays = async (country, callback) => {
+async function giveCountriesValues(country) {
+    if (country){
+        const data = await giveJsonValue("../Files/full_df.json");
+        const filteredCountry = await data.map(({ country }) => (`${country}`));
+        const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
+            const index = acc.findIndex(item => item === obj);
+            if (index === -1) {
+                acc.push(obj);
+            } else {
+                acc[index].cumulative_count += obj.cumulative_count;
+            }
+            return acc;
+        }, []);
+        return uniqueCountry;
+    } else return null
+}
+
+exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callback) => {
     let data = await giveJsonValue("../Files/full_df.json");
     let renamedData = null;
     let temp3 = null;
-    if (country){
+    if (country && intervalStart && intervalEnd){
         let temp1 = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
-        const temp2 = await temp1.map(({ YearWeekISO, weekly_count }) => ({ YearWeekISO, weekly_count }));
+        const temp2 = await temp1.map(({ YearWeekISO, cumulative_count }) => ({ YearWeekISO, cumulative_count }));
         //console.log(temp2);
         temp3 = await temp2.map(obj => {
-            return { x: obj.YearWeekISO, y: obj.weekly_count };
+            return { x: obj.YearWeekISO, y: obj.cumulative_count };
         });
 
         let filterData = await data.filter(elt => elt.country && elt.country === country);
@@ -84,24 +101,16 @@ exports.getVaccinationPays = async (country, callback) => {
 
     }
 
-    const filteredCountry = await data.map(({ country }) => (`${country}`));
-    //console.log(filteredCountry)
-    const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
-        const index = acc.findIndex(item => item === obj);
-        if (index === -1) {
-            acc.push(obj);
-        } else {
-            acc[index].cumulative_count += obj.cumulative_count;
-        }
-        return acc;
-    }, []);
-    //console.log(uniqueCountry);
+    let countries = null;
+    await giveCountriesValues(country).then(function (resolve) {
+        countries = resolve;
+    })
 
     if (renamedData && renamedData.length > 0) {
-        if (uniqueCountry && uniqueCountry.length > 0) return callback(null, {data: renamedData, data2: null, countries: uniqueCountry});
+        if (countries && countries.length > 0) return callback(null, {data: renamedData, data2: temp3, countries});
         else return callback("No countries found");
     } else {
-        if (uniqueCountry && uniqueCountry.length > 0) return callback(null, {data: null, data2: null, countries: uniqueCountry});
+        if (countries && countries.length > 0) return callback(null, {data: null, data2: null, countries});
         else return callback("Country given not in database");
     }
 

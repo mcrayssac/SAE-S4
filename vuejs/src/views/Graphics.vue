@@ -8,17 +8,53 @@
       </v-row>
     </section>
 
+    <section class="Select">
+      <v-banner color="#5F7174" rounded elevation="6">
+        <v-row>
+          <v-col cols="auto" align-self="center">
+            <v-icon color="#32D9CB" size="36">
+              mdi-map-search
+            </v-icon>
+          </v-col>
+          <v-col class="pb-1" cols="auto" align-self="center">
+            <span class="select-bar">
+                Select bar
+            </span>
+          </v-col>
+          <v-spacer/>
+          <v-col v-if="countries && countries.length > 0" cols="auto" align-self="center">
+            <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 150px;" />
+          </v-col>
+          <v-col v-if="timeInterval && timeInterval.length > 0" cols="auto" align-self="center">
+            <v-select color="#A5E65A" dark :items="timeInterval" label="Interval start" v-model="selectedIntervalStart" style="max-width: 150px;" />
+          </v-col>
+          <v-col v-if="timeInterval && timeInterval.length > 0" cols="auto" align-self="center">
+            <v-select color="#A5E65A" dark :items="countries" label="Interval end" v-model="selectedCountry" style="max-width: 150px;" />
+          </v-col>
+          <v-col v-if="selectedCountry && selectedIntervalStart && selectedIntervalEnd" @click="updateVaccination" cols="auto" align-self="center">
+            <v-btn fab text>
+              <v-icon color="#A5E65A" size="30">
+                mdi-magnify
+              </v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-banner>
+    </section>
+
+    <v-divider class="my-10"/>
+
     <section class="Graph">
       <v-banner color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="auto" align-self="center">
             <v-icon color="#32D9CB" size="36">
-              mdi-poll
+              mdi-chart-arc
             </v-icon>
           </v-col>
           <v-col class="pb-1" cols="auto" align-self="center">
             <span class="select-bar">
-                Here our title
+                Regional cases and deaths
             </span>
           </v-col>
         </v-row>
@@ -26,9 +62,9 @@
 
       <v-banner class="mt-5" color="#5F7174" rounded elevation="6">
         <v-row>
-          <v-col cols="auto" align-self="center" style="width: 100%; height: 500px;">
+          <v-col cols="12" align="center" style="width: 100%;">
             <section class="Graph">
-              <JSCharting :options="chartOptions" style="width: 100%; height: 100%;"/>
+              <JSCharting :options="chartOptions" style="width: 100%; height: 500px;"/>
             </section>
           </v-col>
         </v-row>
@@ -42,17 +78,13 @@
         <v-row>
           <v-col cols="auto" align-self="center">
             <v-icon color="#32D9CB" size="36">
-              mdi-poll
+              mdi-chart-bell-curve-cumulative
             </v-icon>
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Vaccinations and cases number
+                Regional vaccinations and cases
             </span>
-          </v-col>
-          <v-spacer/>
-          <v-col v-if="countries" class="pb-1" cols="auto" align-self="center">
-            <v-select color="white" dark :items="countries" label="Region" v-model="selectedCountry" @change="updateVaccination()" style="max-width: 100px;" />
           </v-col>
         </v-row>
       </v-banner>
@@ -81,22 +113,80 @@ export default {
   data: () => ({
     countries: null,
     selectedCountry: null,
+    timeInterval: null,
+    selectedIntervalStart: null,
+    selectedIntervalEnd: null,
     chartOptions: {
-      type: 'horizontal column',
+      defaultSeries_type: 'radar polar',
+      title: {
+        position: 'center',
+        label: {
+          text: 'Time interval of deaths and cases per Region',
+          style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
+        }
+      },
+      palette: ['#32D9CB', '#A5E65A'],
+      yAxis_scale: { interval: 50, range_max: 150 },
+      legend: { position: 'bottom', template: '%icon,%name' },
+      defaultPoint: {
+        marker: {
+          type: 'circle',
+          fill: 'white',
+          outline_width: 2
+        }
+      },
       series: [
         {
+          name: 'William',
+          type: 'area spline',
           points: [
-            {x: 'A', y: 50},
-            {x: 'B', y: 30},
-            {x: 'C', y: 50}
+            { name: 'Jan', y: 59 },
+            { name: 'Feb', y: 122 },
+            { name: 'Mar', y: 57 },
+            { name: 'Apr', y: 15 },
+            { name: 'May', y: 111 },
+            { name: 'Jun', y: 140 },
+            { name: 'Jul', y: 67 },
+            { name: 'Aug', y: 88 },
+            { name: 'Sep', y: 90 },
+            { name: 'Oct', y: 50 },
+            { name: 'Nov', y: 77 },
+            { name: 'Dec', y: 109 }
+          ]
+        },
+        {
+          name: 'Elliot',
+          type: 'column',
+          points: [
+            { name: 'Jan', y: 79 },
+            { name: 'Feb', y: 94 },
+            { name: 'Mar', y: 93 },
+            { name: 'Apr', y: 60 },
+            { name: 'May', y: 7 },
+            { name: 'Jun', y: 83 },
+            { name: 'Jul', y: 94 },
+            { name: 'Aug', y: 66 },
+            { name: 'Sep', y: 94 },
+            { name: 'Oct', y: 68 },
+            { name: 'Nov', y: 81 },
+            { name: 'Dec', y: 65 }
           ]
         }
       ]
     },
     chartOptions1: {
       type: 'area spline',
-      legend_visible: true,
-      legend_position: 'inside top left',
+      title: {
+        position: 'center',
+        label: {
+          text: 'Vaccination and accumulative cases number',
+          style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
+        }
+      },
+      legend: {
+        template: '%icon %name',
+        position: 'top right'
+      },
       palette: ['#32D9CB', '#A5E65A'],
       defaultSeries: {
         shape_opacity: 0.2,

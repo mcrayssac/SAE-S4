@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get('/', graphController.accueil)
 
-router.get('/vaccination/:country', graphController.graphVaccination)
+router.get('/vaccination/:country/:intervalStart/:intervalEnd', graphController.graphVaccination)
 
 router.get('/contamination/:codeCountry', graphController.graphContamination)
 
