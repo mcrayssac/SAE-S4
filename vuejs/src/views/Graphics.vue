@@ -29,7 +29,7 @@
             <v-select color="#A5E65A" dark :items="timeInterval" label="Interval start" v-model="selectedIntervalStart" style="max-width: 150px;" />
           </v-col>
           <v-col v-if="timeInterval && timeInterval.length > 0" cols="auto" align-self="center">
-            <v-select color="#A5E65A" dark :items="countries" label="Interval end" v-model="selectedCountry" style="max-width: 150px;" />
+            <v-select color="#A5E65A" dark :items="timeInterval" label="Interval end" v-model="selectedIntervalEnd" style="max-width: 150px;" />
           </v-col>
           <v-col v-if="selectedCountry && selectedIntervalStart && selectedIntervalEnd" @click="updateVaccination" cols="auto" align-self="center">
             <v-btn fab text>
@@ -224,22 +224,29 @@ export default {
   },
   methods:{
     async updateVaccination(){
-      let self = this;
-      await axios.get(`http://localhost:3000/vaccination/${self.selectedCountry}`).then(function (response) {
-        console.log(response.data);
-        self.countries = response.data.data.countries
-        self.chartOptions1.series[0].points = response.data.data.data;
-        self.chartOptions1.series[1].points = response.data.data.data2;
-      }).catch(function (error) {
-        console.log(error);
-      })
+      const checkIntervalInfYears = this.selectedIntervalStart.substring(0, 4) < this.selectedIntervalEnd.substring(0, 4)
+      const checkIntervalEqualYears = this.selectedIntervalStart.substring(0, 4) === this.selectedIntervalEnd.substring(0, 4)
+      const checkIntervalWeek = this.selectedIntervalStart.substring(6, 8) < this.selectedIntervalEnd.substring(6, 8)
+      if (checkIntervalInfYears || (checkIntervalEqualYears && checkIntervalWeek)){
+        let self = this;
+        await axios.get(`http://localhost:3000/vaccination/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
+          console.log(response.data);
+          self.countries = response.data.data.countries
+          self.timeInterval = response.data.data.interval
+          self.chartOptions1.series[0].points = response.data.data.vaccinationsValues;
+          self.chartOptions1.series[1].points = response.data.data.cumulatedCasesValues;
+        }).catch(function (error) {
+          console.log(error);
+        })
+      }
     }
   },
   mounted() {
     let self = this;
-    axios.get('http://localhost:3000/vaccination/null').then(function (response) {
+    axios.get('http://localhost:3000/vaccination/null/null/null').then(function (response) {
       console.log(response.data);
       self.countries = response.data.data.countries
+      self.timeInterval = response.data.data.interval
     }).catch(function (error) {
       console.log(error);
     })
