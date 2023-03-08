@@ -52,7 +52,7 @@ async function giveIntervalValues(data) {
     return uniqueCountry;
 }
 
-async function giveCumulatedCasesValues(country, data) {
+async function giveCumulatedCasesValues(country, intervalStart, intervalEnd, data) {
     let filteredData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
     let mappedData = await filteredData.map(({ YearWeekISO, cumulative_count }) => ({ YearWeekISO, cumulative_count }));
     const uniqueData = await mappedData.reduce((acc, obj) => {
@@ -67,9 +67,9 @@ async function giveCumulatedCasesValues(country, data) {
     });
     return mappedData;
 }
-
-async function giveVaccinationsValues(country, data) {
-    let filterData = await data.filter(elt => elt.country && elt.country === country);
+//((intervalStart.substring(0, 4) < intervalEnd.substring(0, 4)) || (intervalStart.substring(0, 4) === intervalEnd.substring(0, 4) && intervalStart.substring(6, 8) < intervalEnd.substring(6, 8)))
+async function giveVaccinationsValues(country, intervalStart, intervalEnd, data) {
+    let filterData = await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && elt.YearWeekISO >= intervalStart && elt.YearWeekISO <= in);
     //console.log(filterData);
     const filteredData = await filterData.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
     //console.log(filteredData);
@@ -126,10 +126,10 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
     let cumulatedCasesValues = null;
     if (country && intervalStart && intervalEnd){
         console.log(country, intervalStart, intervalEnd);
-        cumulatedCasesValues = await giveCumulatedCasesValues(country, data);
+        cumulatedCasesValues = await giveCumulatedCasesValues(country, intervalStart, intervalEnd, data);
         //console.log(cumulatedCasesValues);
 
-        vaccinationsValues = await giveVaccinationsValues(country, data);
+        vaccinationsValues = await giveVaccinationsValues(country, intervalStart, intervalEnd, data);
         //console.log(vaccinationsValues);
     }
 
