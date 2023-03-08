@@ -125,6 +125,7 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
     let vaccinationsValues = null;
     let cumulatedCasesValues = null;
     if (country && intervalStart && intervalEnd){
+        console.log(country, intervalStart, intervalEnd);
         cumulatedCasesValues = await giveCumulatedCasesValues(country, data);
         //console.log(cumulatedCasesValues);
 
