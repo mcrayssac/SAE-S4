@@ -182,43 +182,10 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
 
 }
 
-function createProcess(){
-    new Promise((resolve,reject) =>{
-        let result = spawn('python', ['loadGraphDf.py/getContamination']);
-        let results = ""
-        result.stdout.on('data', (data)=>{
-            results+= data
-        });
-        result.on('close', ()=>{
-            resolve(result)
-        });
-        result.on('error', (err)=>{
-            reject(err)
-        })
-    })
-}
-
-exports.getContaminationPays = async (countryCode, callback) => {
-    let data = read()
-    const res = await createProcess()
-    console.log(res)
-    return callback(null, res)
-}
-
-exports.getComparisonContaminationVaccination = async (countryCode, callback) => {
-    let data = read()
-    let result = spawn('python', ['loadGraphDf.py/getComparison',countryCode])
-    return callback(null, result)
-}
-
-exports.getWeekContamination = async (countryCode,weekNum, callback) =>{
-    let data = read()
-    let result =  spawn('python', ['loadGraphDf.py/getContaminationNumber',countryCode, weekNum])
-    return callback(null, result)
-}
-
-exports.getWeekVaccination = async (countryCode,weekNum, callback) =>{
-    let data = read()
-    let result =  spawn('python', ['loadGraphDf.py/getVaccinationNumber',countryCode, weekNum])
-    return callback(null, result)
+exports.accueil = async(callback) => {
+    try{
+        callback(null, "I'm testing guys chill, and you know, our root's route (get it ;3) is working just fine~");
+    } catch (err){
+        callback(err);
+    }
 }
