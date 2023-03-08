@@ -53,7 +53,7 @@ async function giveIntervalValues(data) {
 }
 
 async function giveCumulatedCasesValues(country, intervalStart, intervalEnd, data) {
-    let filteredData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
+    let filteredData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases' && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
     let mappedData = await filteredData.map(({ YearWeekISO, cumulative_count }) => ({ YearWeekISO, cumulative_count }));
     const uniqueData = await mappedData.reduce((acc, obj) => {
         const index = acc.findIndex(item => item.cumulative_count === obj.cumulative_count && item.YearWeekISO === obj.YearWeekISO);
@@ -67,9 +67,17 @@ async function giveCumulatedCasesValues(country, intervalStart, intervalEnd, dat
     });
     return mappedData;
 }
-//((intervalStart.substring(0, 4) < intervalEnd.substring(0, 4)) || (intervalStart.substring(0, 4) === intervalEnd.substring(0, 4) && intervalStart.substring(6, 8) < intervalEnd.substring(6, 8)))
+
+function verifyIntervalStart(elt, intervalStart) {
+    return ((intervalStart.substring(0, 4) < elt.YearWeekISO.substring(0, 4)) || (intervalStart.substring(0, 4) === elt.YearWeekISO.substring(0, 4) && (intervalStart.substring(6, 8) < elt.YearWeekISO.substring(6, 8) || intervalStart.substring(6, 8) === elt.YearWeekISO.substring(6, 8))));
+}
+
+function verifyIntervalEnd(elt, intervalEnd) {
+    return ((elt.YearWeekISO.substring(0, 4) < intervalEnd.substring(0, 4)) || (elt.YearWeekISO.substring(0, 4) === intervalEnd.substring(0, 4) && (elt.YearWeekISO.substring(6, 8) < intervalEnd.substring(6, 8) || elt.YearWeekISO.substring(6, 8) === intervalEnd.substring(6, 8))));
+}
+
 async function giveVaccinationsValues(country, intervalStart, intervalEnd, data) {
-    let filterData = await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && elt.YearWeekISO >= intervalStart && elt.YearWeekISO <= in);
+    let filterData = await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
     //console.log(filterData);
     const filteredData = await filterData.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
     //console.log(filteredData);
