@@ -128,12 +128,37 @@ async function giveVaccinationsValues(country, intervalStart, intervalEnd, data)
     return renamedData;
 }
 
+async function giveIndicatorValues(country, intervalStart, intervalEnd, data, indicator) {
+    const filterData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === indicator && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
+    const filteredData = await filterData.map(({ YearWeekISO, weekly_count }) => ({ YearWeekISO, weekly_count }));
+    const uniqueData = await filteredData.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO && item.weekly_count === obj.weekly_count);
+        if (index === -1) {
+            acc.push(obj);
+        }
+        return acc;
+    }, []);
+    const renamedData = await uniqueData.map(obj => {
+        return {x: obj.YearWeekISO, y: obj.weekly_count};
+    });
+    return renamedData
+}
+
 exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callback) => {
     let data = await giveJsonValue("../Files/full_df.json");
+    let casesValues = null;
+    let deathsValues = null;
     let vaccinationsValues = null;
     let cumulatedCasesValues = null;
     if (country && intervalStart && intervalEnd){
-        console.log(country, intervalStart, intervalEnd);
+        //console.log(country, intervalStart, intervalEnd);
+
+        casesValues = await giveIndicatorValues(country, intervalStart, intervalEnd, data, 'cases');
+        //console.log(casesValues);
+
+        deathsValues= await giveIndicatorValues(country, intervalStart, intervalEnd, data, 'deaths');
+        //console.log(deathsValues);
+
         cumulatedCasesValues = await giveCumulatedCasesValues(country, intervalStart, intervalEnd, data);
         //console.log(cumulatedCasesValues);
 
@@ -148,10 +173,10 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
     //console.log(interval);
 
     if (vaccinationsValues && vaccinationsValues.length > 0) {
-        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {vaccinationsValues, cumulatedCasesValues, countries, interval});
+        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {casesValues, deathsValues, vaccinationsValues, cumulatedCasesValues, countries, interval});
         else return callback("No countries found");
     } else {
-        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {vaccinationsValues, cumulatedCasesValues, countries, interval});
+        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {casesValues, deathsValues, vaccinationsValues, cumulatedCasesValues, countries, interval});
         else return callback("Country given not in database");
     }
 

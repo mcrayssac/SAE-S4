@@ -62,10 +62,11 @@
 
       <v-banner class="mt-5" color="#5F7174" rounded elevation="6">
         <v-row>
-          <v-col cols="12" align="center" style="width: 100%;">
-            <section class="Graph">
-              <JSCharting :options="chartOptions" style="width: 100%; height: 500px;"/>
-            </section>
+          <v-col class="pe-0" cols="6" align="center" style="width: 100%;">
+            <JSCharting v-if="chartOptions.series[0].points && chartOptions.series[0].points.length > 0" :options="chartOptions" style="width: 100%; height: 500px;"/>
+          </v-col>
+          <v-col class="ps-0" cols="6" align="center" style="width: 100%;">
+            <JSCharting v-if="chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0" :options="chartOptions1" style="width: 100%; height: 500px;"/>
           </v-col>
         </v-row>
       </v-banner>
@@ -92,7 +93,7 @@
       <v-banner class="mt-5" color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="12" align="center" style="width: 100%; ">
-            <JSCharting v-if="chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0" :options="chartOptions1" style="width: 100%; height: 500px;"/>
+            <JSCharting v-if="chartOptions2.series[0].points && chartOptions2.series[0].points.length > 0" :options="chartOptions2" style="width: 100%; height: 500px;"/>
             <Loading v-else color="#32D9CB" />
           </v-col>
         </v-row>
@@ -118,15 +119,21 @@ export default {
     selectedIntervalEnd: null,
     chartOptions: {
       defaultSeries_type: 'radar polar',
+      defaultSeries: {
+        shape_opacity: 0.2,
+        defaultPoint_marker: {
+          size: 6
+        }
+      },
       title: {
         position: 'center',
         label: {
-          text: 'Time interval of deaths and cases per Region',
+          text: 'Time interval of cases per Region',
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
-      palette: ['#32D9CB', '#A5E65A'],
-      yAxis_scale: { interval: 50, range_max: 150 },
+      palette: ['#32D9CB'],
+      yAxis_scale: { interval: 1000 },
       legend: { position: 'bottom', template: '%icon,%name' },
       defaultPoint: {
         marker: {
@@ -137,44 +144,80 @@ export default {
       },
       series: [
         {
-          name: 'William',
-          type: 'area spline',
+          name: 'Cases values',
+          type: 'area',
           points: [
-            { name: 'Jan', y: 59 },
-            { name: 'Feb', y: 122 },
-            { name: 'Mar', y: 57 },
-            { name: 'Apr', y: 15 },
-            { name: 'May', y: 111 },
-            { name: 'Jun', y: 140 },
-            { name: 'Jul', y: 67 },
-            { name: 'Aug', y: 88 },
-            { name: 'Sep', y: 90 },
-            { name: 'Oct', y: 50 },
-            { name: 'Nov', y: 77 },
-            { name: 'Dec', y: 109 }
+            {
+              "x": "2021-W01",
+              "y": 123771
+            },
+            {
+              "x": "2021-W02",
+              "y": 120598
+            },
+            {
+              "x": "2021-W03",
+              "y": 132695
+            },
+            {
+              "x": "2021-W04",
+              "y": 134230
+            }
           ]
         },
-        {
-          name: 'Elliot',
-          type: 'column',
-          points: [
-            { name: 'Jan', y: 79 },
-            { name: 'Feb', y: 94 },
-            { name: 'Mar', y: 93 },
-            { name: 'Apr', y: 60 },
-            { name: 'May', y: 7 },
-            { name: 'Jun', y: 83 },
-            { name: 'Jul', y: 94 },
-            { name: 'Aug', y: 66 },
-            { name: 'Sep', y: 94 },
-            { name: 'Oct', y: 68 },
-            { name: 'Nov', y: 81 },
-            { name: 'Dec', y: 65 }
-          ]
-        }
       ]
     },
     chartOptions1: {
+      defaultSeries_type: 'radar polar',
+      defaultSeries: {
+        shape_opacity: 0.2,
+        defaultPoint_marker: {
+          size: 6
+        }
+      },
+      title: {
+        position: 'center',
+        label: {
+          text: 'Time interval of deaths per Region',
+          style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
+        }
+      },
+      palette: ['#A5E65A'],
+      yAxis_scale: { interval: 1000 },
+      legend: { position: 'bottom', template: '%icon,%name' },
+      defaultPoint: {
+        marker: {
+          type: 'circle',
+          fill: 'white',
+          outline_width: 2
+        }
+      },
+      series: [
+        {
+          name: 'Deaths values',
+          type: 'area',
+          points: [
+            {
+              "x": "2021-W01",
+              "y": 123771
+            },
+            {
+              "x": "2021-W02",
+              "y": 120598
+            },
+            {
+              "x": "2021-W03",
+              "y": 132695
+            },
+            {
+              "x": "2021-W04",
+              "y": 134230
+            }
+          ]
+        },
+      ]
+    },
+    chartOptions2: {
       type: 'area spline',
       title: {
         position: 'center',
