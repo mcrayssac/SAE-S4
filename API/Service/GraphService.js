@@ -1,7 +1,7 @@
 const { spawn } = require('child_process');
 const fs = require('fs')
 const path = require('path')
-const {read} = require("fs");
+const {read, rename} = require("fs");
 
 /**
  * Import data.json
@@ -183,8 +183,62 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
 }
 
 exports.getCaseVaccinationRelation = async(callback) =>{
+    let data = await giveJsonValue("../Files/full_df.json");
+    //console.log(data);
+    data = await data.filter(elt => elt.indicator && elt.indicator === 'cases');
+    //console.log(data);
+    const filteredData = await data.map(({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
+    //console.log(filteredData);
+    const cleanedData = filteredData.map(d => ({
+        ...d,
+        TotalDoses: isNaN(d.TotalDoses) ? 0 : d.TotalDoses,
+        FirstDose: isNaN(d.FirstDose) ? 0 : d.FirstDose,
+        SecondDose: isNaN(d.SecondDose) ? 0 : d.SecondDose,
+        DoseAdditional1: isNaN(d.DoseAdditional1) ? 0 : d.DoseAdditional1,
+        DoseAdditional2: isNaN(d.DoseAdditional2) ? 0 : d.DoseAdditional2,
+        DoseAdditional3: isNaN(d.DoseAdditional3) ? 0 : d.DoseAdditional3,
+        DoseUnk: isNaN(d.DoseUnk) ? 0 : d.DoseUnk
+    }));
+    const mergedData = cleanedData.map(d => ({
+        ...d,
+        TotalDoses: d.FirstDose + d.SecondDose + d.DoseAdditional1 + d.DoseAdditional2 + d.DoseAdditional3 + d.DoseUnk,
+        FirstDose: d.FirstDose,
+        SecondDose: d.SecondDose,
+        DoseAdditional1: d.DoseAdditional1,
+        DoseAdditional2: d.DoseAdditional2,
+        DoseAdditional3: d.DoseAdditional3,
+        DoseUnk: d.DoseUnk
+    }));
+    //console.log(mergedData);
 
-    return callback("under construction")
+    const uniqueData = Object.values(await mergedData.reduce((acc, curr) => {
+        const key = curr.YearWeekISO + curr.cumulative_count + curr.TotalDoses;
+        if (!acc[key]) {
+            acc[key] = { YearWeekISO: curr.YearWeekISO, cumulative_count: curr.cumulative_count, TotalDoses: curr.TotalDoses };
+        }
+        return acc;
+    }, {}));
+    //console.log(uniqueData);
+    const result = await uniqueData.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO);
+        if (index === -1) {
+            acc.push(obj);
+        } else {
+            acc[index].TotalDoses += obj.TotalDoses;
+            acc[index].cumulative_count += obj.cumulative_count;
+        }
+        return acc;
+    }, []);
+    console.log(result);
+    let renamedData = await result.map(obj => {
+        return {x: obj.cumulative_count, y: obj.TotalDoses};
+    });
+    console.log(renamedData);
+    if (renamedData && renamedData.length > 0) {
+        return callback(null, {renamedData});
+    } else {
+        return callback("Woops something went wrong pal !");
+    }
 }
 
 exports.accueil = async(callback) => {
