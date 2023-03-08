@@ -182,6 +182,11 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
 
 }
 
+exports.getCaseVaccinationRelation = async(callback) =>{
+
+    return callback("under construction")
+}
+
 exports.accueil = async(callback) => {
     try{
         callback(null, "I'm testing guys chill, and you know, our root's route (get it ;3) is working just fine~");

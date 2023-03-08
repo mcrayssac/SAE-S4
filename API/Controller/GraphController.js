@@ -24,29 +24,12 @@ exports.graphVaccination = (req, res) => {
     });
 }
 
-exports.graphContamination = (req, res) => {
-    let codeCountry = req.params.codeCountry;
-    graphService.getContaminationPays(codeCountry, (error, results)=>{
+exports.graphCaseVaccinationRelation = (req, res) => {
+    graphService.getCaseVaccinationRelation((error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});
         }
         return res.status(200).send({success: 1, data: results})
     });
-}
-
-exports.graphComparison = (req, res) => {
-    let codeCountry = req.params.codeCountry;
-    graphService.getComparisonContaminationVaccination(codeCountry, (error, results)=>{
-        if(error){
-            console.log(error);
-            return res.status(400).send({success: 0, data: error});
-        }
-        return res.status(200).send({success: 1, data: results})
-    });
-}
-
-exports.prediction = (req, res) =>{
-    let codeCountry = req.params.codeCountry;
-    return ("okayyyyyyyyy4 : "+codeCountry);
 }
