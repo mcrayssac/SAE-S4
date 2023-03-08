@@ -61,12 +61,17 @@
       </v-banner>
 
       <v-banner class="mt-5" color="#5F7174" rounded elevation="6">
-        <v-row>
+        <v-row v-if="chartOptions.series[0].points && chartOptions.series[0].points.length > 0 && chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0">
           <v-col class="pe-0" cols="6" align="center" style="width: 100%;">
-            <JSCharting v-if="chartOptions.series[0].points && chartOptions.series[0].points.length > 0" :options="chartOptions" style="width: 100%; height: 500px;"/>
+            <JSCharting :options="chartOptions" style="width: 100%; height: 500px;"/>
           </v-col>
           <v-col class="ps-0" cols="6" align="center" style="width: 100%;">
-            <JSCharting v-if="chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0" :options="chartOptions1" style="width: 100%; height: 500px;"/>
+            <JSCharting :options="chartOptions1" style="width: 100%; height: 500px;"/>
+          </v-col>
+        </v-row>
+        <v-row v-else>
+          <v-col cols="12" align="center" style="width: 100%;">
+            <Loading color="#32D9CB" />
           </v-col>
         </v-row>
       </v-banner>
@@ -146,24 +151,7 @@ export default {
         {
           name: 'Cases values',
           type: 'area',
-          points: [
-            {
-              "x": "2021-W01",
-              "y": 123771
-            },
-            {
-              "x": "2021-W02",
-              "y": 120598
-            },
-            {
-              "x": "2021-W03",
-              "y": 132695
-            },
-            {
-              "x": "2021-W04",
-              "y": 134230
-            }
-          ]
+          points: null
         },
       ]
     },
@@ -195,25 +183,8 @@ export default {
       series: [
         {
           name: 'Deaths values',
-          type: 'area',
-          points: [
-            {
-              "x": "2021-W01",
-              "y": 123771
-            },
-            {
-              "x": "2021-W02",
-              "y": 120598
-            },
-            {
-              "x": "2021-W03",
-              "y": 132695
-            },
-            {
-              "x": "2021-W04",
-              "y": 134230
-            }
-          ]
+          type: 'column',
+          points: null
         },
       ]
     },
@@ -276,8 +247,10 @@ export default {
           console.log(response.data);
           self.countries = response.data.data.countries
           self.timeInterval = response.data.data.interval
-          self.chartOptions1.series[0].points = response.data.data.vaccinationsValues;
-          self.chartOptions1.series[1].points = response.data.data.cumulatedCasesValues;
+          self.chartOptions2.series[0].points = response.data.data.vaccinationsValues;
+          self.chartOptions2.series[1].points = response.data.data.cumulatedCasesValues;
+          self.chartOptions.series[0].points = response.data.data.casesValues;
+          self.chartOptions1.series[0].points = response.data.data.deathsValues;
         }).catch(function (error) {
           console.log(error);
         })
