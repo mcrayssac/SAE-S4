@@ -60,8 +60,8 @@
         </v-row>
       </v-banner>
 
-      <v-banner class="mt-5" color="#5F7174" rounded elevation="6">
-        <v-row v-if="chartOptions.series[0].points && chartOptions.series[0].points.length > 0 && chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0">
+      <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
+        <v-row v-if="chartOptions.series[0].points && chartOptions.series[0].points.length > 0 && chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0" style="background-color: white">
           <v-col class="pe-0" cols="6" align="center" style="width: 100%;">
             <JSCharting :options="chartOptions" style="width: 100%; height: 500px;"/>
           </v-col>
@@ -95,7 +95,7 @@
         </v-row>
       </v-banner>
 
-      <v-banner class="mt-5" color="#5F7174" rounded elevation="6">
+      <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="12" align="center" style="width: 100%; ">
             <JSCharting v-if="chartOptions2.series[0].points && chartOptions2.series[0].points.length > 0" :options="chartOptions2" style="width: 100%; height: 500px;"/>
@@ -123,7 +123,7 @@ export default {
     selectedIntervalStart: null,
     selectedIntervalEnd: null,
     chartOptions: {
-      defaultSeries_type: 'radar polar',
+      defaultSeries_type: 'radar polar area',
       defaultSeries: {
         shape_opacity: 0.2,
         defaultPoint_marker: {
@@ -138,7 +138,6 @@ export default {
         }
       },
       palette: ['#32D9CB'],
-      yAxis_scale: { interval: 1000 },
       legend: { position: 'bottom', template: '%icon,%name' },
       defaultPoint: {
         marker: {
@@ -150,18 +149,14 @@ export default {
       series: [
         {
           name: 'Cases values',
-          type: 'area',
           points: null
         },
       ]
     },
     chartOptions1: {
-      defaultSeries_type: 'radar polar',
+      defaultSeries_type: 'radar polar column',
       defaultSeries: {
-        shape_opacity: 0.2,
-        defaultPoint_marker: {
-          size: 6
-        }
+        opacity: 0.7,
       },
       title: {
         position: 'center',
@@ -171,7 +166,6 @@ export default {
         }
       },
       palette: ['#A5E65A'],
-      yAxis_scale: { interval: 1000 },
       legend: { position: 'bottom', template: '%icon,%name' },
       defaultPoint: {
         marker: {
@@ -183,7 +177,6 @@ export default {
       series: [
         {
           name: 'Deaths values',
-          type: 'column',
           points: null
         },
       ]
