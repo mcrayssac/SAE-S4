@@ -182,11 +182,11 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
 
 }
 
-exports.getCaseVaccinationRelation = async(callback) =>{
+exports.getCaseVaccinationRelation = async(country, callback) =>{
     let data = await giveJsonValue("../Files/full_df.json");
     //console.log(data);
-    data = await data.filter(elt => elt.indicator && elt.indicator === 'cases');
-    //console.log(data);
+    data = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
+    console.log(data);
     const filteredData = await data.map(({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
     //console.log(filteredData);
     const cleanedData = filteredData.map(d => ({

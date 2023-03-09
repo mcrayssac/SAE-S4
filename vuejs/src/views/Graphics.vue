@@ -252,36 +252,27 @@ export default {
       ]
     },
     chartOptions3: {
-      type: 'scatter',
-      title: {
-        position: 'center',
-        label: {
-          text: 'Relation between COVID cases and vaccinations',
-          style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
+      defaultPoint: {
+        opacity: 0.8,
+        marker: {
+          type: 'circle',
+          outline_width: 0,
+          size: 12
         }
       },
-      legend: {
-        template: '%icon %name',
-        position: 'top right'
-      },
-      palette: ['#32D9CB', '#A5E65A'],
-      defaultSeries: {
-        shape_opacity: 0.2,
-        defaultPoint_marker: {
-          size: 0
-        }
+      axisToZoom: 'xy',
+      legend_visible: false,
+      yAxis: {
+        label_text:
+            'Number of vaccine administered',
+        alternateGridFill: 'none',
+        scale_zoomLimit: 5000
       },
       xAxis: {
-        label_text:'Number of COVID-19 cases',
-        scale_type: 'auto',
-        crosshair_enabled: true
+        label_text:
+            'Number of COVID-19 cases',
+        scale_zoomLimit: 100
       },
-      yAxis: [
-        {
-          label_text:'Number of vaccine administered',
-          scale_type: 'auto'
-        }
-      ],
       series: [
         {
           name: 'Vaccination/Cases relation',

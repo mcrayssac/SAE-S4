@@ -6,7 +6,7 @@ router.get('/', graphController.accueil)
 
 router.get('/vaccination/:country/:intervalStart/:intervalEnd', graphController.graphVaccination)
 
-router.get('/relation/', graphController.graphCaseVaccinationRelation)
+router.get('/relation/:country', graphController.graphCaseVaccinationRelation)
 
 
 const dataRefresh = require("../DataRefresh/dataRefresh")
