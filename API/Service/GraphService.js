@@ -314,3 +314,42 @@ exports.accueil = async(callback) => {
         callback(err);
     }
 }
+
+exports.prediction = async(country, intervalStart, intervalEnd, YearWeekISO, transmission, duration, callback) => {
+    let data = await giveJsonValue("../Files/full_df.json");
+    //console.log(data);
+    let sick = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
+    console.log(data);
+    const filteredSick = sick[sick.length-1];
+    //console.log(filteredData);
+    let death = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths');
+    console.log(data);
+    const filteredDeath = death[death.length-1];
+    const cleanedSick = filteredSick.map(d => ({
+        ...d,
+        cumulative_count: isNaN(d.cumulative_count) ? 0 : d.cumulative_count
+    }));
+    const mergedSick = cleanedSick.map(d => ({
+        ...d,
+        cumulative_count: d.cumulative_count
+    }));
+    const cleanedDeath = filteredDeath.map(d => ({
+        ...d,
+        cumulative_count: isNaN(d.cumulative_count) ? 0 : d.cumulative_count
+    }));
+    const mergedData2 = cleanedDeath.map(d => ({
+        ...d,
+        cumulative_count: d.cumulative_count
+    }));
+    let iterationNumber = 0;
+    let population = filteredSick.population;
+    let sick0 = cleanedSick.cumulative_count;
+    let removed0 = cleanedDeath.cumulative_count;
+    for(let i in range()){console.log("hello");}
+    let result = {
+        YearWeekISO: YearWeekISO,
+        infected: sick,
+        dead: removed
+    }
+    return result;
+}
