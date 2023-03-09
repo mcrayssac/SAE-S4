@@ -128,6 +128,62 @@ async function giveVaccinationsValues(country, intervalStart, intervalEnd, data)
     return renamedData;
 }
 
+async function giveTotalVaccinationValues(country, intervalStart, intervalEnd, data) {
+    let filterData = await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
+    //console.log(filterData);
+    const filteredData = await filterData.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
+    //console.log(filteredData);
+    const cleanedData = filteredData.map(d => ({
+        ...d,
+        TotalDoses: isNaN(d.TotalDoses) ? 0 : d.TotalDoses,
+        FirstDose: isNaN(d.FirstDose) ? 0 : d.FirstDose,
+        SecondDose: isNaN(d.SecondDose) ? 0 : d.SecondDose,
+        DoseAdditional1: isNaN(d.DoseAdditional1) ? 0 : d.DoseAdditional1,
+        DoseAdditional2: isNaN(d.DoseAdditional2) ? 0 : d.DoseAdditional2,
+        DoseAdditional3: isNaN(d.DoseAdditional3) ? 0 : d.DoseAdditional3,
+        DoseUnk: isNaN(d.DoseUnk) ? 0 : d.DoseUnk
+    }));
+    let mergedData = cleanedData.map(d => ({
+        ...d,
+        TotalDoses: d.FirstDose + d.SecondDose + d.DoseAdditional1 + d.DoseAdditional2 + d.DoseAdditional3 + d.DoseUnk,
+        FirstDose: d.FirstDose,
+        SecondDose: d.SecondDose,
+        DoseAdditional1: d.DoseAdditional1,
+        DoseAdditional2: d.DoseAdditional2,
+        DoseAdditional3: d.DoseAdditional3,
+        DoseUnk: d.DoseUnk
+    }));
+    //console.log(mergedData);
+    const uniqueData = Object.values(await mergedData.reduce((acc, curr) => {
+        const key = curr.YearWeekISO + curr.TotalDoses;
+        if (!acc[key]) {
+            acc[key] = { YearWeekISO: curr.YearWeekISO, TotalDoses: curr.TotalDoses };
+        }
+        return acc;
+    }, {}));
+    //console.log(uniqueData.length);
+    const result = await uniqueData.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO);
+        if (index === -1) {
+            acc.push(obj);
+        } else {
+            acc[index].TotalVaccination += obj.TotalVaccination;
+        }
+        return acc;
+    }, []);
+    let TotalVaccination=0;
+    for(let i in result){
+        TotalVaccination = result[i].TotalDoses+TotalVaccination;
+        result[i].TotalVaccination = TotalVaccination;
+    }
+    console.log(result.length);
+    let renamedData = await result.map(obj => {
+        return {x: obj.YearWeekISO, y: obj.TotalVaccination};
+    });
+    //console.log(renamedData);
+    return renamedData;
+}
+
 async function giveIndicatorValues(country, intervalStart, intervalEnd, data, indicator) {
     const filterData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === indicator && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
     const filteredData = await filterData.map(({ YearWeekISO, weekly_count }) => ({ YearWeekISO, weekly_count }));
@@ -144,12 +200,24 @@ async function giveIndicatorValues(country, intervalStart, intervalEnd, data, in
     return renamedData
 }
 
+const getContaminationPays = async (countryCode, callback) => {
+    try{
+        let data = read()
+        const res = await createProcess()
+        console.log(res)
+        return callback(null, res)
+    } catch(err){
+        console.log(err)
+        return callback(err, null)
+    }
+}
 exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callback) => {
     let data = await giveJsonValue("../Files/full_df.json");
     let casesValues = null;
     let deathsValues = null;
     let vaccinationsValues = null;
     let cumulatedCasesValues = null;
+    let totalVaccinationValues = null;
     if (country && intervalStart && intervalEnd){
         //console.log(country, intervalStart, intervalEnd);
 
@@ -164,6 +232,10 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
 
         vaccinationsValues = await giveVaccinationsValues(country, intervalStart, intervalEnd, data);
         //console.log(vaccinationsValues);
+
+        totalVaccinationValues = await giveTotalVaccinationValues(country, intervalStart, intervalEnd, data);
+        //console.log(totalVaccinationValues);
+
     }
 
     const countries = await giveCountriesValues(data);
@@ -173,13 +245,17 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
     //console.log(interval);
 
     if (vaccinationsValues && vaccinationsValues.length > 0) {
-        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {casesValues, deathsValues, vaccinationsValues, cumulatedCasesValues, countries, interval});
+        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {casesValues, deathsValues, vaccinationsValues, totalVaccinationValues,cumulatedCasesValues, countries, interval});
         else return callback("No countries found");
     } else {
-        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {casesValues, deathsValues, vaccinationsValues, cumulatedCasesValues, countries, interval});
+        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {casesValues, deathsValues, vaccinationsValues, totalVaccinationValues, cumulatedCasesValues, countries, interval});
         else return callback("Country given not in database");
     }
 
+const getWeekContamination = async (countryCode,weekNum, callback) =>{
+    let data = read()
+    let result =  spawn('python', ['loadGraphDf.py/getContaminationNumber',countryCode, weekNum])
+    return callback(null, result)
 }
 
 exports.getCaseVaccinationRelation = async(country, callback) =>{
@@ -210,7 +286,7 @@ exports.getCaseVaccinationRelation = async(country, callback) =>{
         DoseUnk: d.DoseUnk
     }));
     //console.log(mergedData);
-
+}
     const uniqueData = Object.values(await mergedData.reduce((acc, curr) => {
         const key = curr.YearWeekISO + curr.cumulative_count + curr.TotalDoses;
         if (!acc[key]) {
