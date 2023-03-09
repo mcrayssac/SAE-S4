@@ -105,6 +105,34 @@
       </v-banner>
     </section>
 
+    <v-divider class="my-10"/>
+
+    <section class="Graph">
+      <v-banner color="#5F7174" rounded elevation="6">
+        <v-row>
+          <v-col cols="auto" align-self="center">
+            <v-icon color="#32D9CB" size="36">
+              mdi-chart-bell-curve-cumulative
+            </v-icon>
+          </v-col>
+          <v-col class="pb-0" cols="auto" align-self="center">
+            <span class="select-bar">
+                Regional vaccinations and cases
+            </span>
+          </v-col>
+        </v-row>
+      </v-banner>
+
+      <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
+        <v-row>
+          <v-col cols="12" align="center" style="width: 100%; ">
+            <JSCharting v-if="chartOptions2.series[0].points && chartOptions2.series[0].points.length > 0" :options="chartOptions2" style="width: 100%; height: 500px;"/>
+            <Loading v-else color="#32D9CB" />
+          </v-col>
+        </v-row>
+      </v-banner>
+    </section>
+
   </v-container>
 </template>
 
@@ -223,6 +251,49 @@ export default {
           points: null
         }
       ]
+    },
+    chartOptions3: {
+      type: 'area spline',
+      title: {
+        position: 'center',
+        label: {
+          text: 'Vaccination and accumulative cases number',
+          style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
+        }
+      },
+      legend: {
+        template: '%icon %name',
+        position: 'top right'
+      },
+      palette: ['#32D9CB', '#A5E65A'],
+      defaultSeries: {
+        shape_opacity: 0.2,
+        defaultPoint_marker: {
+          size: 0
+        }
+      },
+      xAxis: {
+        scale_type: 'auto',
+        crosshair_enabled: true,
+        defaultTick: {
+          label_rotate: -90
+        }
+      },
+      yAxis: [
+        {
+          scale_type: 'auto',
+        }
+      ],
+      series: [
+        {
+          name: 'Vaccinations number',
+          points: null
+        },
+        {
+          name: 'Cases number',
+          points: null
+        }
+      ]
     }
   }),
   components: {
@@ -253,9 +324,14 @@ export default {
   mounted() {
     let self = this;
     axios.get('http://localhost:3000/vaccination/null/null/null').then(function (response) {
-      console.log(response.data);
+      //console.log(response.data);
       self.countries = response.data.data.countries
       self.timeInterval = response.data.data.interval
+    }).catch(function (error) {
+      console.log(error);
+    })
+    axios.get('http://localhost:3000/relation').then(function (response) {
+      console.log(response.data.data.renamedData);
     }).catch(function (error) {
       console.log(error);
     })
