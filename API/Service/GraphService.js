@@ -200,17 +200,6 @@ async function giveIndicatorValues(country, intervalStart, intervalEnd, data, in
     return renamedData
 }
 
-const getContaminationPays = async (countryCode, callback) => {
-    try{
-        let data = read()
-        const res = await createProcess()
-        console.log(res)
-        return callback(null, res)
-    } catch(err){
-        console.log(err)
-        return callback(err, null)
-    }
-}
 exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callback) => {
     let data = await giveJsonValue("../Files/full_df.json");
     let casesValues = null;
@@ -218,13 +207,13 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
     let vaccinationsValues = null;
     let cumulatedCasesValues = null;
     let totalVaccinationValues = null;
-    if (country && intervalStart && intervalEnd){
+    if (country && intervalStart && intervalEnd) {
         //console.log(country, intervalStart, intervalEnd);
 
         casesValues = await giveIndicatorValues(country, intervalStart, intervalEnd, data, 'cases');
         //console.log(casesValues);
 
-        deathsValues= await giveIndicatorValues(country, intervalStart, intervalEnd, data, 'deaths');
+        deathsValues = await giveIndicatorValues(country, intervalStart, intervalEnd, data, 'deaths');
         //console.log(deathsValues);
 
         cumulatedCasesValues = await giveCumulatedCasesValues(country, intervalStart, intervalEnd, data);
@@ -245,18 +234,30 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
     //console.log(interval);
 
     if (vaccinationsValues && vaccinationsValues.length > 0) {
-        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {casesValues, deathsValues, vaccinationsValues, totalVaccinationValues,cumulatedCasesValues, countries, interval});
+        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {
+            casesValues,
+            deathsValues,
+            vaccinationsValues,
+            totalVaccinationValues,
+            cumulatedCasesValues,
+            countries,
+            interval
+        });
         else return callback("No countries found");
     } else {
-        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {casesValues, deathsValues, vaccinationsValues, totalVaccinationValues, cumulatedCasesValues, countries, interval});
+        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {
+            casesValues,
+            deathsValues,
+            vaccinationsValues,
+            totalVaccinationValues,
+            cumulatedCasesValues,
+            countries,
+            interval
+        });
         else return callback("Country given not in database");
     }
-
-const getWeekContamination = async (countryCode,weekNum, callback) =>{
-    let data = read()
-    let result =  spawn('python', ['loadGraphDf.py/getContaminationNumber',countryCode, weekNum])
-    return callback(null, result)
 }
+
 
 exports.getCaseVaccinationRelation = async(country, callback) =>{
     let data = await giveJsonValue("../Files/full_df.json");
@@ -286,7 +287,7 @@ exports.getCaseVaccinationRelation = async(country, callback) =>{
         DoseUnk: d.DoseUnk
     }));
     //console.log(mergedData);
-}
+
     const uniqueData = Object.values(await mergedData.reduce((acc, curr) => {
         const key = curr.YearWeekISO + curr.cumulative_count + curr.TotalDoses;
         if (!acc[key]) {
