@@ -154,7 +154,8 @@
       <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="12" align="center" style="width: 100%; ">
-            <JSCharting :options="chartOptions3" style="width: 100%; height: 500px;"/>
+            <JSCharting v-if="chartOptions3.series[0].points && chartOptions3.series[0].points.length > 0" :options="chartOptions3" style="width: 100%; height: 500px;"/>
+            <Loading v-else color="#32D9CB" />
           </v-col>
         </v-row>
       </v-banner>
@@ -323,6 +324,7 @@ export default {
       ]
     },
     chartOptions3: {
+      type: 'marker',
       defaultPoint: {
         opacity: 0.8,
         marker: {
@@ -376,6 +378,13 @@ export default {
         }).catch(function (error) {
           console.log(error);
         })
+        await axios.get(`http://localhost:3000/relation/${this.selectedCountry}`).then(function (response) {
+          console.log(response.data.data.renamedData);
+          self.countries = response.data.data.countries
+          self.chartOptions3.series[0].points = response.data.data.renamedData;
+        }).catch(function (error) {
+          console.log(error);
+        })
       }
     }
   },
@@ -385,12 +394,6 @@ export default {
       //console.log(response.data);
       self.countries = response.data.data.countries
       self.timeInterval = response.data.data.interval
-    }).catch(function (error) {
-      console.log(error);
-    })
-    axios.get('http://localhost:3000/relation').then(function (response) {
-      console.log(response.data.data.renamedData);
-      self.chartOptions3.series[0].points = response.data.data.renamedData;
     }).catch(function (error) {
       console.log(error);
     })

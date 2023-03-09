@@ -295,19 +295,8 @@ exports.getCaseVaccinationRelation = async(country, callback) =>{
         }
         return acc;
     }, {}));
-    //console.log(uniqueData);
-    const result = await uniqueData.reduce((acc, obj) => {
-        const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO);
-        if (index === -1) {
-            acc.push(obj);
-        } else {
-            acc[index].TotalDoses += obj.TotalDoses;
-            acc[index].cumulative_count += obj.cumulative_count;
-        }
-        return acc;
-    }, []);
-    console.log(result);
-    let renamedData = await result.map(obj => {
+
+    let renamedData = await uniqueData.map(obj => {
         return {x: obj.cumulative_count, y: obj.TotalDoses};
     });
     console.log(renamedData);
