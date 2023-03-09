@@ -76,12 +76,8 @@ function verifyIntervalEnd(elt, intervalEnd) {
     return ((elt.YearWeekISO.substring(0, 4) < intervalEnd.substring(0, 4)) || (elt.YearWeekISO.substring(0, 4) === intervalEnd.substring(0, 4) && (elt.YearWeekISO.substring(6, 8) < intervalEnd.substring(6, 8) || elt.YearWeekISO.substring(6, 8) === intervalEnd.substring(6, 8))));
 }
 
-async function giveVaccinationsValues(country, intervalStart, intervalEnd, data) {
-    let filterData = await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
-    //console.log(filterData);
-    const filteredData = await filterData.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
-    //console.log(filteredData);
-    const cleanedData = filteredData.map(d => ({
+function getTotalDoses(data){
+    const cleanedData = data.map(d => ({
         ...d,
         TotalDoses: isNaN(d.TotalDoses) ? 0 : d.TotalDoses,
         FirstDose: isNaN(d.FirstDose) ? 0 : d.FirstDose,
@@ -91,7 +87,7 @@ async function giveVaccinationsValues(country, intervalStart, intervalEnd, data)
         DoseAdditional3: isNaN(d.DoseAdditional3) ? 0 : d.DoseAdditional3,
         DoseUnk: isNaN(d.DoseUnk) ? 0 : d.DoseUnk
     }));
-    const mergedData = cleanedData.map(d => ({
+    let mergedData = cleanedData.map(d => ({
         ...d,
         TotalDoses: d.FirstDose + d.SecondDose + d.DoseAdditional1 + d.DoseAdditional2 + d.DoseAdditional3 + d.DoseUnk,
         FirstDose: d.FirstDose,
@@ -101,6 +97,15 @@ async function giveVaccinationsValues(country, intervalStart, intervalEnd, data)
         DoseAdditional3: d.DoseAdditional3,
         DoseUnk: d.DoseUnk
     }));
+    return mergedData;
+}
+
+async function giveVaccinationsValues(country, intervalStart, intervalEnd, data) {
+    let filterData = await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
+    //console.log(filterData);
+    const filteredData = await filterData.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
+    //console.log(filteredData);
+    const mergedData = getTotalDoses(filterData);
 
     //console.log(mergedData);
     const uniqueData = Object.values(await mergedData.reduce((acc, curr) => {
@@ -133,26 +138,8 @@ async function giveTotalVaccinationValues(country, intervalStart, intervalEnd, d
     //console.log(filterData);
     const filteredData = await filterData.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
     //console.log(filteredData);
-    const cleanedData = filteredData.map(d => ({
-        ...d,
-        TotalDoses: isNaN(d.TotalDoses) ? 0 : d.TotalDoses,
-        FirstDose: isNaN(d.FirstDose) ? 0 : d.FirstDose,
-        SecondDose: isNaN(d.SecondDose) ? 0 : d.SecondDose,
-        DoseAdditional1: isNaN(d.DoseAdditional1) ? 0 : d.DoseAdditional1,
-        DoseAdditional2: isNaN(d.DoseAdditional2) ? 0 : d.DoseAdditional2,
-        DoseAdditional3: isNaN(d.DoseAdditional3) ? 0 : d.DoseAdditional3,
-        DoseUnk: isNaN(d.DoseUnk) ? 0 : d.DoseUnk
-    }));
-    let mergedData = cleanedData.map(d => ({
-        ...d,
-        TotalDoses: d.FirstDose + d.SecondDose + d.DoseAdditional1 + d.DoseAdditional2 + d.DoseAdditional3 + d.DoseUnk,
-        FirstDose: d.FirstDose,
-        SecondDose: d.SecondDose,
-        DoseAdditional1: d.DoseAdditional1,
-        DoseAdditional2: d.DoseAdditional2,
-        DoseAdditional3: d.DoseAdditional3,
-        DoseUnk: d.DoseUnk
-    }));
+
+    let mergedData = getTotalDoses(filterData);
     //console.log(mergedData);
     const uniqueData = Object.values(await mergedData.reduce((acc, curr) => {
         const key = curr.YearWeekISO + curr.TotalDoses;
@@ -266,26 +253,7 @@ exports.getCaseVaccinationRelation = async(country, callback) =>{
     //console.log(data);
     const filteredData = await data.map(({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
     //console.log(filteredData);
-    const cleanedData = filteredData.map(d => ({
-        ...d,
-        TotalDoses: isNaN(d.TotalDoses) ? 0 : d.TotalDoses,
-        FirstDose: isNaN(d.FirstDose) ? 0 : d.FirstDose,
-        SecondDose: isNaN(d.SecondDose) ? 0 : d.SecondDose,
-        DoseAdditional1: isNaN(d.DoseAdditional1) ? 0 : d.DoseAdditional1,
-        DoseAdditional2: isNaN(d.DoseAdditional2) ? 0 : d.DoseAdditional2,
-        DoseAdditional3: isNaN(d.DoseAdditional3) ? 0 : d.DoseAdditional3,
-        DoseUnk: isNaN(d.DoseUnk) ? 0 : d.DoseUnk
-    }));
-    const mergedData = cleanedData.map(d => ({
-        ...d,
-        TotalDoses: d.FirstDose + d.SecondDose + d.DoseAdditional1 + d.DoseAdditional2 + d.DoseAdditional3 + d.DoseUnk,
-        FirstDose: d.FirstDose,
-        SecondDose: d.SecondDose,
-        DoseAdditional1: d.DoseAdditional1,
-        DoseAdditional2: d.DoseAdditional2,
-        DoseAdditional3: d.DoseAdditional3,
-        DoseUnk: d.DoseUnk
-    }));
+    const mergedData = getTotalDoses(filteredData);
     //console.log(mergedData);
 
     const uniqueData = Object.values(await mergedData.reduce((acc, curr) => {
