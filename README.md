@@ -39,6 +39,7 @@ If the data is already loaded, it should tell you that you `All your files are u
 npm run start_update
 ```
 *You can do the same thing with the top right button in the app*
+
 5. Open a browser and navigate to **'http://localhost:8080'** to view the application.
 
 That's it! 
