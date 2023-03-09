@@ -112,6 +112,34 @@
         <v-row>
           <v-col cols="auto" align-self="center">
             <v-icon color="#32D9CB" size="36">
+              mdi-chart-bell-curve-cumulative
+            </v-icon>
+          </v-col>
+          <v-col class="pb-0" cols="auto" align-self="center">
+            <span class="select-bar">
+                Total regional vaccinations and cases
+            </span>
+          </v-col>
+        </v-row>
+      </v-banner>
+
+      <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
+        <v-row>
+          <v-col cols="12" align="center" style="width: 100%; ">
+            <JSCharting v-if="chartOptions4.series[0].points && chartOptions4.series[0].points.length > 0" :options="chartOptions4" style="width: 100%; height: 500px;"/>
+            <Loading v-else color="#32D9CB" />
+          </v-col>
+        </v-row>
+      </v-banner>
+    </section>
+
+    <v-divider class="my-10"/>
+
+    <section class="Graph">
+      <v-banner color="#5F7174" rounded elevation="6">
+        <v-row>
+          <v-col cols="auto" align-self="center">
+            <v-icon color="#32D9CB" size="36">
               mdi-chart-scatter-plot
             </v-icon>
           </v-col>
@@ -251,6 +279,49 @@ export default {
         }
       ]
     },
+    chartOptions4: {
+      type: 'area spline',
+      title: {
+        position: 'center',
+        label: {
+          text: 'Total Vaccination and accumulative cases number',
+          style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
+        }
+      },
+      legend: {
+        template: '%icon %name',
+        position: 'top right'
+      },
+      palette: ['#32D9CB', '#A5E65A'],
+      defaultSeries: {
+        shape_opacity: 0.2,
+        defaultPoint_marker: {
+          size: 0
+        }
+      },
+      xAxis: {
+        scale_type: 'auto',
+        crosshair_enabled: true,
+        defaultTick: {
+          label_rotate: -90
+        }
+      },
+      yAxis: [
+        {
+          scale_type: 'auto',
+        }
+      ],
+      series: [
+        {
+          name: 'Total Vaccination number',
+          points: null
+        },
+        {
+          name: 'Cases number',
+          points: null
+        }
+      ]
+    },
     chartOptions3: {
       defaultPoint: {
         opacity: 0.8,
@@ -296,6 +367,8 @@ export default {
           console.log(response.data);
           self.countries = response.data.data.countries
           self.timeInterval = response.data.data.interval
+          self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
+          self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
           self.chartOptions2.series[0].points = response.data.data.vaccinationsValues;
           self.chartOptions2.series[1].points = response.data.data.cumulatedCasesValues;
           self.chartOptions.series[0].points = response.data.data.casesValues;
