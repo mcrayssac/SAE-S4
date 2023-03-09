@@ -112,12 +112,12 @@
         <v-row>
           <v-col cols="auto" align-self="center">
             <v-icon color="#32D9CB" size="36">
-              mdi-chart-bell-curve-cumulative
+              mdi-chart-scatter-plot
             </v-icon>
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Regional vaccinations and cases
+                Regional relation between vaccinations and cases
             </span>
           </v-col>
         </v-row>
@@ -126,8 +126,7 @@
       <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="12" align="center" style="width: 100%; ">
-            <JSCharting v-if="chartOptions2.series[0].points && chartOptions2.series[0].points.length > 0" :options="chartOptions2" style="width: 100%; height: 500px;"/>
-            <Loading v-else color="#32D9CB" />
+            <JSCharting :options="chartOptions3" style="width: 100%; height: 500px;"/>
           </v-col>
         </v-row>
       </v-banner>
@@ -253,11 +252,11 @@ export default {
       ]
     },
     chartOptions3: {
-      type: 'area spline',
+      type: 'scatter',
       title: {
         position: 'center',
         label: {
-          text: 'Vaccination and accumulative cases number',
+          text: 'Relation between COVID cases and vaccinations',
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
@@ -273,24 +272,19 @@ export default {
         }
       },
       xAxis: {
+        label_text:'Number of COVID-19 cases',
         scale_type: 'auto',
-        crosshair_enabled: true,
-        defaultTick: {
-          label_rotate: -90
-        }
+        crosshair_enabled: true
       },
       yAxis: [
         {
-          scale_type: 'auto',
+          label_text:'Number of vaccine administered',
+          scale_type: 'auto'
         }
       ],
       series: [
         {
-          name: 'Vaccinations number',
-          points: null
-        },
-        {
-          name: 'Cases number',
+          name: 'Vaccination/Cases relation',
           points: null
         }
       ]
@@ -332,6 +326,7 @@ export default {
     })
     axios.get('http://localhost:3000/relation').then(function (response) {
       console.log(response.data.data.renamedData);
+      self.chartOptions3.series[0].points = response.data.data.renamedData;
     }).catch(function (error) {
       console.log(error);
     })
