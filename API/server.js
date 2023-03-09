@@ -57,13 +57,13 @@ app.all("*", (req, res,next) => {
  * Display server port
  */
 app.listen(process.env.PORT, () => {
-  console.log(`The server listening on port http://localhost:${process.env.PORT}`)
+  console.log(`The server is listening on port http://localhost:${process.env.PORT}`)
 })
 
 /**
  * Server usage
  */
-console.log(chalk.cyan.bold.bgBlack(`Usage : \nLunch nodeJS server : \nnpm start \nLunch nodeJS server and force update : \nnpm run start_update\n`));
+console.log(chalk.cyan.bold.bgBlack(`Usage : \nLaunch nodeJS server : \nnpm start \nLaunch nodeJS server and force update : \nnpm run start_update\n`));
 
 /**
  * Data refresh

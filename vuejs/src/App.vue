@@ -143,4 +143,5 @@ export default {
 
 <style>
 @import '@/../public/css/App.css';
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Nunito&family=Work+Sans&display=swap%27');
 </style>
