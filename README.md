@@ -22,12 +22,12 @@ npm install
 cd vuejs
 npm install
 ```
-3. Create a **`.env`** in the **`API`** directory with the following environment variables:
+3. Create a `.env` in the `API` directory with the following environment variables:
 ```bash
 PORT = 3000
 LOCALHOST_PORT = "http://localhost:8080"
 ```
-4. Make sure to first load the data in the **`API`** directory (you will not be able to see anything without doing this, it might take a while but our lovely project leader had too much time to spare and made a timer that estimate how much time it would take you to load the data):
+4. Make sure to first load the data in the `API` directory (you will not be able to see anything without doing this, it might take a while but our lovely project leader had too much time to spare and made a timer that estimate how much time it would take you to load the data):
 ```bash
 # Load data 
 npm run start
