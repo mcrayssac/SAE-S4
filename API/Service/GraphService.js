@@ -176,7 +176,7 @@ async function giveTotalVaccinationValues(country, intervalStart, intervalEnd, d
         TotalVaccination = result[i].TotalDoses+TotalVaccination;
         result[i].TotalVaccination = TotalVaccination;
     }
-    console.log(result.length);
+    //console.log(result.length);
     let renamedData = await result.map(obj => {
         return {x: obj.YearWeekISO, y: obj.TotalVaccination};
     });
@@ -263,7 +263,7 @@ exports.getCaseVaccinationRelation = async(country, callback) =>{
     let data = await giveJsonValue("../Files/full_df.json");
     //console.log(data);
     data = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
-    console.log(data);
+    //console.log(data);
     const filteredData = await data.map(({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
     //console.log(filteredData);
     const cleanedData = filteredData.map(d => ({
@@ -299,7 +299,7 @@ exports.getCaseVaccinationRelation = async(country, callback) =>{
     let renamedData = await uniqueData.map(obj => {
         return {x: obj.cumulative_count, y: obj.TotalDoses};
     });
-    console.log(renamedData);
+    //console.log(renamedData);
     if (renamedData && renamedData.length > 0) {
         return callback(null, {renamedData});
     } else {

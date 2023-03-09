@@ -379,7 +379,7 @@ export default {
           console.log(error);
         })
         await axios.get(`http://localhost:3000/relation/${this.selectedCountry}`).then(function (response) {
-          console.log(response.data.data.renamedData);
+          //console.log(response.data.data.renamedData);
           self.chartOptions3.series[0].points = response.data.data.renamedData;
         }).catch(function (error) {
           console.log(error);

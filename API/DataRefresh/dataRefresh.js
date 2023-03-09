@@ -24,7 +24,7 @@ exports.serverUpdate = async () => {
             const dateNow = new Date();
             if ((new Date(timestand_update)) - dateNow < -86400000) {
                 importation = true;
-            } else console.log(chalk.green.bold.bgBlack(`All your files are up to date !`));
+            }
         }
         if (importation){
             const response = await webImportation();

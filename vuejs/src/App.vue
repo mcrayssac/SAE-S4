@@ -2,24 +2,67 @@
   <v-app class="app">
     <section class="NavBar">
       <v-app-bar app color="#5F7174" dark elevate-on-scroll>
-        <v-app-bar-nav-icon class="bar-icon" @click="drawer = true" color="#D6FFF6"></v-app-bar-nav-icon>
-        <v-toolbar-title><span class="toolbar-title-left">Belfort </span><span class="toolbar-title-right">Analytica</span></v-toolbar-title>
+        <v-app-bar-nav-icon @click="drawer = true">
+          <v-tooltip color="#5F7174" bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn v-bind="attrs" v-on="on" text fab>
+                <v-icon color="white" size="30">
+                  mdi-account-group
+                </v-icon>
+              </v-btn>
+            </template>
+            <span class="tooltip-text">© Developers informations</span>
+          </v-tooltip>
+        </v-app-bar-nav-icon>
+        <v-toolbar-title>
+          <v-tooltip color="#5F7174" bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <span v-bind="attrs" v-on="on" class="toolbar-title-left">Belfort </span><span v-bind="attrs" v-on="on" class="toolbar-title-right">Analytica</span>
+            </template>
+            <span class="tooltip-text">© IUT Nord Franche-Comté project</span>
+          </v-tooltip>
+        </v-toolbar-title>
         <v-spacer />
-        <v-btn text fab @click="$router.push('/')">
-          <v-icon color="#A5E65A" size="30">
-            mdi-home
-          </v-icon>
-        </v-btn>
-        <v-btn text fab @click="$router.push('/graphics')">
-          <v-icon color="#32D9CB" size="30">
-            mdi-poll
-          </v-icon>
-        </v-btn>
-        <v-btn v-if="!dataUpdate" text fab @click="dataRefresh">
-          <v-icon color="#32D9CB" size="30">
-            mdi-file-refresh
-          </v-icon>
-        </v-btn>
+        <v-tooltip color="#5F7174" bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn v-bind="attrs" v-on="on" text fab @click="$router.push('/')">
+              <v-icon color="#A5E65A" size="30">
+                mdi-home
+              </v-icon>
+            </v-btn>
+          </template>
+          <span class="tooltip-text">Show home</span>
+        </v-tooltip>
+        <v-tooltip color="#5F7174" bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn v-bind="attrs" v-on="on" text fab @click="displayWindow('/graphics')">
+              <v-icon color="#32D9CB" size="30">
+                mdi-poll
+              </v-icon>
+            </v-btn>
+          </template>
+          <span class="tooltip-text">Show graphics</span>
+        </v-tooltip>
+        <v-tooltip color="#5F7174" bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn v-bind="attrs" v-on="on" text fab @click="displayWindow('/predictions')">
+              <v-icon color="#32D9CB" size="30">
+                mdi-chart-bell-curve
+              </v-icon>
+            </v-btn>
+          </template>
+          <span class="tooltip-text">Show predictions</span>
+        </v-tooltip>
+        <v-tooltip v-if="!dataUpdate" color="#5F7174" bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn v-bind="attrs" v-on="on" text fab @click="dataRefresh">
+              <v-icon color="white" size="30">
+                mdi-file-refresh
+              </v-icon>
+            </v-btn>
+          </template>
+          <span class="tooltip-text">Data refresh</span>
+        </v-tooltip>
       </v-app-bar>
     </section>
 
@@ -58,7 +101,7 @@
         <router-view/>
 
         <v-snackbar color="#32D9CB" v-model="snackbar" timeout="-1">
-          <span class="tooltip-text">{{ snackbarText }}</span>
+          <span class="snackbar-text">{{ snackbarText }}</span>
           <template #action="{ attrs }">
             <v-btn fab class="mx-0 px-0" text v-bind="attrs" @click="snackbar = false;">
               <v-icon color="#5F7174" size="28">
@@ -136,12 +179,17 @@ export default {
         temps = temps <= 0 ? 0 : temps - 1
         if (temps === 0) self.timer = 'Coming !';
       }, 1000)
+    },
+    displayWindow(path){
+      this.snackbarText = `Wait few seconds... and please select variables in select bar !`;
+      this.snackbar = true;
+      this.$router.push(path);
     }
   }
 };
 </script>
 
 <style>
-@import '@/../public/css/App.css';
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Nunito&family=Work+Sans&display=swap%27');
+@import '@/../public/css/App.css';
 </style>

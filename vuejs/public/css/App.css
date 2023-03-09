@@ -58,9 +58,17 @@
 }
 
 .tooltip-text{
+    color: white !important;
+    font-size: 1em !important;
+    font-family: "Roboto", sans-serif !important;
+    font-weight: bold !important;
+    letter-spacing: 1px !important;
+}
+
+.snackbar-text{
     color: #5F7174 !important;
-    font-size: 1.2em !important;
-    font-family: "Montserrat Medium" !important;
+    font-size: 1em !important;
+    font-family: "Montserrat Medium", sans-serif !important;
     font-weight: bold !important;
     letter-spacing: 2px !important;
 }
