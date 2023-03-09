@@ -2,12 +2,14 @@ import pandas as pd
 import json
 
 def getVaccination():
-    return 0
+    return 3
 def getContamination():
-    return 0
+    return 4
 def getComparison():
-    return 0
+    return 5
 def getContaminationNumber():
-    return 0
+    return 6
 def getVaccinationNumber():
-    return 0
+    return 7
+
+getContamination()
