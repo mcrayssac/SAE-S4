@@ -64,3 +64,20 @@
     font-weight: bold !important;
     letter-spacing: 2px !important;
 }
+
+.alertText{
+    font-size: 1em !important;
+    font-family: "Montserrat Medium" !important;
+    font-weight: bold !important;
+    letter-spacing: 1px !important;
+}
+
+.alertNumber{
+    border-radius: 3px !important;
+    background-color: white !important;
+    color: #00A6C0 !important;
+    font-size: 1em !important;
+    font-family: 'Montserrat Medium', sans-serif !important;
+    font-weight: bold !important;
+    letter-spacing: 1px !important;
+}

@@ -15,7 +15,7 @@
             mdi-poll
           </v-icon>
         </v-btn>
-        <v-btn text fab @click="dataRefresh">
+        <v-btn v-if="!dataUpdate" text fab @click="dataRefresh">
           <v-icon color="#32D9CB" size="30">
             mdi-file-refresh
           </v-icon>
@@ -43,6 +43,18 @@
 
     <section class="Main">
       <v-main>
+        <v-alert v-if="dataUpdate" class="mx-16 my-3 alertText" border="left" color="#00A6C0" elevation="6" type="error">
+          <v-row>
+            <v-col cols="auto">
+              {{ dataUpdateValue }}
+            </v-col>
+            <v-spacer/>
+            <v-col class="alertNumber" v-if="timer" cols="auto">
+              {{ timer }}
+            </v-col>
+          </v-row>
+        </v-alert>
+
         <router-view/>
 
         <v-snackbar color="#32D9CB" v-model="snackbar" timeout="-1">
@@ -62,7 +74,7 @@
 
 <script>
 import axios from 'axios';
-
+import {mapState} from "vuex";
 export default {
   name: 'App',
   data: () => ({
@@ -71,34 +83,59 @@ export default {
     callback: null,
     snackbar: false,
     snackbarText: null,
+    timer: null,
   }),
+  computed:{
+    ...mapState(['dataUpdate', 'dataUpdateValue'])
+  },
   methods:{
     dataRefresh() {
       let self = this;
+      this.$store.commit('setDataUpdate', 'updating');
+      self.$store.commit('setDataUpdateValue', 'Data update in progress... Please wait the end !');
       axios.get('http://localhost:3000/refresh').then(function (response) {
-        self.callback = true;
-        if (response.status === 204) self.snackbarText = `All your files are up to date !`;
-        else self.snackbarText = `Updating data successful !`;
-        self.snackbar = true;
-        console.log(response);
+        setTimeout(() => {
+          self.callback = true;
+          self.$store.commit('setDataUpdate', null);
+          self.timer = null;
+          if (response.status === 204) self.snackbarText = `All your files are up to date !`;
+          else self.snackbarText = `Updating data successful !`;
+          self.snackbar = true;
+          console.log(response);
+        }, 200);
       }).catch(function (error) {
         self.callback = true;
+        self.$store.commit('setDataUpdate', null);
+        self.timer = null;
         self.snackbar = true;
         self.snackbarText = error;
         console.log(error);
       })
       setTimeout(() => {
-        console.log(self.callback);
         if (!self.callback) {
           axios.get('http://localhost:3000/mean/minutes').then(function (response) {
-            self.snackbar = true;
-            self.snackbarText = `Waiting time is around ${response.data.data.minutes} minutes and ${response.data.data.seconds} seconds calculated from your last data imports. Please wait !`;
+            self.startTimer(parseInt(response.data.data.minutes) + (response.data.data.seconds / 60))
+            self.$store.commit('setDataUpdateValue', `Waiting time is around ${response.data.data.minutes} minutes and ${response.data.data.seconds} seconds calculated from your last data imports. Please wait !`);
           }).catch(function (error) {
-            self.snackbar = true;
-            if (error.data === null) self.snackbarText = `No imports found before this importation. Waiting time will be short or long... Please wait !`;
+            if (error.data === null) self.$store.commit('setDataUpdateValue', `No imports found before this importation. Waiting time will be short or long... Please wait !`);
           })
         } else self.callback = false;
       }, 500);
+    },
+    startTimer(start){
+      let temps = start * 60
+      let self = this;
+      setInterval(() => {
+        let minutes = parseInt(temps / 60, 10)
+        let secondes = parseInt(temps % 60, 10)
+
+        minutes = minutes < 10 ? "0" + minutes : minutes
+        secondes = secondes < 10 ? "0" + secondes : secondes
+
+        self.timer = `${minutes}:${secondes}`
+        temps = temps <= 0 ? 0 : temps - 1
+        if (temps === 0) self.timer = 'Coming !';
+      }, 1000)
     }
   }
 };
