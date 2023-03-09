@@ -77,7 +77,35 @@
               <span class="avatar-text">Maxime CRAYSSAC</span>
             </v-col>
             <v-col class="pa-0" cols="12" align="start" no-gutters>
-              <span class="avatar-text-secondary">Créateur</span>
+              <span class="avatar-text-secondary">Creator</span>
+            </v-col>
+          </v-col>
+        </v-row>
+
+        <v-row class="mt-3" align="center" no-gutters>
+          <v-col cols="3" align="center" no-gutters>
+            <v-avatar size="45"><img src="https://github.com/GitGudShu/Portfolio/blob/main/assets/img/profile.png?raw=true" alt="Thomas"></v-avatar>
+          </v-col>
+          <v-col align="start" align-self="center" no-gutters>
+            <v-col class="pa-0" cols="12" align="start" no-gutters>
+              <span class="avatar-text">Thomas CHU</span>
+            </v-col>
+            <v-col class="pa-0" cols="12" align="start" no-gutters>
+              <span class="avatar-text-secondary">Sidekick 1</span>
+            </v-col>
+          </v-col>
+        </v-row>
+
+        <v-row class="mt-3" align="center" no-gutters>
+          <v-col cols="3" align="center" no-gutters>
+            <v-avatar size="45"><img src="https://media.discordapp.net/attachments/951827690514686022/1017070058889019494/IMG_9214.jpg?width=925&height=819" alt="Le retard"></v-avatar>
+          </v-col>
+          <v-col align="start" align-self="center" no-gutters>
+            <v-col class="pa-0" cols="12" align="start" no-gutters>
+              <span class="avatar-text">Aurélien GUILLOU</span>
+            </v-col>
+            <v-col class="pa-0" cols="12" align="start" no-gutters>
+              <span class="avatar-text-secondary">Sidekick 2</span>
             </v-col>
           </v-col>
         </v-row>
