@@ -165,7 +165,6 @@
 </template>
 
 <script>
-////chartOptions1.series[0].points && chartOptions1.series[0].points.length > 0
 import JSCharting from 'jscharting-vue';
 import Loading from "@/components/Loading";
 import axios from "axios";

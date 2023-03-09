@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Graphics from '../views/Graphics.vue'
+import Predictions from '../views/Predictions.vue'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes = [
     path: '/graphics',
     name: 'graphics',
     component: Graphics
+  },
+  {
+    path: '/predictions',
+    name: 'predictions',
+    component: Predictions
   }
 ]
 
