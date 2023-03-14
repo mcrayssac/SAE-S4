@@ -145,7 +145,7 @@
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Regional relation between vaccinations and cases
+                Test Map Chart
             </span>
           </v-col>
         </v-row>
@@ -156,6 +156,33 @@
           <v-col cols="12" align="center" style="width: 100%; ">
             <JSCharting v-if="chartOptions3.series[0].points && chartOptions3.series[0].points.length > 0" :options="chartOptions3" style="width: 100%; height: 500px;"/>
             <Loading v-else color="#32D9CB" />
+          </v-col>
+        </v-row>
+      </v-banner>
+    </section>
+
+    <v-divider class="my-10"/>
+
+    <section class="Graph">
+      <v-banner color="#5F7174" rounded elevation="6">
+        <v-row>
+          <v-col cols="auto" align-self="center">
+            <v-icon color="#32D9CB" size="36">
+              mdi-chart-scatter-plot
+            </v-icon>
+          </v-col>
+          <v-col class="pb-0" cols="auto" align-self="center">
+            <span class="select-bar">
+                Regional relation between vaccinations and cases
+            </span>
+          </v-col>
+        </v-row>
+      </v-banner>
+
+      <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
+        <v-row>
+          <v-col cols="12" align="center" style="width: 100%; ">
+            <JSCharting :options="chartOptionsTestMap" style="width: 100%; height: 500px;"/>
           </v-col>
         </v-row>
       </v-banner>
@@ -327,7 +354,7 @@ export default {
       title: {
         position: 'center',
         label: {
-          text: 'Relation between COVID cases and vaccines administered',
+          text: 'Relation between COVID deaths and vaccines administered',
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
@@ -354,10 +381,14 @@ export default {
       },
       series: [
         {
-          name: 'Relation Vaccination/Cases',
+          name: 'Relation Vaccination/Deaths',
           points: null
         }
       ]
+    },
+    chartOptionsTestMap: {
+      type: "map",
+      series:[{ map: "world"}]
     }
   }),
   components: {
