@@ -33,7 +33,7 @@ LOCALHOST_PORT = "http://localhost:8080"
 npm run start
 ```
 If the data is already loaded, it should tell you that you `All your files are up to date !
-`, but if for some reason you want to force a reloading of the whole data go to `API` and do: 
+`, but if for some reason you want to force and reload all the data, go to `API` and do: 
 ```bash
 # Force data refresh
 npm run start_update
