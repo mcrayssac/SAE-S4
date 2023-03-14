@@ -47,27 +47,6 @@
         </v-row>
       </v-banner>
 
-      <v-divider class="my-10"/>
-
-      <v-banner>
-        <v-row>
-          <v-col>
-            <v-slider min="0.1" max="3" v-model="transmission" step="0.001" thumb-label="always" label="Transmission">Transmission</v-slider>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-slider min="0.1" max="3" v-model="duration" step="0.001" thumb-label="always" label="Duration">Duration</v-slider>
-          </v-col>
-          <v-col v-if="selectedCountry && transmission && duration" @click="updatePrediction" cols="auto" align-self="center">
-            <v-btn fab text>
-              <v-icon color="#A5E65A" size="30">
-                mdi-magnify
-              </v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-banner>
       <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="12" align="center" style="width: 100%; ">
@@ -89,14 +68,12 @@ export default {
   data: () => ({
     countries: null,
     selectedCountry: null,
-    transmission: null,
-    duration: null,
     chartOption0: {
       type: 'area spline',
       title: {
         position: 'center',
         label: {
-          text: 'Prediction on the number of safe, cases and dead/healed for the population',
+          text: 'Prediction of cases and death',
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
@@ -131,10 +108,6 @@ export default {
         {
           name: 'Removed number',
           points: null
-        },
-        {
-          name: 'Safe Number',
-          points: null
         }
       ]
     }
@@ -154,13 +127,12 @@ export default {
   },
   methods: {
     async updatePrediction(){
-      await axios.get(`http://localhost:3000/prediction/${this.selectedCountry}/${this.transmission}/${this.duration}`).then(function (response) {
+      await axios.get(`http://localhost:3000/vaccination/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
         console.log(response.data);
         self.countries = response.data.data.countries
         self.timeInterval = response.data.data.interval
-        self.chartOption0.series[0].points = response.data.data.infected;
-        self.chartOption0.series[1].points = response.data.data.removed;
-        self.chartOption0.series[2].points = response.data.data.notSick;
+        self.chartOption0.series[0].points = response.data.data.totalVaccinationValues;
+        self.chartOption0.series[1].points = response.data.data.cumulatedCasesValues;
       }).catch(function (error) {
         console.log(error);
       })
