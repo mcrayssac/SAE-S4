@@ -283,41 +283,37 @@ exports.accueil = async(callback) => {
     }
 }
 
-exports.prediction = async(country, intervalStart, intervalEnd, YearWeekISO, transmission, duration, callback) => {
+exports.prediction = async(country, transmission, duration, callback) => {
     let data = await giveJsonValue("../Files/full_df.json");
-    //console.log(data);
     let sick = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
-    console.log(data);
+    console.log(sick);
     const filteredSick = sick[sick.length-1];
-    //console.log(filteredData);
     let death = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths');
-    console.log(data);
+    console.log(death);
     const filteredDeath = death[death.length-1];
-    const cleanedSick = filteredSick.map(d => ({
-        ...d,
-        cumulative_count: isNaN(d.cumulative_count) ? 0 : d.cumulative_count
-    }));
-    const mergedSick = cleanedSick.map(d => ({
-        ...d,
-        cumulative_count: d.cumulative_count
-    }));
-    const cleanedDeath = filteredDeath.map(d => ({
-        ...d,
-        cumulative_count: isNaN(d.cumulative_count) ? 0 : d.cumulative_count
-    }));
-    const mergedData2 = cleanedDeath.map(d => ({
-        ...d,
-        cumulative_count: d.cumulative_count
-    }));
-    let iterationNumber = 0;
-    let population = filteredSick.population;
-    let sick0 = cleanedSick.cumulative_count;
-    let removed0 = cleanedDeath.cumulative_count;
-    for(let i in range()){console.log("hello");}
-    let result = {
-        YearWeekISO: YearWeekISO,
-        infected: sick,
-        dead: removed
+    let population0 = filteredSick.population;
+    let sick0 = filteredSick.cumulative_count;
+    let removed0 = filteredDeath.cumulative_count;
+    let notSick0 = population0 - (sick0 + removed0);
+    let results = [];
+    results.push({YearWeekISO: filteredSick.YearWeekISO,
+        infected: sick0,
+        removed: removed0,
+        notSick: notSick0,
+        population: population0});
+    let year = results[0].YearWeekISO.split('-')[0];
+    let week = Number(results[0].YearWeekISO.split('-W')[1]);
+    for(let i in 10){
+        let YearWeekISO= year+'-W'+(week+i);
+        let infected= transmission*sick0*notSick0 - duration*removed0;
+        let removed= duration*removed0;
+        let notSick = notSick0 - transmission*sick0*notSick0;
+        let population= population0;
+        results.push({YearWeekISO, infected, removed, notSick, population});
+        sick0 = infected;
+        removed0 = removed;
+        notSick0 = notSick;
+        population0 = population
     }
-    return result;
+    return results;
 }

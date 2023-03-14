@@ -8,7 +8,7 @@ router.get('/vaccination/:country/:intervalStart/:intervalEnd', graphController.
 
 router.get('/relation/:country', graphController.graphCaseVaccinationRelation)
 
-
+router.get('/prediction/:country/:transmission/:duration', graphController.graphPrediction)
 
 const dataRefresh = require("../DataRefresh/dataRefresh")
 router.get('/refresh', dataRefresh.routerUpdate)

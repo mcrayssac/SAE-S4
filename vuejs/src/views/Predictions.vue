@@ -50,7 +50,8 @@
       <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="12" align="center" style="width: 100%; ">
-            <Loading color="#32D9CB" />
+            <JSCharting v-if="chartOption0.series[0].points && chartOption0.series[1].points.length > 0" :options="chartOption0" style="width: 100%; height: 500px;"/>
+            <Loading v-else color="#32D9CB" />
           </v-col>
         </v-row>
       </v-banner>
@@ -67,6 +68,49 @@ export default {
   data: () => ({
     countries: null,
     selectedCountry: null,
+    chartOption0: {
+      type: 'area spline',
+      title: {
+        position: 'center',
+        label: {
+          text: 'Prediction of cases and death',
+          style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
+        }
+      },
+      legend: {
+        template: '%icon %name',
+        position: 'top right'
+      },
+      palette: ['#32D9CB', '#A5E65A'],
+      defaultSeries: {
+        shape_opacity: 0.2,
+        defaultPoint_marker: {
+          size: 0
+        }
+      },
+      xAxis: {
+        scale_type: 'auto',
+        crosshair_enabled: true,
+        defaultTick: {
+          label_rotate: -90
+        }
+      },
+      yAxis: [
+        {
+          scale_type: 'auto',
+        }
+      ],
+      series: [
+        {
+          name: 'Cases Number',
+          points: null
+        },
+        {
+          name: 'Removed number',
+          points: null
+        }
+      ]
+    }
   }),
   components: {
     Loading,
@@ -80,6 +124,19 @@ export default {
     }).catch(function (error) {
       console.log(error);
     })
+  },
+  methods: {
+    async updatePrediction(){
+      await axios.get(`http://localhost:3000/vaccination/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
+        console.log(response.data);
+        self.countries = response.data.data.countries
+        self.timeInterval = response.data.data.interval
+        self.chartOption0.series[0].points = response.data.data.totalVaccinationValues;
+        self.chartOption0.series[1].points = response.data.data.cumulatedCasesValues;
+      }).catch(function (error) {
+        console.log(error);
+      })
+    }
   }
 }
 </script>
