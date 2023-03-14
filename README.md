@@ -30,10 +30,15 @@ LOCALHOST_PORT = "http://localhost:8080"
 4. Make sure to first load the data in the `API` directory (you will not be able to see anything without doing this, it might take a while but our lovely project leader had too much time to spare and made a timer that estimate how much time it would take you to load the data):
 ```bash
 # Load data 
+cd API
 npm run start
+
+# launch web server (in another terminal)
+cd vuejs
+npm run serve
 ```
 If the data is already loaded, it should tell you that you `All your files are up to date !
-`, but if for some reason you want to force a reloading of the whole data go to `API` and do: 
+`, but if for some reason you want to force and reload all the data, go to `API` and do: 
 ```bash
 # Force data refresh
 npm run start_update
