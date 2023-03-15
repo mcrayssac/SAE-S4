@@ -145,7 +145,7 @@
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Test Map Chart
+                Regional relation between vaccinations and cases
             </span>
           </v-col>
         </v-row>
@@ -354,7 +354,7 @@ export default {
       title: {
         position: 'center',
         label: {
-          text: 'Relation between COVID deaths and vaccines administered',
+          text: 'Relation between COVID cases and vaccines administered',
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
@@ -381,7 +381,7 @@ export default {
       },
       series: [
         {
-          name: 'Relation Vaccination/Deaths',
+          name: 'Relation Vaccination/Cases',
           points: null
         }
       ]

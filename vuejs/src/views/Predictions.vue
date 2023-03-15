@@ -47,6 +47,7 @@
         </v-row>
       </v-banner>
 
+
       <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="12" align="center" style="width: 100%; ">

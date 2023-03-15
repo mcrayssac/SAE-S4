@@ -286,14 +286,14 @@ exports.accueil = async(callback) => {
 exports.prediction = async(country, transmission, duration, callback) => {
     let data = await giveJsonValue("../Files/full_df.json");
     let sick = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
-    console.log(sick);
     const filteredSick = sick[sick.length-1];
     let death = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths');
-    console.log(death);
     const filteredDeath = death[death.length-1];
+    console.log(filteredSick);
+    console.log(filteredDeath);
     let population0 = filteredSick.population;
-    let sick0 = filteredSick.cumulative_count;
-    let removed0 = filteredDeath.cumulative_count;
+    let sick0 = filteredSick.weekly_count;
+    let removed0 = filteredDeath.weekly_count;
     let notSick0 = population0 - (sick0 + removed0);
     let results = [];
     results.push({YearWeekISO: filteredSick.YearWeekISO,
@@ -301,19 +301,25 @@ exports.prediction = async(country, transmission, duration, callback) => {
         removed: removed0,
         notSick: notSick0,
         population: population0});
+    console.log("une étape de faite");
     let year = results[0].YearWeekISO.split('-')[0];
+    console.log(year);
     let week = Number(results[0].YearWeekISO.split('-W')[1]);
-    for(let i in 10){
-        let YearWeekISO= year+'-W'+(week+i);
-        let infected= transmission*sick0*notSick0 - duration*removed0;
-        let removed= duration*removed0;
-        let notSick = notSick0 - transmission*sick0*notSick0;
-        let population= population0;
-        results.push({YearWeekISO, infected, removed, notSick, population});
+    console.log(week);
+    for(let i =0; i<=10; i++){
+        let infected= Math.round(sick0 + ((transmission*sick0*notSick0 - duration*sick0)/population0));
+        let removed= Math.round(removed0 + (duration*sick0/population0));
+        let notSick = Math.round(notSick0 - (transmission*sick0*notSick0/population0));
+        results.push({infected, removed, notSick, population0});
         sick0 = infected;
         removed0 = removed;
         notSick0 = notSick;
-        population0 = population
+        console.log(i+" est l'itération courante");
     }
-    return results;
+    if(results.length > 0){
+        return callback(null, results);
+    }
+    else{
+        return callback("error there man :'(", null);
+    }
 }
