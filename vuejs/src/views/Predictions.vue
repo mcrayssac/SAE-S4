@@ -31,22 +31,15 @@
 
     <v-divider class="my-10"/>
 
-    <v-banner>
+    <v-banner v-if="selectedCountry">
       <v-row>
         <v-col>
-          <v-slider min="0.1" max="3" v-model="transmission" step="0.001" thumb-label="always" label="Transmission">Transmission</v-slider>
+          <v-slider min="0.1" max="3" v-model="transmission" step="0.001" thumb-label="always" label="Transmission" @change="updatePrediction">Transmission</v-slider>
         </v-col>
       </v-row>
       <v-row>
         <v-col>
-          <v-slider min="0.1" max="3" v-model="duration" step="0.001" thumb-label="always" label="Duration">Duration</v-slider>
-        </v-col>
-        <v-col v-if="selectedCountry && transmission && duration" @click="updatePrediction" cols="auto" align-self="center">
-          <v-btn fab text>
-            <v-icon color="#A5E65A" size="30">
-              mdi-magnify
-            </v-icon>
-          </v-btn>
+          <v-slider min="0.1" max="3" v-model="duration" step="0.001" thumb-label="always" label="Duration" @change="updatePrediction">Duration</v-slider>
         </v-col>
       </v-row>
     </v-banner>
@@ -85,6 +78,7 @@
 <script>
 import Loading from "@/components/Loading";
 import axios from "axios";
+import JSCharting from "jscharting-vue";
 
 export default {
   name: "Predictions",
@@ -127,21 +121,22 @@ export default {
       ],
       series: [
         {
-          name: 'Cases Number',
+          name: 'notSick',
           points: null
         },
         {
-          name: 'Removed number',
+          name: 'infected',
           points: null
         },
         {
-          name: 'Safe Number',
+          name: 'removed',
           points: null
         }
       ]
     }
   }),
   components: {
+    JSCharting,
     Loading,
   },
   mounted() {
@@ -156,10 +151,9 @@ export default {
   },
   methods: {
     async updatePrediction(){
+      let self = this;
       await axios.get(`http://localhost:3000/prediction/${this.selectedCountry}/${this.transmission}/${this.duration}`).then(function (response) {
-        console.log(response.data);
-        self.countries = response.data.data.countries
-        self.timeInterval = response.data.data.interval
+        console.log(self.chartOption0);
         self.chartOption0.series[0].points = response.data.data.infected;
         self.chartOption0.series[1].points = response.data.data.removed;
         self.chartOption0.series[2].points = response.data.data.notSick;

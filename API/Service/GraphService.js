@@ -283,14 +283,68 @@ exports.accueil = async(callback) => {
     }
 }
 
-exports.prediction = async(country, transmission, duration, callback) => {
+exports.getPredictionValue = async(country, transmission, duration, callback) => {
+    let data = await giveJsonValue("../Files/full_df.json");
+    let array = await prediction(country, transmission, duration)
+    let array1 = await array.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO && item.notSick === obj.notSick);
+        if (index === -1) {
+            acc.push(obj);
+        }
+        return acc;
+    }, []);
+    array1 = await array1.map(obj => {
+        return {x: obj.YearWeekISO, y: obj.notSick};
+    });
+    let notSick = array1;
+    array1 = await array.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO && item.infected === obj.infected);
+        if (index === -1) {
+            acc.push(obj);
+        }
+        return acc;
+    }, []);
+    array1 = await array1.map(obj => {
+        return {x: obj.YearWeekISO, y: obj.infected};
+    });
+    let infected = array1;
+    array1 = await array.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO && item.removed === obj.removed);
+        if (index === -1) {
+            acc.push(obj);
+        }
+        return acc;
+    }, []);
+    array1 = await array1.map(obj => {
+        return {x: obj.YearWeekISO, y: obj.removed};
+    });
+    let removed = array1;
+    const countries = await giveCountriesValues(data);
+    if (array && array.length > 0) {
+        if (countries && countries.length > 0 ) return callback(null, {
+            notSick,
+            infected,
+            removed
+        });
+        else return callback("No countries found");
+    } else {
+        if (countries && countries.length > 0 ) return callback(null, {
+            notSick,
+            infected,
+            removed
+        });
+        else return callback("Country given not in database");
+    }
+}
+
+async function prediction(country, transmission, duration){
     let data = await giveJsonValue("../Files/full_df.json");
     let sick = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
+    sick = await sick.filter(elt => elt.TargetGroup && elt.TargetGroup === "ALL");
     const filteredSick = sick[sick.length-1];
     let death = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths');
+    death = await death.filter(elt => elt.TargetGroup && elt.TargetGroup === "ALL");
     const filteredDeath = death[death.length-1];
-    console.log(filteredSick);
-    console.log(filteredDeath);
     let population0 = filteredSick.population;
     let sick0 = filteredSick.weekly_count;
     let removed0 = filteredDeath.weekly_count;
@@ -301,25 +355,23 @@ exports.prediction = async(country, transmission, duration, callback) => {
         removed: removed0,
         notSick: notSick0,
         population: population0});
-    console.log("une étape de faite");
     let year = results[0].YearWeekISO.split('-')[0];
-    console.log(year);
     let week = Number(results[0].YearWeekISO.split('-W')[1]);
-    console.log(week);
-    for(let i =0; i<=10; i++){
+    let i = 1;
+    for(let i =1; i<=15; i++){
+        let YearWeekISO = year+"-W"+(week+i);
         let infected= Math.round(sick0 + ((transmission*sick0*notSick0 - duration*sick0)/population0));
         let removed= Math.round(removed0 + (duration*sick0/population0));
         let notSick = Math.round(notSick0 - (transmission*sick0*notSick0/population0));
-        results.push({infected, removed, notSick, population0});
+        results.push({YearWeekISO,infected, removed, notSick, population0});
         sick0 = infected;
         removed0 = removed;
         notSick0 = notSick;
-        console.log(i+" est l'itération courante");
     }
     if(results.length > 0){
-        return callback(null, results);
+        return results;
     }
     else{
-        return callback("error there man :'(", null);
+        return "error there man :'(";
     }
 }
