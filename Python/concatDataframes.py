@@ -48,6 +48,11 @@ df_vaccin = readFile.execution("vaccinations")
 df_vaccin = pd.DataFrame.from_records(df_vaccin['records'])
 df_vaccin = df_vaccin.sort_values('YearWeekISO')
 
+#----- Read Vaccination Archived -----
+df_vaccin_archived = readFile.execution("vaccinationsArchived")
+df_vaccin_archived = pd.DataFrame.from_records(df_vaccin_archived['records'])
+df_vaccin_archived = df_vaccin_archived.sort_values('dateRep')
+
 #----- Read Contamination -----
 df_cases = readFile.execution("cases")
 df_cases = pd.DataFrame.from_records(df_cases)
@@ -58,9 +63,10 @@ df_cases['YearWeekISO'] = df_cases['YearWeekISO'].str.replace('-','-W')
 #----- Max Columns -----
 pd.set_option('display.max_columns', None)
 
+def concatVaccinationsArchived():
+    print(df_vaccin_archived)
 
-
-def Cases(indicator):
+"""def Cases(indicator):
     #print("Cases beginning !")
     #print(df_cases['YearWeekISO'].isnull().sum())
     #print(df_cases['country_code'].isnull().sum())
@@ -133,4 +139,4 @@ def execution():
 
 execution()
 endTime(beginTime)
-storageTime()
+storageTime()"""
