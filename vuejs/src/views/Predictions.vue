@@ -156,10 +156,10 @@ export default {
       self.chartOption0.series[1].points = null;
       self.chartOption0.series[2].points = null;
       await axios.get(`http://localhost:3000/prediction/${this.selectedCountry}/${this.transmission}/${this.duration}`).then(function (response) {
-        console.log(self.chartOption0);
-        self.chartOption0.series[0].points = response.data.data.infected;
-        self.chartOption0.series[1].points = response.data.data.removed;
-        self.chartOption0.series[2].points = response.data.data.notSick;
+        console.log(response.data.data.notSick);
+        self.chartOption0.series[0].points = response.data.data.notSick;
+        self.chartOption0.series[1].points = response.data.data.infected;
+        self.chartOption0.series[2].points = response.data.data.removed;
       }).catch(function (error) {
         console.log(error);
       })
