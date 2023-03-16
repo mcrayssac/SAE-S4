@@ -52,8 +52,8 @@ async function giveIntervalValues(data) {
     return uniqueCountry;
 }
 
-async function giveCumulatedCasesValues(country, intervalStart, intervalEnd, data) {
-    let filteredData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases' && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
+async function giveCumulatedCasesValues(country, intervalStart, intervalEnd, indicator, data) {
+    let filteredData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === indicator && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
     let mappedData = await filteredData.map(({ YearWeekISO, cumulative_count }) => ({ YearWeekISO, cumulative_count }));
     const uniqueData = await mappedData.reduce((acc, obj) => {
         const index = acc.findIndex(item => item.cumulative_count === obj.cumulative_count && item.YearWeekISO === obj.YearWeekISO);
@@ -62,7 +62,11 @@ async function giveCumulatedCasesValues(country, intervalStart, intervalEnd, dat
         }
         return acc;
     }, []);
-    mappedData = await uniqueData.map(obj => {
+    let mergedData = uniqueData.map(d => ({
+        ...d,
+        cumulative_count: Math.log10(d.cumulative_count),
+    }));
+    mappedData = await mergedData.map(obj => {
         return { x: obj.YearWeekISO, y: obj.cumulative_count };
     });
     return mappedData;
@@ -164,7 +168,11 @@ async function giveTotalVaccinationValues(country, intervalStart, intervalEnd, d
         result[i].TotalVaccination = TotalVaccination;
     }
     //console.log(result.length);
-    let renamedData = await result.map(obj => {
+    mergedData = result.map(d => ({
+        ...d,
+        TotalVaccination: Math.log10(d.TotalVaccination),
+    }));
+    let renamedData = await mergedData.map(obj => {
         return {x: obj.YearWeekISO, y: obj.TotalVaccination};
     });
     //console.log(renamedData);
@@ -193,6 +201,7 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
     let deathsValues = null;
     let vaccinationsValues = null;
     let cumulatedCasesValues = null;
+    let cumulatedDeathsValues = null;
     let totalVaccinationValues = null;
     if (country && intervalStart && intervalEnd) {
         //console.log(country, intervalStart, intervalEnd);
@@ -203,8 +212,11 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
         deathsValues = await giveIndicatorValues(country, intervalStart, intervalEnd, data, 'deaths');
         //console.log(deathsValues);
 
-        cumulatedCasesValues = await giveCumulatedCasesValues(country, intervalStart, intervalEnd, data);
+        cumulatedCasesValues = await giveCumulatedCasesValues(country, intervalStart, intervalEnd, 'cases', data);
         //console.log(cumulatedCasesValues);
+
+        cumulatedDeathsValues = await giveCumulatedCasesValues(country, intervalStart, intervalEnd, 'deaths', data);
+        console.log(cumulatedDeathsValues);
 
         vaccinationsValues = await giveVaccinationsValues(country, intervalStart, intervalEnd, data);
         //console.log(vaccinationsValues);
@@ -227,6 +239,7 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
             vaccinationsValues,
             totalVaccinationValues,
             cumulatedCasesValues,
+            cumulatedDeathsValues,
             countries,
             interval
         });
@@ -238,6 +251,7 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
             vaccinationsValues,
             totalVaccinationValues,
             cumulatedCasesValues,
+            cumulatedDeathsValues,
             countries,
             interval
         });
@@ -358,15 +372,16 @@ async function prediction(country, transmission, duration){
     let year = results[0].YearWeekISO.split('-')[0];
     let week = Number(results[0].YearWeekISO.split('-W')[1]);
     let i = 1;
-    for(let i =1; i<=15; i++){
+    while(i <= 20){
         let YearWeekISO = year+"-W"+(week+i);
         let infected= Math.round(sick0 + ((transmission*sick0*notSick0 - duration*sick0)/population0));
         let removed= Math.round(removed0 + (duration*sick0/population0));
         let notSick = Math.round(notSick0 - (transmission*sick0*notSick0/population0));
         results.push({YearWeekISO,infected, removed, notSick, population0});
-        sick0 = infected;
+        sick0 = infected//infected > 0 ? 0 : infected;
         removed0 = removed;
-        notSick0 = notSick;
+        notSick0 = notSick//notSick > 0 ? 0 : notSick;
+        i++;
     }
     if(results.length > 0){
         return results;

@@ -319,7 +319,7 @@ export default {
         template: '%icon %name',
         position: 'top right'
       },
-      palette: ['#32D9CB', '#A5E65A'],
+      palette: ['#32D9CB', '#A5E65A', '#ff0000'],
       defaultSeries: {
         shape_opacity: 0.2,
         defaultPoint_marker: {
@@ -345,6 +345,10 @@ export default {
         },
         {
           name: 'Cases number',
+          points: null
+        },
+        {
+          name: 'Deaths number',
           points: null
         }
       ]
@@ -408,6 +412,7 @@ export default {
           self.timeInterval = response.data.data.interval
           self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
           self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
+          self.chartOptions4.series[2].points = response.data.data.cumulatedDeathsValues;
           self.chartOptions2.series[0].points = response.data.data.vaccinationsValues;
           self.chartOptions2.series[1].points = response.data.data.cumulatedCasesValues;
           self.chartOptions.series[0].points = response.data.data.casesValues;

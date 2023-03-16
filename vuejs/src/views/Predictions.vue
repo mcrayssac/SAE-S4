@@ -100,7 +100,7 @@ export default {
         template: '%icon %name',
         position: 'top right'
       },
-      palette: ['#32D9CB', '#A5E65A'],
+      palette: ['#32D9CB', '#A5E65A', '#5F7174'],
       defaultSeries: {
         shape_opacity: 0.2,
         defaultPoint_marker: {
@@ -152,6 +152,9 @@ export default {
   methods: {
     async updatePrediction(){
       let self = this;
+      self.chartOption0.series[0].points = null;
+      self.chartOption0.series[1].points = null;
+      self.chartOption0.series[2].points = null;
       await axios.get(`http://localhost:3000/prediction/${this.selectedCountry}/${this.transmission}/${this.duration}`).then(function (response) {
         console.log(self.chartOption0);
         self.chartOption0.series[0].points = response.data.data.infected;
