@@ -375,8 +375,8 @@ async function prediction(country, transmission, duration){
     let i = 1;
     let YearWeekISO = null;
     let stagnation = 0;
-    while(notSick0 > 0 && removed0 > 0 && sick0 > 0 && stagnation < 10){
-        if(i <= 52){
+    while(notSick0 > 0 && removed0 < population0 && sick0 > 0 && stagnation < 10){
+        if(i <= 52-weekAdd){
             YearWeekISO = year+"-W"+(weekAdd+i);
         }
         else{
@@ -384,14 +384,16 @@ async function prediction(country, transmission, duration){
             i = 1;
             YearWeekISO = year+"-W"+(week+i);
         }
-        let infected= Math.round(sick0 + ((transmission*sick0*notSick0 - duration*sick0)/population0));
-        let removed= Math.round(removed0 + (duration*sick0/population0));
-        let notSick = Math.round(notSick0 - (transmission*sick0*notSick0/population0));
-        if(infected === notSick0 || notSick === notSick0 ){
+        let notSick = Math.round(notSick0 + (-transmission*notSick0*sick0/population0));
+        let infected= Math.round(sick0 + ((transmission*notSick0*sick0/population0) - duration*sick0));
+        let removed= Math.round(removed0 + duration*sick0);
+        if(infected === sick0 || notSick === notSick0 ){
             stagnation++;
         }
+        if(removed >= population0){
+            removed = population0;
+        }
         infected = infected > 0 ? infected : 0;
-        removed = removed > 0 ? removed : 0;
         notSick = notSick > 0 ? notSick : 0;
         results.push({YearWeekISO,infected, removed, notSick, population0});
         sick0 = infected;
