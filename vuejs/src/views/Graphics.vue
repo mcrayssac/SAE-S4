@@ -3,7 +3,7 @@
     <section class="Title">
       <v-row class="mt-10" align="center" no-gutters>
         <v-col class="mb-16" align="center" no-gutters>
-          <h1 class="page-title">Graphics</h1>
+          <h1 class="page-title">Data Visualisation</h1>
         </v-col>
       </v-row>
     </section>
