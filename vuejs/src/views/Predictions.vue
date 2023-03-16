@@ -3,12 +3,35 @@
     <section class="Title">
       <v-row class="mt-10" align="center" no-gutters>
         <v-col class="mb-16" align="center" no-gutters>
-          <h1 class="page-title">Predictions</h1>
+          <h1 class="page-title">Regressions</h1>
         </v-col>
       </v-row>
     </section>
 
-    <section class="Select">
+      <section class="Select">
+        <v-banner color="#5F7174" rounded elevation="6">
+          <v-row>
+            <v-col cols="auto" align-self="center">
+              <v-icon color="#32D9CB" size="36">
+                mdi-map-search
+              </v-icon>
+            </v-col>
+            <v-col class="pb-1" cols="auto" align-self="center">
+              <span class="select-bar">
+                  Select bar
+              </span>
+            </v-col>
+            <v-spacer/>
+            <v-col v-if="countries && countries.length > 0" cols="auto" align-self="center">
+              <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 150px;" />
+            </v-col>
+          </v-row>
+        </v-banner>
+      </section>
+
+    <v-divider class="my-10"/>
+
+    <section class="Slider" v-if="selectedCountry">
       <v-banner color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="auto" align-self="center">
@@ -17,34 +40,34 @@
             </v-icon>
           </v-col>
           <v-col class="pb-1" cols="auto" align-self="center">
-            <span class="select-bar">
-                Select bar
-            </span>
+              <span class="select-bar">
+                  Transmission
+              </span>
           </v-col>
           <v-spacer/>
-          <v-col v-if="countries && countries.length > 0" cols="auto" align-self="center">
-            <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 150px;" />
+          <v-col class="py-10" cols="8" align-self="center">
+            <v-slider hide-details :thumb-size="24" min="0.1" max="3" v-model="transmission" step="0.01" thumb-label="always" @change="updatePrediction">Transmission</v-slider>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="auto" align-self="center">
+            <v-icon color="#32D9CB" size="36">
+              mdi-map-search
+            </v-icon>
+          </v-col>
+          <v-col class="pb-1" cols="auto" align-self="center">
+              <span class="select-bar">
+                  Duration
+              </span>
+          </v-col>
+          <v-spacer/>
+          <v-col class="py-10" cols="8" align-self="center">
+            <v-slider hide-details :thumb-size="24" min="0.1" max="3" v-model="duration" step="0.01" thumb-label="always" @change="updatePrediction">Transmission</v-slider>
           </v-col>
         </v-row>
       </v-banner>
+      <v-divider class="my-10"/>
     </section>
-
-    <v-divider class="my-10"/>
-
-    <v-banner v-if="selectedCountry">
-      <v-row>
-        <v-col>
-          <v-slider min="0.1" max="3" v-model="transmission" step="0.001" thumb-label="always" label="Transmission" @change="updatePrediction">Transmission</v-slider>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-slider min="0.1" max="3" v-model="duration" step="0.001" thumb-label="always" label="Duration" @change="updatePrediction">Duration</v-slider>
-        </v-col>
-      </v-row>
-    </v-banner>
-
-    <v-divider class="my-10"/>
 
     <section class="Graph">
       <v-banner color="#5F7174" rounded elevation="6">

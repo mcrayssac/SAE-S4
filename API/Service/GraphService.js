@@ -385,7 +385,7 @@ async function prediction(country, transmission, duration){
         removed0 = removed;
         notSick0 = notSick;
         i++;
-        console.log('YearWeek: ', YearWeekISO,', Sick: ', sick0, ', Removed: ', removed0, ', Not sick: ', notSick0, ', i:', i)
+        //console.log('YearWeek: ', YearWeekISO,', Sick: ', sick0, ', Removed: ', removed0, ', Not sick: ', notSick0, ', i:', i)
     }
     if(results.length > 0){
         return results;
