@@ -392,7 +392,7 @@ export default {
     },
     chartOptionsTestMap: {
       type: "map",
-      series:[{ map: "world"}]
+      series:[{ map: "europe"}]
     }
   }),
   components: {

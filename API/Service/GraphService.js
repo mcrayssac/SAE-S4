@@ -289,6 +289,31 @@ exports.getCaseVaccinationRelation = async(country, callback) =>{
     }
 }
 
+exports.getWorldMapCases = async(callback) =>{
+    let data = await giveJsonValue("../Files/full_df.json");
+    //console.log(data);
+    const filteredData = await data.map(({ Region }) => ({ Region }));
+    //console.log(filteredData);
+
+    const uniqueData = Object.values(await filteredData.reduce((acc, curr) => {
+        const key = curr.Region;
+        if (!acc[key]) {
+            acc[key] = { Region: curr.Region };
+        }
+        return acc;
+    }, {}));
+
+    let renamedData = uniqueData.map(obj => {
+        return {map: obj.Region};
+    });
+    //console.log(renamedData);
+    if (renamedData && renamedData.length > 0) {
+        return callback(null, {renamedData});
+    } else {
+        return callback("Woops something went wrong pal !");
+    }
+}
+
 exports.accueil = async(callback) => {
     try{
         callback(null, "I'm testing guys chill, and you know, our root's route (get it ;3) is working just fine~");
