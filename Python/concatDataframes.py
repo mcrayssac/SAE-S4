@@ -71,16 +71,49 @@ def concatVaccinationsArchived(df_cases, df_cases_archived, df_vaccin):
     df_cases_archived.loc[:, 'YearWeekISO'] = df_cases_archived.loc[:, 'date'].apply(lambda x: x.strftime('%Y-W%U'))
     df_cases_archived = df_cases_archived.sort_values('YearWeekISO')
     df_cases_archived = df_cases_archived.drop(['date', 'countryterritoryCode', 'continentExp', 'dateRep', 'day', 'month', 'year'], axis=1)
-    print(df_cases_archived.head(5))
-    print('\n')
-    print(df_cases_archived.tail(5))
-    print(df_cases_archived.shape)
-    df = df_cases_archived.groupby(['countriesAndTerritories', 'geoId', 'YearWeekISO'], as_index=False).sum(numeric_only=True)
-    print(df)
+    numeric_cols = ['cases', 'deaths', 'Cumulative_number_for_14_days_of_COVID-19_cases_per_100000']
+    df_cases_archived_sum = df_cases_archived.groupby(['countriesAndTerritories', 'geoId', 'YearWeekISO'])[numeric_cols].sum(numeric_only=True).reset_index()
+    popData2019 = df_cases_archived.groupby(['countriesAndTerritories', 'geoId', 'YearWeekISO'])['popData2019'].first().reset_index()['popData2019']
+    df_cases_archived_sum['population'] = popData2019
+    df_cases_archived = df_cases_archived_sum
+    df_melt = pd.melt(df_cases_archived, id_vars=["countriesAndTerritories", "geoId", "YearWeekISO", "population"],
+                      value_vars=["cases", "deaths"], var_name="indicator", value_name="weekly_count")
+    df_cases_archived = df_melt[["countriesAndTerritories", "geoId", "YearWeekISO", "indicator", "weekly_count", "population"]]
+    df_cases_archived = df_cases_archived.rename(columns={'countriesAndTerritories': 'country', 'geoId': 'country_code'})
+    print(df_cases_archived)
+    df_cases = df_cases.drop(['continent', 'source', 'note', 'cumulative_count', 'rate_14_day'], axis=1)
+    df_cases = df_cases[(df_cases['YearWeekISO'] >= '2021-W01') & (df_cases['YearWeekISO'] <= '2023-W09')]
+    print(df_cases)
+
+    """df_cases_archived = df_cases_archived[(df_cases_archived['country_code'] == "FR") & (df_cases_archived['YearWeekISO'] == "2019-W52")]
+    print(df_cases_archived)
+    df_cases = df_cases[(df_cases['country_code'] == "FRA") & (df_cases['YearWeekISO'] == "2021-W52")]
+    print(df_cases)"""
+
+    df_combined = pd.concat([df_cases_archived, df_cases], ignore_index=True)
+    print(df_combined)
+
+    counts = df_combined.groupby('country')['country'].count()
+    counts = counts.sort_values(ascending=False)
+    counts = counts[0] - 0.20 * counts[0]
+
+    df_cases_archived_countries = df_combined['country'].unique()
+    for elt in df_cases_archived_countries:
+        if (df_combined['country'] == elt).sum() <= counts:
+            df_combined = df_combined.drop(df_combined[df_combined['country'] == elt].index)
+
+    counts = df_combined.groupby('country')['country'].count()
+    print(counts)
+
+
+    print((df_combined['country'] == "France").sum())
+    print((df_combined['country'] == "Italy").sum())
+    print((df_combined['country'] == "Afghanistan").sum())
 
 
 
-    """result = df.to_json(orient="records")
+
+    """result = merged_df.to_json(orient="records")
     parsed = json.loads(result)
     dumped = json.dumps(parsed, indent=4)
     with open('.\data.json', 'w') as f:
