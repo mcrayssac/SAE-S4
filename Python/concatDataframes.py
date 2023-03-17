@@ -75,8 +75,16 @@ def concatVaccinationsArchived(df_cases, df_cases_archived, df_vaccin):
     print('\n')
     print(df_cases_archived.tail(5))
     print(df_cases_archived.shape)
-    df_fr = df_cases_archived[(df_cases_archived["YearWeekISO"] == "2020-W50") & (df_cases_archived["geoId"] == "FR")]
-    print(df_fr)
+    df = df_cases_archived.groupby(['countriesAndTerritories', 'geoId', 'YearWeekISO'], as_index=False).sum(numeric_only=True)
+    print(df)
+
+
+
+    """result = df.to_json(orient="records")
+    parsed = json.loads(result)
+    dumped = json.dumps(parsed, indent=4)
+    with open('.\data.json', 'w') as f:
+        f.write(dumped)"""
 
 
 
