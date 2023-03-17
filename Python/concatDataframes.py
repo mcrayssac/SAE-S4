@@ -36,7 +36,7 @@ def storageTime():
     print("Ending time storage")
 
 import readFile
-from Web_importation import importFile
+#from Web_importation import importFile
 
 import pycountry
 def trans_alpha_country(x):
@@ -48,10 +48,10 @@ df_vaccin = readFile.execution("vaccinations")
 df_vaccin = pd.DataFrame.from_records(df_vaccin['records'])
 df_vaccin = df_vaccin.sort_values('YearWeekISO')
 
-#----- Read Vaccination Archived -----
-df_vaccin_archived = readFile.execution("vaccinationsArchived")
-df_vaccin_archived = pd.DataFrame.from_records(df_vaccin_archived['records'])
-df_vaccin_archived = df_vaccin_archived.sort_values('dateRep')
+#----- Read Contamination Archived -----
+df_cases_archived = readFile.execution("casesArchived")
+df_cases_archived = pd.DataFrame.from_records(df_cases_archived['records'])
+df_cases_archived = df_cases_archived.sort_values('dateRep')
 
 #----- Read Contamination -----
 df_cases = readFile.execution("cases")
@@ -63,8 +63,24 @@ df_cases['YearWeekISO'] = df_cases['YearWeekISO'].str.replace('-','-W')
 #----- Max Columns -----
 pd.set_option('display.max_columns', None)
 
-def concatVaccinationsArchived():
-    print(df_vaccin_archived)
+def concatVaccinationsArchived(df_cases, df_cases_archived, df_vaccin):
+    pd.options.mode.chained_assignment = None  # default='warn'
+    print(df_cases_archived.shape)
+    df_cases_archived = df_cases_archived[ df_cases_archived["geoId"].str.len() == 2 ]
+    df_cases_archived.loc[:, 'date'] = pd.to_datetime(df_cases_archived.loc[:, 'dateRep'], format='%d/%m/%Y')
+    df_cases_archived.loc[:, 'YearWeekISO'] = df_cases_archived.loc[:, 'date'].apply(lambda x: x.strftime('%Y-W%U'))
+    df_cases_archived = df_cases_archived.sort_values('YearWeekISO')
+    df_cases_archived = df_cases_archived.drop(['date', 'countryterritoryCode', 'continentExp', 'dateRep', 'day', 'month', 'year'], axis=1)
+    print(df_cases_archived.head(5))
+    print('\n')
+    print(df_cases_archived.tail(5))
+    print(df_cases_archived.shape)
+    df_fr = df_cases_archived[(df_cases_archived["YearWeekISO"] == "2020-W50") & (df_cases_archived["geoId"] == "FR")]
+    print(df_fr)
+
+
+
+concatVaccinationsArchived(df_cases, df_cases_archived, df_vaccin)
 
 """def Cases(indicator):
     #print("Cases beginning !")
