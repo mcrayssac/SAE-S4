@@ -11,6 +11,9 @@ def load(type, path):
 vaccinationPath = "../Files/vaccination.json"
 vaccinationType = "vaccinations"
 
+caseArchivedPath = "../Files/caseArchived.json"
+caseArchivedType = "casesArchived"
+
 casePath = "../Files/case.json"
 caseType = "cases"
 
@@ -20,5 +23,7 @@ def execution(type):
         return load(caseType, casePath)
     elif type == vaccinationType:
         return load(vaccinationType, vaccinationPath)
+    elif type == caseArchivedType:
+        return load(caseArchivedType, caseArchivedPath)
     else:
         return

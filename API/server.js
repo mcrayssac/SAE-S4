@@ -68,9 +68,9 @@ console.log(chalk.cyan.bold.bgBlack(`Usage : \nLaunch nodeJS server : \nnpm star
 /**
  * Data refresh
  */
-const dataRefresh = require('./DataRefresh/dataRefresh');
+/*const dataRefresh = require('./DataRefresh/dataRefresh');
 dataRefresh.serverUpdate().then(async function (response) {
   console.log(chalk.green.bold.bgBlack(response));
 }).catch(function (error) {
   console.log(error);
-})
+})*/

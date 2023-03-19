@@ -31,6 +31,10 @@ vaccinationFile = "../Files/vaccination.json"
 vaccinationType = "vaccinations"
 vaccinationUrl = "https://opendata.ecdc.europa.eu/covid19/vaccine_tracker/json/"
 
+caseArchivedFile = "../Files/caseArchived.json"
+caseArchivedType = "casesArchived"
+caseArchivedUrl = "https://opendata.ecdc.europa.eu/covid19/casedistribution/json/"
+
 caseFile = "../Files/case.json"
 caseType = "cases"
 caseUrl = "https://opendata.ecdc.europa.eu/covid19/nationalcasedeath/json/"
@@ -38,6 +42,7 @@ caseUrl = "https://opendata.ecdc.europa.eu/covid19/nationalcasedeath/json/"
 #----- Execution -----
 def execution():
     storage(importation(caseType, caseUrl), caseFile, caseType)
+    storage(importation(caseArchivedType, caseArchivedUrl), caseArchivedFile, caseArchivedType)
     storage(importation(vaccinationType, vaccinationUrl), vaccinationFile, vaccinationType)
 
 execution()
