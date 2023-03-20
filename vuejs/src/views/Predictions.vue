@@ -8,26 +8,26 @@
       </v-row>
     </section>
 
-      <section class="Select">
-        <v-banner color="#5F7174" rounded elevation="6">
-          <v-row>
-            <v-col cols="auto" align-self="center">
-              <v-icon color="#32D9CB" size="36">
-                mdi-map-search
-              </v-icon>
-            </v-col>
-            <v-col class="pb-1" cols="auto" align-self="center">
+    <section class="Select">
+      <v-banner color="#5F7174" rounded elevation="6">
+        <v-row>
+          <v-col cols="auto" align-self="center">
+            <v-icon color="#32D9CB" size="36">
+              mdi-map-search
+            </v-icon>
+          </v-col>
+          <v-col class="pb-1" cols="auto" align-self="center">
               <span class="select-bar">
                   Select bar
               </span>
-            </v-col>
-            <v-spacer/>
-            <v-col v-if="countries && countries.length > 0" cols="auto" align-self="center">
-              <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 150px;" />
-            </v-col>
-          </v-row>
-        </v-banner>
-      </section>
+          </v-col>
+          <v-spacer/>
+          <v-col v-if="countries && countries.length > 0" cols="auto" align-self="center">
+            <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 150px;" />
+          </v-col>
+        </v-row>
+      </v-banner>
+    </section>
 
     <v-divider class="my-10"/>
 
