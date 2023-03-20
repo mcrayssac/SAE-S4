@@ -38,6 +38,23 @@ async function giveCountriesValues(data) {
     return uniqueCountry;
 }
 
+/**
+ * Give unique countries codes in full_df.json
+ * @returns {Promise<*>}
+ */
+async function giveCountryCodeValues(data) {
+    const filteredCountry = await data.map(({ Region }) => (`${Region}`));
+    const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item === obj);
+        if (index === -1) {
+            acc.push(obj);
+        }
+        return acc;
+    }, []);
+    //console.log(uniqueCountry);
+    return uniqueCountry;
+}
+
 
 async function giveIntervalValues(data) {
     const filteredCountry = await data.map(({ YearWeekISO }) => (`${YearWeekISO}`));
@@ -287,6 +304,21 @@ exports.getCaseVaccinationRelation = async(country, callback) =>{
     } else {
         return callback("Woops something went wrong pal !");
     }
+}
+
+
+exports.getWorldMapCases = async(callback) =>{
+    let data = await giveJsonValue("../Files/full_df.json");
+
+    const code = await giveCountryCodeValues(data);
+    //console.log(countries)
+
+    if (code && code.length > 0){
+        return callback(null, {code})
+    }
+    else{
+        return callback("Woops something went wrong pal !");
+    };
 }
 
 exports.accueil = async(callback) => {

@@ -10,6 +10,8 @@ router.get('/relation/:country', graphController.graphCaseVaccinationRelation)
 
 router.get('/prediction/:country/:transmission/:duration', graphController.graphPrediction)
 
+router.get('/worldMap', graphController.graphWorldMapCases)
+
 const dataRefresh = require("../DataRefresh/dataRefresh")
 router.get('/refresh', dataRefresh.routerUpdate)
 router.get('/mean/minutes', dataRefresh.meanMinutesUpdate)

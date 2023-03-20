@@ -182,7 +182,7 @@
       <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="12" align="center" style="width: 100%; ">
-            <JSCharting :options="chartOptionsTestMap" style="width: 100%; height: 500px;"/>
+            <JSCharting :options="chartOptionsMap" style="width: 100%; height: 500px;"/>
           </v-col>
         </v-row>
       </v-banner>
@@ -390,9 +390,9 @@ export default {
         }
       ]
     },
-    chartOptionsTestMap: {
-      type: "map",
-      series:[{ map: "world"}]
+    chartOptionsMap: {
+      type: "map solid",
+      series: null
     }
   }),
   components: {
@@ -438,6 +438,18 @@ export default {
     }).catch(function (error) {
       console.log(error);
     })
+
+    axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
+      const codes = response.data.data.code;
+      const mapCodes = codes.map(country => {
+        return { map: country.toLowerCase() };
+      });
+      console.log([mapCodes]);
+      self.chartOptionsMap.series = [...mapCodes];
+    }).catch(function (error) {
+      console.log(error);
+    });
+
   }
 };
 </script>
