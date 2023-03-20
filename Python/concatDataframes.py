@@ -64,8 +64,9 @@ df_cases['YearWeekISO'] = df_cases['YearWeekISO'].str.replace('-','-W')
 pd.set_option('display.max_columns', None)
 
 def concatVaccinationsArchived(df_cases, df_cases_archived, df_vaccin):
+    print('Archived start')
     pd.options.mode.chained_assignment = None  # default='warn'
-    print(df_cases_archived.shape)
+    #print(df_cases_archived.shape)
     df_cases_archived = df_cases_archived[ df_cases_archived["geoId"].str.len() == 2 ]
     df_cases_archived.loc[:, 'date'] = pd.to_datetime(df_cases_archived.loc[:, 'dateRep'], format='%d/%m/%Y')
     df_cases_archived.loc[:, 'YearWeekISO'] = df_cases_archived.loc[:, 'date'].apply(lambda x: x.strftime('%Y-W%U'))
@@ -80,10 +81,10 @@ def concatVaccinationsArchived(df_cases, df_cases_archived, df_vaccin):
                       value_vars=["cases", "deaths"], var_name="indicator", value_name="weekly_count")
     df_cases_archived = df_melt[["countriesAndTerritories", "geoId", "YearWeekISO", "indicator", "weekly_count", "population"]]
     df_cases_archived = df_cases_archived.rename(columns={'countriesAndTerritories': 'country', 'geoId': 'country_code'})
-    print(df_cases_archived)
+    #print(df_cases_archived)
     df_cases = df_cases.drop(['continent', 'source', 'note', 'cumulative_count', 'rate_14_day'], axis=1)
     df_cases = df_cases[(df_cases['YearWeekISO'] >= '2021-W01') & (df_cases['YearWeekISO'] <= '2023-W09')]
-    print(df_cases)
+    #print(df_cases)
 
     """df_cases_archived = df_cases_archived[(df_cases_archived['country_code'] == "FR") & (df_cases_archived['YearWeekISO'] == "2019-W52")]
     print(df_cases_archived)
@@ -91,7 +92,7 @@ def concatVaccinationsArchived(df_cases, df_cases_archived, df_vaccin):
     print(df_cases)"""
 
     df_combined = pd.concat([df_cases_archived, df_cases], ignore_index=True)
-    print(df_combined)
+    #print(df_combined)
 
     counts = df_combined.groupby('country')['country'].count()
     counts = counts.sort_values(ascending=False)
@@ -102,59 +103,66 @@ def concatVaccinationsArchived(df_cases, df_cases_archived, df_vaccin):
         if (df_combined['country'] == elt).sum() <= counts:
             df_combined = df_combined.drop(df_combined[df_combined['country'] == elt].index)
 
-    counts = df_combined.groupby('country')['country'].count()
-    print(counts)
-
-
-    print((df_combined['country'] == "France").sum())
-    print((df_combined['country'] == "Italy").sum())
-    print((df_combined['country'] == "Afghanistan").sum())
-
-
-
-
-    """result = merged_df.to_json(orient="records")
+    print('Archived end')
+    return df_combined
+    #print(df_combined)
+    """result = df_combined.to_json(orient="records")
     parsed = json.loads(result)
     dumped = json.dumps(parsed, indent=4)
     with open('.\data.json', 'w') as f:
         f.write(dumped)"""
 
+df_cases = concatVaccinationsArchived(df_cases, df_cases_archived, df_vaccin)
 
-
-concatVaccinationsArchived(df_cases, df_cases_archived, df_vaccin)
-
-"""def Cases(indicator):
-    #print("Cases beginning !")
+def Cases(indicator):
+    print("Cases beginning !")
     #print(df_cases['YearWeekISO'].isnull().sum())
     #print(df_cases['country_code'].isnull().sum())
     #print(df_cases['indicator'].isnull().sum())
     df_cases['Region'] = df_cases['country'].apply(trans_alpha_country)
     df_cases_one = df_cases[ df_cases["indicator"] == indicator ]
+    #df_cases_one = df_cases_one[ df_cases_one["Region"] == "FR" ]
     df_cases_one = df_cases_one.set_index(["YearWeekISO", "Region"])
-    #print("Cases ending !")
+    print(df_cases_one)
+    print("Cases ending !")
     return df_cases_one
 
 
 def Vaccination(TargetGroup, Vaccine):
-    #print("Vaccine beginning !")
+    print("Vaccine beginning !")
     #print(df_vaccin['YearWeekISO'].isnull().sum())
     df_vaccin_one = df_vaccin[ df_vaccin["Region"].str.len() == 2 ]
     df_vaccin_one = df_vaccin_one[ df_vaccin_one["TargetGroup"] == TargetGroup ]
     df_vaccin_one = df_vaccin_one[ df_vaccin_one["Vaccine"] == Vaccine ]
+    #df_vaccin_one = df_vaccin_one[ df_vaccin_one["Region"] == "FR" ]
     df_vaccin_one = df_vaccin_one.set_index(["YearWeekISO", "Region"])
-    #print("Vaccine ending !")
+    print(df_vaccin_one)
+    print("Vaccine ending !")
     return df_vaccin_one
 
 
 def Concat(indicator, TargetGroup, Vaccine):
     #print("Concat beginning !")
+    print(indicator)
+    print(TargetGroup)
+    print(Vaccine)
     df_concat = pd.concat([Cases(indicator), Vaccination(TargetGroup, Vaccine)], axis=1)
-    df_concat = df_concat[df_concat['FirstDose'].notna()]
+    df_concat = df_concat.reset_index()
+    #df_concat = df_concat[df_concat['FirstDose'].notna()]
     df_concat = df_concat[df_concat['country'].notna()]
+    df_concat = df_concat[(df_concat['YearWeekISO'] <= '2021-W01') | (df_concat['FirstDose'].notna())]
+    df_concat[['FirstDose', 'FirstDoseRefused', 'SecondDose', 'DoseAdditional1', 'DoseAdditional2', 'DoseAdditional3', 'UnknownDose', 'NumberDosesReceived', 'NumberDosesExported', 'Denominator']] = df_concat[['FirstDose', 'FirstDoseRefused', 'SecondDose', 'DoseAdditional1', 'DoseAdditional2', 'DoseAdditional3', 'UnknownDose', 'NumberDosesReceived', 'NumberDosesExported', 'Denominator']].fillna(0)
+    df_concat = df_concat.drop(['ReportingCountry', 'Population'], axis=1)
+    df_concat[['TargetGroup']] = df_concat[['TargetGroup']].fillna(TargetGroup)
+    df_concat[['Vaccine']] = df_concat[['Vaccine']].fillna(Vaccine)
+    #df_concat[['ReportingCountry']] = df_concat[['ReportingCountry']].fillna(df_concat[['Region']])
+
+
+    print(df_concat)
     #print("Concat ending !")
     return df_concat
 
-import cleanFile as cleanFile
+#import cleanFile as cleanFile
 
 def concat_full():
     tabVaccine = df_vaccin["Vaccine"].unique()
@@ -162,28 +170,32 @@ def concat_full():
     tabIndicator = df_cases["indicator"].unique()
 
     print("Full First Concat beginning !")
-    tabConcat = []
-    for elt in tabIndicator:
+    print(len(tabVaccine))
+    tabVaccineList = tabVaccine.tolist()
+    tabVaccineJson = json.dumps(tabVaccineList)
+    storage(tabVaccineJson, "../Files/Vaccine.json")
+    for elt in tabVaccine:
+        tabConcat = []
         for elt1 in tabTargetGroup:
-            for elt2 in tabVaccine:
-                tabConcat.append(Concat(elt, elt1, elt2))
-    df_concat_full = pd.concat(tabConcat)
-    df_concat_full = cleanFile.clean(df_concat_full)
-    pd.set_option('display.max_columns', None)
-    df_concat_full = df_concat_full.sort_index()
+            for elt2 in tabIndicator:
+                tabConcat.append(Concat(elt2, elt1, elt).to_dict(orient="records"))
+        print("Dataframe shape : ")
+        print(len(tabConcat))
+        storage(tabConcat, "../Files/"+ elt +".json")
+    #tabConcat.append(Concat(tabIndicator[0], tabTargetGroup[0], tabVaccine[0]))
+    #df_concat_full = pd.concat(tabConcat)
+    #df_concat_full = cleanFile.clean(df_concat_full)
+    #pd.set_option('display.max_columns', None)
+    #df_concat_full = df_concat_full.sort_index()
     #print(df_concat_full.tail(50))
-    print("Dataframe shape : ")
-    print(df_concat_full.shape)
     #print("\n\n\n")
-    return df_concat_full
+    return 'Concat successful'
 
 #----- Storage File -----
 def storage(df, file):
     print("Beginning storage")
-    df.reset_index(inplace=True)
-    df = df.to_dict(orient="records")
     out_file = open(file, "w")
-    json.dump(df, out_file, indent = 2)
+    json.dump(df, out_file, ensure_ascii=False, indent=2)
     out_file.close()
     print("Ending storage")
 
@@ -192,8 +204,8 @@ fullDataframeFile = "../Files/full_df.json"
 
 #----- Execution -----
 def execution():
-    storage(concat_full(), fullDataframeFile)
+    concat_full()
 
 execution()
 endTime(beginTime)
-storageTime()"""
+storageTime()
