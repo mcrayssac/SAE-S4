@@ -8,6 +8,8 @@ router.get('/vaccines', graphController.giveVaccine)
 
 router.get('/countries/:vaccine', graphController.giveCountries)
 
+router.get('/intervals/:vaccine/:country', graphController.giveInterval)
+
 router.get('/vaccination/:country/:intervalStart/:intervalEnd', graphController.graphVaccination)
 
 router.get('/relation/:country', graphController.graphCaseVaccinationRelation)

@@ -57,6 +57,39 @@ exports.giveCountries = async (vaccine, callback) => {
 }
 
 /**
+ * Give intervals values from vaccine and country
+ * @returns {Promise<*>}
+ */
+exports.giveIntervals = async (vaccine, country, callback) => {
+    if (vaccine && country){
+        const path = "../Files/" + vaccine + ".json";
+        let data = await giveJsonValue(path);
+        data = await giveIntervalValues(data, country);
+        if (data && data.length > 0) {
+            return callback(null, data);
+        } else {
+            return callback("ERROR: data");
+        }
+    } else {
+        return callback("ERROR: vaccine");
+    }
+
+}
+
+async function giveIntervalValues(data, country) {
+    const filteredCountry = await data.map(({ YearWeekISO }) => (`${YearWeekISO}`));
+    const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item === obj);
+        if (index === -1) {
+            acc.push(obj);
+        }
+        return acc;
+    }, []);
+    //console.log(uniqueCountry);
+    return uniqueCountry;
+}
+
+/**
  * Give unique countries in full_df.json
  * @returns {Promise<*>}
  */
@@ -78,20 +111,6 @@ async function giveCountriesValues(data) {
  */
 async function giveCountryCodeValues(data) {
     const filteredCountry = await data.map(({ Region }) => (`${Region}`));
-    const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
-        const index = acc.findIndex(item => item === obj);
-        if (index === -1) {
-            acc.push(obj);
-        }
-        return acc;
-    }, []);
-    //console.log(uniqueCountry);
-    return uniqueCountry;
-}
-
-
-async function giveIntervalValues(data) {
-    const filteredCountry = await data.map(({ YearWeekISO }) => (`${YearWeekISO}`));
     const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
         const index = acc.findIndex(item => item === obj);
         if (index === -1) {

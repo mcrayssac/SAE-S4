@@ -26,7 +26,7 @@
             <v-select color="#A5E65A" dark :items="vaccines" label="Vaccines" v-model="selectedVaccine" style="max-width: 150px;" @change="updateCountries" />
           </v-col>
           <v-col v-if="countries && countries.length > 0" cols="auto" align-self="center">
-            <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 150px;" />
+            <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 150px;" @change="updateInterval"/>
           </v-col>
           <v-col v-if="timeInterval && timeInterval.length > 0" cols="auto" align-self="center">
             <v-select color="#A5E65A" dark :items="timeInterval" label="Interval start" v-model="selectedIntervalStart" style="max-width: 150px;" />
@@ -484,6 +484,14 @@ export default {
       let self = this;
       await axios.get(`http://localhost:3000/countries/${this.selectedVaccine}`).then(function (response) {
         self.countries = response.data.data;
+      }).catch(function (error) {
+        console.log(error);
+      })
+    },
+    async updateInterval(){
+      let self = this;
+      await axios.get(`http://localhost:3000/intervals/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
+        console.log(response.data);
       }).catch(function (error) {
         console.log(error);
       })
