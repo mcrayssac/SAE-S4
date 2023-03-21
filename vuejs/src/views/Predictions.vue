@@ -62,7 +62,23 @@
           </v-col>
           <v-spacer/>
           <v-col class="py-10 px-5" cols="8" align-self="center">
-            <v-slider hide-details :thumb-size="24" thumb-color="#00A6C0" color="#32D9CB" track-color="white" min="0.1" max="3" v-model="duration" step="0.01" thumb-label="always" @change="updatePrediction">Transmission</v-slider>
+            <v-slider hide-details :thumb-size="24" thumb-color="#00A6C0" color="#32D9CB" track-color="white" min="0.1" max="1" v-model="duration" step="0.01" thumb-label="always" @change="updatePrediction">Transmission</v-slider>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="auto" align-self="center">
+            <v-icon color="#32D9CB" size="36">
+              mdi-map-search
+            </v-icon>
+          </v-col>
+          <v-col class="pb-1" cols="auto" align-self="center">
+              <span class="select-bar">
+                  Survival rate
+              </span>
+          </v-col>
+          <v-spacer/>
+          <v-col class="py-10 px-5" cols="8" align-self="center">
+            <v-slider hide-details :thumb-size="24" thumb-color="#00A6C0" color="#32D9CB" track-color="white" min="0" max="1" v-model="survival" step="0.01" thumb-label="always" @change="updatePrediction">Transmission</v-slider>
           </v-col>
         </v-row>
       </v-banner>
@@ -110,6 +126,7 @@ export default {
     selectedCountry: null,
     transmission: null,
     duration: null,
+    survival: null,
     chartOption0: {
       type: 'area spline',
       title: {
@@ -178,8 +195,7 @@ export default {
       self.chartOption0.series[0].points = null;
       self.chartOption0.series[1].points = null;
       self.chartOption0.series[2].points = null;
-      await axios.get(`http://localhost:3000/prediction/${this.selectedCountry}/${this.transmission}/${this.duration}`).then(function (response) {
-        console.log(response.data.data.notSick);
+      await axios.get(`http://localhost:3000/prediction/${this.selectedCountry}/${this.transmission}/${this.duration}/${this.survival}`).then(function (response) {
         self.chartOption0.series[0].points = response.data.data.notSick;
         self.chartOption0.series[1].points = response.data.data.infected;
         self.chartOption0.series[2].points = response.data.data.removed;

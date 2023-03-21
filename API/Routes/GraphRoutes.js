@@ -14,7 +14,7 @@ router.get('/vaccination/:country/:intervalStart/:intervalEnd', graphController.
 
 router.get('/relation/:country', graphController.graphCaseVaccinationRelation)
 
-router.get('/prediction/:country/:transmission/:duration', graphController.graphPrediction)
+router.get('/prediction/:country/:transmission/:duration/:survival', graphController.graphPrediction)
 
 router.get('/worldMap', graphController.graphWorldMapCases)
 
