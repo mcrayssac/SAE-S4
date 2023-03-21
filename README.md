@@ -48,3 +48,14 @@ npm run start_update
 5. Open a browser and navigate to **'http://localhost:8080'** to view the application.
 
 That's it! 
+
+## Sources & datasets dictionary
+
+- [Vaccines](https://www.ecdc.europa.eu/en/publications-data/data-covid-19-vaccination-eu-eea)
+- [COVID cases/deaths 2021-now](https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19)
+- [COVID cases/deaths 2020 (archived)](https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide)
+
+
+- [Vaccines documentation](https://www.ecdc.europa.eu/sites/default/files/documents/Variable_Dictionary_VaccineTracker-7-october-2022.pdf)
+  *You can find there aliases of the vaccines used in this project for example*
+- [COVID cases/deaths documentation](https://www.ecdc.europa.eu/sites/default/files/documents/2022-06-23_Variable_Dictionary_and_Disclaimer_national_weekly_data.pdf)

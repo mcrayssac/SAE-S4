@@ -176,7 +176,34 @@
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Regional relation between vaccinations and cases
+                World Map of this dataset's countries
+            </span>
+          </v-col>
+        </v-row>
+      </v-banner>
+
+      <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
+        <v-row>
+          <v-col cols="12" align="center" style="width: 100%; ">
+            <JSCharting :options="chartHeatmap" style="width: 100%; height: 500px;"/>
+          </v-col>
+        </v-row>
+      </v-banner>
+    </section>
+
+    <v-divider class="my-10"/>
+
+    <section class="Graph">
+      <v-banner color="#5F7174" rounded elevation="6">
+        <v-row>
+          <v-col cols="auto" align-self="center">
+            <v-icon color="#32D9CB" size="36">
+              mdi-chart-scatter-plot
+            </v-icon>
+          </v-col>
+          <v-col class="pb-0" cols="auto" align-self="center">
+            <span class="select-bar">
+                World Map of this dataset's countries
             </span>
           </v-col>
         </v-row>
@@ -397,6 +424,54 @@ export default {
     },
     chartOptionsMap: {
       type: "map solid",
+      mapping_base_layers: "US",
+      series: null
+    },
+    chartHeatmap: {
+      type: "heatmap solid",
+      annotations: [
+        {
+          label: {
+            text: 'COVID-19 situation in Europe<br>Results by country (2020-2023)',
+            style_fontSize: 16
+          },
+          position: 'top left'
+        }
+      ],
+      defaultAxis: {
+        defaultTick: {
+          line_visible: false,
+          gridLine_visible: false
+        },
+        line_visible: false
+      },
+      xAxis: [
+        {
+          /* The main axis */
+          id: 'x1',
+          orientation: 'top',
+          defaultTick_label: {
+            text: '<b>%value</b>',
+            offset: '8,5'
+          },
+          scale_interval: { unit: 'YearWeekISO', multiplier: 4 }
+        }
+      ],
+      yAxis: {
+        scale_invert: true,
+        line_visible: false,
+        defaultTick_label_offset: '4,0'
+      },
+      defaultPoint: {
+        legendEntry_visible: false,
+        outline: { color: 'white', width: 2 }
+      },
+      toolbar_visible: false,
+      legend: {
+        template: '%icon %name',
+        position: 'top right',
+        layout: 'vertical'
+      },
       series: null
     }
   }),
@@ -456,7 +531,7 @@ export default {
         return { map: country.toLowerCase() };
       });
       console.log([mapCodes]);
-      self.chartOptionsMap.series = [...mapCodes];
+      //self.chartOptionsMap.series = [...mapCodes];
     }).catch(function (error) {
       console.log(error);
     });*/
