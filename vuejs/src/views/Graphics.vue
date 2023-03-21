@@ -491,7 +491,7 @@ export default {
     async updateInterval(){
       let self = this;
       await axios.get(`http://localhost:3000/intervals/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
-        console.log(response.data);
+        self.timeInterval = response.data.data;
       }).catch(function (error) {
         console.log(error);
       })

@@ -64,7 +64,7 @@ exports.giveIntervals = async (vaccine, country, callback) => {
     if (vaccine && country){
         const path = "../Files/" + vaccine + ".json";
         let data = await giveJsonValue(path);
-        data = await giveIntervalValues(data, country);
+        data = await giveIntervalValues(data[0], country);
         if (data && data.length > 0) {
             return callback(null, data);
         } else {
@@ -77,7 +77,8 @@ exports.giveIntervals = async (vaccine, country, callback) => {
 }
 
 async function giveIntervalValues(data, country) {
-    const filteredCountry = await data.map(({ YearWeekISO }) => (`${YearWeekISO}`));
+    let filteredData = await data.filter(elt => elt.country === country);
+    const filteredCountry = await filteredData.map(({ YearWeekISO }) => (`${YearWeekISO}`));
     const uniqueCountry = await filteredCountry.reduce((acc, obj) => {
         const index = acc.findIndex(item => item === obj);
         if (index === -1) {
