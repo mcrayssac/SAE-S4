@@ -179,17 +179,16 @@ export default {
     JSCharting,
     Loading,
   },
-  mounted() {
-    let self = this;
-    axios.get('http://localhost:3000/vaccination/null/null/null').then(function (response) {
-      //console.log(response.data);
-      self.countries = response.data.data.countries
-      self.timeInterval = response.data.data.interval
-    }).catch(function (error) {
-      console.log(error);
-    })
-  },
   methods: {
+    async getCountries() {
+      let self = this;
+      axios.get('http://localhost:3000/countries/MOD').then(function (response) {
+        console.log(response.data.data);
+        self.countries = response.data.data;
+      }).catch(function (error) {
+        console.log(error);
+      })
+    },
     async updatePrediction(){
       let self = this;
       self.chartOption0.series[0].points = null;
@@ -203,6 +202,9 @@ export default {
         console.log(error);
       })
     }
+  },
+  beforeMount() {
+    this.getCountries()
   }
 }
 </script>
