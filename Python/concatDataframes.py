@@ -155,8 +155,8 @@ def Concat(indicator, TargetGroup, Vaccine):
     df_concat = df_concat.drop(['ReportingCountry', 'Population'], axis=1)
     df_concat[['TargetGroup']] = df_concat[['TargetGroup']].fillna(TargetGroup)
     df_concat[['Vaccine']] = df_concat[['Vaccine']].fillna(Vaccine)
+    df_concat = df_concat.dropna(subset=['weekly_count'])
     #df_concat[['ReportingCountry']] = df_concat[['ReportingCountry']].fillna(df_concat[['Region']])
-
 
     print(df_concat)
     #print("Concat ending !")

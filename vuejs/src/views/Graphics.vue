@@ -23,7 +23,7 @@
           </v-col>
           <v-spacer/>
           <v-col v-if="vaccines && vaccines.length > 0" cols="auto" align-self="center">
-            <v-select color="#A5E65A" dark :items="vaccines" label="Vaccines" v-model="selectedVaccine" style="max-width: 150px;" />
+            <v-select color="#A5E65A" dark :items="vaccines" label="Vaccines" v-model="selectedVaccine" style="max-width: 150px;" @change="updateCountries" />
           </v-col>
           <v-col v-if="countries && countries.length > 0" cols="auto" align-self="center">
             <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 150px;" />
@@ -405,6 +405,14 @@ export default {
     Loading,
   },
   methods:{
+    async updateCountries(){
+      let self = this;
+      await axios.get(`http://localhost:3000/countries/${this.selectedVaccine}`).then(function (response) {
+        self.countries = response.data.data;
+      }).catch(function (error) {
+        console.log(error);
+      })
+    },
     async updateVaccination(){
       const checkIntervalInfYears = this.selectedIntervalStart.substring(0, 4) < this.selectedIntervalEnd.substring(0, 4)
       const checkIntervalEqualYears = this.selectedIntervalStart.substring(0, 4) === this.selectedIntervalEnd.substring(0, 4)
@@ -436,7 +444,7 @@ export default {
   },
   mounted() {
     let self = this;
-    axios.get('http://localhost:3000/vaccine').then(function (response) {
+    axios.get('http://localhost:3000/vaccines').then(function (response) {
       self.vaccines = response.data.data;
     }).catch(function (error) {
       console.log(error);

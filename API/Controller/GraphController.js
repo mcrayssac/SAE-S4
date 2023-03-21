@@ -12,7 +12,18 @@ exports.accueil = (req, res) => {
 }
 
 exports.giveVaccine = async (req, res) => {
-    await graphService.giveVaccineValues((error, results)=>{
+    await graphService.giveVaccines((error, results)=>{
+        if(error){
+            console.log(error);
+            return res.status(400).send({success: 0, data: error});
+        }
+        return res.status(200).send({success: 1, data: results})
+    });
+}
+
+exports.giveCountries = async (req, res) => {
+    let vaccine = req.params.vaccine
+    await graphService.giveCountries(vaccine, (error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});

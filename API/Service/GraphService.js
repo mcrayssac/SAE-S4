@@ -25,7 +25,7 @@ async function giveJsonValue(path) {
  * Give vaccine values in Vaccine.json
  * @returns {Promise<*>}
  */
-exports.giveVaccineValues = async (callback) => {
+exports.giveVaccines = async (callback) => {
     const path = "../Files/Vaccine.json"
     let data = await giveJsonValue(path);
     data = JSON.parse(data)
@@ -34,6 +34,26 @@ exports.giveVaccineValues = async (callback) => {
     } else {
         return callback("ERROR: data")
     }
+}
+
+/**
+ * Give countries values from vaccine
+ * @returns {Promise<*>}
+ */
+exports.giveCountries = async (vaccine, callback) => {
+    if (vaccine){
+        const path = "../Files/" + vaccine + ".json";
+        let data = await giveJsonValue(path);
+        data = await giveCountriesValues(data[0]);
+        if (data && data.length > 0) {
+            return callback(null, data);
+        } else {
+            return callback("ERROR: data");
+        }
+    } else {
+        return callback("ERROR: vaccine");
+    }
+
 }
 
 /**
@@ -49,7 +69,6 @@ async function giveCountriesValues(data) {
         }
         return acc;
     }, []);
-    //console.log(uniqueCountry);
     return uniqueCountry;
 }
 
