@@ -36,7 +36,7 @@ def storageTime():
     print("Ending time storage")
 
 import readFile
-#from Web_importation import importFile
+from Web_importation import importFile
 
 import pycountry
 def trans_alpha_country(x):
