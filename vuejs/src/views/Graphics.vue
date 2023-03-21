@@ -22,6 +22,9 @@
             </span>
           </v-col>
           <v-spacer/>
+          <v-col v-if="vaccines && vaccines.length > 0" cols="auto" align-self="center">
+            <v-select color="#A5E65A" dark :items="vaccines" label="Vaccines" v-model="selectedVaccine" style="max-width: 150px;" />
+          </v-col>
           <v-col v-if="countries && countries.length > 0" cols="auto" align-self="center">
             <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 150px;" />
           </v-col>
@@ -199,6 +202,8 @@ import axios from "axios";
 export default {
   name: 'Test',
   data: () => ({
+    vaccines: null,
+    selectedVaccine: null,
     countries: null,
     selectedCountry: null,
     timeInterval: null,
@@ -431,15 +436,13 @@ export default {
   },
   mounted() {
     let self = this;
-    axios.get('http://localhost:3000/vaccination/null/null/null').then(function (response) {
-      //console.log(response.data);
-      self.countries = response.data.data.countries
-      self.timeInterval = response.data.data.interval
+    axios.get('http://localhost:3000/vaccine').then(function (response) {
+      self.vaccines = response.data.data;
     }).catch(function (error) {
       console.log(error);
     })
 
-    axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
+    /*axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
       const codes = response.data.data.code;
       const mapCodes = codes.map(country => {
         return { map: country.toLowerCase() };
@@ -448,7 +451,7 @@ export default {
       self.chartOptionsMap.series = [...mapCodes];
     }).catch(function (error) {
       console.log(error);
-    });
+    });*/
 
   }
 };

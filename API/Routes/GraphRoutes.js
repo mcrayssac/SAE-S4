@@ -4,6 +4,8 @@ const router = express.Router();
 
 router.get('/', graphController.accueil)
 
+router.get('/vaccine', graphController.giveVaccine)
+
 router.get('/vaccination/:country/:intervalStart/:intervalEnd', graphController.graphVaccination)
 
 router.get('/relation/:country', graphController.graphCaseVaccinationRelation)

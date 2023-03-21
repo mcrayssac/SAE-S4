@@ -11,6 +11,16 @@ exports.accueil = (req, res) => {
     });
 }
 
+exports.giveVaccine = async (req, res) => {
+    await graphService.giveVaccineValues((error, results)=>{
+        if(error){
+            console.log(error);
+            return res.status(400).send({success: 0, data: error});
+        }
+        return res.status(200).send({success: 1, data: results})
+    });
+}
+
 exports.graphVaccination = (req, res) => {
     let country = req.params.country;
     let intervalStart = req.params.intervalStart;

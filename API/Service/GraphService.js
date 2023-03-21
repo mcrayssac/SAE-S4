@@ -22,6 +22,21 @@ async function giveJsonValue(path) {
 }
 
 /**
+ * Give vaccine values in Vaccine.json
+ * @returns {Promise<*>}
+ */
+exports.giveVaccineValues = async (callback) => {
+    const path = "../Files/Vaccine.json"
+    let data = await giveJsonValue(path);
+    data = JSON.parse(data)
+    if (data && data.length > 0) {
+        return callback(null, data)
+    } else {
+        return callback("ERROR: data")
+    }
+}
+
+/**
  * Give unique countries in full_df.json
  * @returns {Promise<*>}
  */
