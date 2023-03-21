@@ -161,15 +161,15 @@ export default {
       ],
       series: [
         {
-          name: 'notSick',
+          name: 'not sick population',
           points: null
         },
         {
-          name: 'infected',
+          name: 'sick population',
           points: null
         },
         {
-          name: 'removed',
+          name: 'dead population',
           points: null
         }
       ]
