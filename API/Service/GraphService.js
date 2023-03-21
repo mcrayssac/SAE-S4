@@ -267,7 +267,7 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
         //console.log(cumulatedCasesValues);
 
         cumulatedDeathsValues = await giveCumulatedCasesValues(country, intervalStart, intervalEnd, 'deaths', data);
-        console.log(cumulatedDeathsValues);
+        //console.log(cumulatedDeathsValues);
 
         vaccinationsValues = await giveVaccinationsValues(country, intervalStart, intervalEnd, data);
         //console.log(vaccinationsValues);
@@ -363,9 +363,9 @@ exports.accueil = async(callback) => {
     }
 }
 
-exports.getPredictionValue = async(country, transmission, duration, callback) => {
+exports.getPredictionValue = async(country, transmission, duration, survival, callback) => {
     let data = await giveJsonValue("../Files/full_df.json");
-    let array = await prediction(country, transmission, duration)
+    let array = await prediction(country, transmission, duration, survival)
     let array1 = await array.reduce((acc, obj) => {
         const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO && item.notSick === obj.notSick);
         if (index === -1) {
@@ -417,7 +417,7 @@ exports.getPredictionValue = async(country, transmission, duration, callback) =>
     }
 }
 
-async function prediction(country, transmission, duration){
+async function prediction(country, transmission, duration, survival){
     let data = await giveJsonValue("../Files/full_df.json");
     let sick = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
     sick = await sick.filter(elt => elt.TargetGroup && elt.TargetGroup === "ALL");
@@ -441,7 +441,7 @@ async function prediction(country, transmission, duration){
     let i = 1;
     let YearWeekISO = null;
     let stagnation = 0;
-    while(notSick0 > 0 && removed0 < population0 && sick0 > 0 && stagnation < 10){
+    do{
         if(i <= 52-weekAdd){
             YearWeekISO = year+"-W"+(weekAdd+i);
         }
@@ -450,9 +450,9 @@ async function prediction(country, transmission, duration){
             i = 1;
             YearWeekISO = year+"-W"+(week+i);
         }
-        let notSick = Math.round(notSick0 + (-transmission*notSick0*sick0/population0));
+        let notSick = Math.round(notSick0 + (-transmission*notSick0*sick0/population0) + duration*sick0*survival);
         let infected= Math.round(sick0 + ((transmission*notSick0*sick0/population0) - duration*sick0));
-        let removed= Math.round(removed0 + duration*sick0);
+        let removed= Math.round(removed0 + duration*sick0*(1-survival));
         if(infected === sick0 || notSick === notSick0 ){
             stagnation++;
         }
@@ -467,7 +467,7 @@ async function prediction(country, transmission, duration){
         notSick0 = notSick;
         i++;
         //console.log('YearWeek: ', YearWeekISO,', Sick: ', sick0, ', Removed: ', removed0, ', Not sick: ', notSick0, ', i:', i)
-    }
+    }while(notSick0 > 0 && removed0 < population0 && sick0 > 0 && stagnation < 10)
     if(results.length > 0){
         return results;
     }

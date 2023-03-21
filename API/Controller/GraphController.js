@@ -70,7 +70,8 @@ exports.graphPrediction = (req, res) => {
     let country = req.params.country;
     let transmission = req.params.transmission;
     let duration = req.params.duration;
-    graphService.getPredictionValue(country, transmission, duration, (error, results)=>{
+    let survival = req.params.survival;
+    graphService.getPredictionValue(country, transmission, duration, survival, (error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});
