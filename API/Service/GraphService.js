@@ -106,6 +106,14 @@ async function giveCountriesValues(data) {
     return uniqueCountry;
 }
 
+/**
+ * Used to give cases and deaths
+ * @param country
+ * @param intervalStart
+ * @param intervalEnd
+ * @param data
+ * @returns {Promise<*>}
+ */
 async function giveVisualizationData(country, intervalStart, intervalEnd, data) {
     return await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
 }
@@ -181,10 +189,22 @@ async function giveCumulatedValues(indicator, data, total, log) {
     }
 }
 
+/**
+ * Verify start interval
+ * @param elt
+ * @param intervalStart
+ * @returns {boolean}
+ */
 function verifyIntervalStart(elt, intervalStart) {
     return ((intervalStart.substring(0, 4) < elt.YearWeekISO.substring(0, 4)) || (intervalStart.substring(0, 4) === elt.YearWeekISO.substring(0, 4) && (intervalStart.substring(6, 8) < elt.YearWeekISO.substring(6, 8) || intervalStart.substring(6, 8) === elt.YearWeekISO.substring(6, 8))));
 }
 
+/**
+ * Verify start end
+ * @param elt
+ * @param intervalEnd
+ * @returns {boolean}
+ */
 function verifyIntervalEnd(elt, intervalEnd) {
     return ((elt.YearWeekISO.substring(0, 4) < intervalEnd.substring(0, 4)) || (elt.YearWeekISO.substring(0, 4) === intervalEnd.substring(0, 4) && (elt.YearWeekISO.substring(6, 8) < intervalEnd.substring(6, 8) || elt.YearWeekISO.substring(6, 8) === intervalEnd.substring(6, 8))));
 }
@@ -244,6 +264,12 @@ async function giveVaccinationsValues(country, intervalStart, intervalEnd, data)
     return renamedData;
 }
 
+/**
+ * Used to give vaccinations
+ * @param data
+ * @param total
+ * @returns {Promise<*>}
+ */
 async function giveTotalVaccinationValues(data, total) {
     const filteredData = await data.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3 }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3 }));
     //console.log('filteredData: ', filteredData.length);
@@ -313,6 +339,15 @@ async function giveIndicatorValues(country, intervalStart, intervalEnd, data, in
     return renamedData
 }
 
+/**
+ * Used to give data for VueJS
+ * @param vaccine
+ * @param country
+ * @param intervalStart
+ * @param intervalEnd
+ * @param callback
+ * @returns {Promise<*>}
+ */
 exports.getVaccinationPays = async (vaccine, country, intervalStart, intervalEnd, callback) => {
     if (vaccine && country && intervalStart && intervalEnd) {
         const path = "../Files/" + vaccine + ".json";
@@ -361,71 +396,6 @@ exports.getVaccinationPays = async (vaccine, country, intervalStart, intervalEnd
     } else {
         return callback("ERROR: vaccine");
     }
-
-
-
-    /*let data = await giveJsonValue("../Files/full_df.json");
-    let casesValues = null;
-    let deathsValues = null;
-    let vaccinationsValues = null;
-    let cumulatedCasesValues = null;
-    let cumulatedDeathsValues = null;
-    let totalVaccinationValues = null;
-    if (country && intervalStart && intervalEnd) {
-        //console.log(country, intervalStart, intervalEnd);
-
-        casesValues = await giveIndicatorValues(country, intervalStart, intervalEnd, data, 'cases');
-        //console.log(casesValues);
-
-        deathsValues = await giveIndicatorValues(country, intervalStart, intervalEnd, data, 'deaths');
-        //console.log(deathsValues);
-
-        cumulatedCasesValues = await giveCumulatedValues(country, intervalStart, intervalEnd, 'cases', data);
-        //console.log(cumulatedCasesValues);
-
-        cumulatedDeathsValues = await giveCumulatedValues(country, intervalStart, intervalEnd, 'deaths', data);
-        //console.log(cumulatedDeathsValues);
-
-        vaccinationsValues = await giveVaccinationsValues(country, intervalStart, intervalEnd, data);
-        //console.log(vaccinationsValues);
-
-        totalVaccinationValues = await giveTotalVaccinationValues(country, intervalStart, intervalEnd, data);
-        //console.log(totalVaccinationValues);
-
-    }
-
-    const countries = await giveCountriesValues(data);
-    //console.log(countries)
-
-    const interval = await giveIntervalValues(data)
-    //console.log(interval);
-
-    if (vaccinationsValues && vaccinationsValues.length > 0) {
-        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {
-            casesValues,
-            deathsValues,
-            vaccinationsValues,
-            totalVaccinationValues,
-            cumulatedCasesValues,
-            cumulatedDeathsValues,
-            countries,
-            interval
-        });
-        else return callback("No countries found");
-    } else {
-        if (countries && countries.length > 0 && interval && interval.length > 0) return callback(null, {
-            casesValues,
-            deathsValues,
-            vaccinationsValues,
-            totalVaccinationValues,
-            cumulatedCasesValues,
-            cumulatedDeathsValues,
-            countries,
-            interval
-        });
-        else return callback("Country given not in database");
-    }*/
-    return callback("Country given not in database");
 }
 
 

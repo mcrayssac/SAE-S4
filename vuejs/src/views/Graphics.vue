@@ -32,7 +32,7 @@
             <v-select color="#A5E65A" dark :items="timeInterval" label="Interval start" v-model="selectedIntervalStart" style="max-width: 100px;" />
           </v-col>
           <v-col v-if="timeInterval && timeInterval.length > 0" cols="auto" align-self="center">
-            <v-select color="#A5E65A" dark :items="timeInterval" label="Interval end" v-model="selectedIntervalEnd" style="max-width: 100px;" />
+            <v-select color="#A5E65A" dark :items="inverseTimeInterval" label="Interval end" v-model="selectedIntervalEnd" style="max-width: 100px;" />
           </v-col>
           <v-col v-if="selectedCountry && selectedIntervalStart && selectedIntervalEnd" @click="updateVaccination" cols="auto" align-self="center">
             <v-btn fab text>
@@ -483,7 +483,12 @@ export default {
     JSCharting,
     Loading,
   },
-  methods:{
+  computed: {
+    inverseTimeInterval() {
+      return [...this.timeInterval].reverse()
+    },
+  },
+  methods: {
     async updateCountries(){
       let self = this;
       this.loading = true;
@@ -529,7 +534,7 @@ export default {
           self.loading = false;
         })
         await axios.get(`http://localhost:3000/relation/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
-          console.log(response.data.data.relation);
+          //console.log(response);
           self.chartOptions3.series[0].points = response.data.data.relation;
         }).catch(function (error) {
           console.log(error);
