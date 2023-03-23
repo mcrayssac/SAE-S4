@@ -516,7 +516,7 @@ export default {
         let self = this;
         this.loading = true;
         await axios.get(`http://localhost:3000/visualization/${this.selectedVaccine}/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
-          console.log(response);
+          //console.log(response);
           self.loading = false;
           self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
           self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
@@ -534,12 +534,12 @@ export default {
           console.log(error);
           self.loading = false;
         })
-        /*await axios.get(`http://localhost:3000/relation/${this.selectedCountry}`).then(function (response) {
-          //console.log(response.data.data.renamedData);
+        await axios.get(`http://localhost:3000/relation/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
+          console.log(response.data.data.renamedData);
           self.chartOptions3.series[0].points = response.data.data.renamedData;
         }).catch(function (error) {
           console.log(error);
-        })*/
+        })
       }
     }
   },

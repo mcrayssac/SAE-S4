@@ -372,32 +372,36 @@ exports.getVaccinationPays = async (vaccine, country, intervalStart, intervalEnd
 }
 
 
-exports.getCaseVaccinationRelation = async(country, callback) =>{
-    let data = await giveJsonValue("../Files/full_df.json");
-    //console.log(data);
-    data = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths');
-    //console.log(data);
-    const filteredData = await data.map(({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
-    //console.log(filteredData);
-    const mergedData = getTotalDoses(filteredData);
-    //console.log(mergedData);
+exports.getCaseVaccinationRelation = async(vaccine, country, callback) =>{
+    if (vaccine && country) {
+        let data = await giveJsonValue("../Files/full_df.json");
+        //console.log(data);
+        data = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths');
+        //console.log(data);
+        const filteredData = await data.map(({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
+        //console.log(filteredData);
+        const mergedData = getTotalDoses(filteredData);
+        //console.log(mergedData);
 
-    const uniqueData = Object.values(await mergedData.reduce((acc, curr) => {
-        const key = curr.YearWeekISO + curr.cumulative_count + curr.TotalDoses;
-        if (!acc[key]) {
-            acc[key] = { YearWeekISO: curr.YearWeekISO, cumulative_count: curr.cumulative_count, TotalDoses: curr.TotalDoses };
+        const uniqueData = Object.values(await mergedData.reduce((acc, curr) => {
+            const key = curr.YearWeekISO + curr.cumulative_count + curr.TotalDoses;
+            if (!acc[key]) {
+                acc[key] = { YearWeekISO: curr.YearWeekISO, cumulative_count: curr.cumulative_count, TotalDoses: curr.TotalDoses };
+            }
+            return acc;
+        }, {}));
+
+        let renamedData = uniqueData.map(obj => {
+            return {x: obj.cumulative_count, y: obj.TotalDoses};
+        });
+        //console.log(renamedData);
+        if (renamedData && renamedData.length > 0) {
+            return callback(null, {renamedData});
+        } else {
+            return callback("Woops something went wrong pal !");
         }
-        return acc;
-    }, {}));
-
-    let renamedData = uniqueData.map(obj => {
-        return {x: obj.cumulative_count, y: obj.TotalDoses};
-    });
-    //console.log(renamedData);
-    if (renamedData && renamedData.length > 0) {
-        return callback(null, {renamedData});
-    } else {
-        return callback("Woops something went wrong pal !");
+    }else{
+        return callback("ERROR: vaccine");
     }
 }
 
