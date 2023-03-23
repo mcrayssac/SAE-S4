@@ -520,17 +520,10 @@ export default {
           self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
           self.chartOptions4.series[2].points = response.data.data.cumulatedDeathsValues;
           self.chartOptions2.series[0].points = response.data.data.vaccinationValues;
-          self.chartOptions2.series[1].points = response.data.data.giveCasesValues;
-          self.chartOptions2.series[2].points = response.data.data.giveDeathsValues;
-          /*self.countries = response.data.data.countries
-          self.timeInterval = response.data.data.interval
-          self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
-          self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
-          self.chartOptions4.series[2].points = response.data.data.cumulatedDeathsValues;
-          self.chartOptions2.series[0].points = response.data.data.vaccinationsValues;
-          self.chartOptions2.series[1].points = response.data.data.cumulatedCasesValues;
-          self.chartOptions.series[0].points = response.data.data.casesValues;
-          self.chartOptions1.series[0].points = response.data.data.deathsValues;*/
+          self.chartOptions2.series[1].points = response.data.data.giveLogCasesValues;
+          self.chartOptions2.series[2].points = response.data.data.giveLogDeathsValues;
+          self.chartOptions.series[0].points = response.data.data.giveCasesValues;
+          self.chartOptions1.series[0].points = response.data.data.giveDeathsValues;
         }).catch(function (error) {
           console.log(error);
           self.loading = false;
