@@ -97,7 +97,7 @@
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Regional vaccinations and cases
+                Regional vaccinations, cases and deaths
             </span>
           </v-col>
         </v-row>
@@ -125,7 +125,7 @@
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Total regional vaccinations and cases
+                Total regional vaccinations, cases and deaths
             </span>
           </v-col>
         </v-row>
@@ -306,7 +306,7 @@ export default {
       title: {
         position: 'center',
         label: {
-          text: 'Vaccination and accumulative cases number',
+          text: 'Vaccinations, cases and deaths number',
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
@@ -314,7 +314,7 @@ export default {
         template: '%icon %name',
         position: 'top right'
       },
-      palette: ['#32D9CB', '#A5E65A'],
+      palette: ['#32D9CB', '#A5E65A', '#5F7174'],
       defaultSeries: {
         shape_opacity: 0.2,
         defaultPoint_marker: {
@@ -341,6 +341,10 @@ export default {
         {
           name: 'Cases number',
           points: null
+        },
+        {
+          name: 'Deaths number',
+          points: null
         }
       ]
     },
@@ -349,7 +353,7 @@ export default {
       title: {
         position: 'center',
         label: {
-          text: 'Total Vaccination and accumulative cases number',
+          text: 'Total Vaccination and accumulative cases and deaths number',
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
@@ -357,7 +361,7 @@ export default {
         template: '%icon %name',
         position: 'top right'
       },
-      palette: ['#32D9CB', '#A5E65A', '#ff0000'],
+      palette: ['#32D9CB', '#A5E65A', '#5F7174'],
       defaultSeries: {
         shape_opacity: 0.2,
         defaultPoint_marker: {
@@ -382,11 +386,11 @@ export default {
           points: null
         },
         {
-          name: 'Cases number',
+          name: 'Accumulative cases number',
           points: null
         },
         {
-          name: 'Deaths number',
+          name: 'Accumulative deaths number',
           points: null
         }
       ]
@@ -401,29 +405,23 @@ export default {
         }
       },
       defaultPoint: {
-        opacity: 0.8,
-        marker: {
+        tooltip: '<b>Week: %name</b><br>Deaths per week: <b>%xValue</b><br>Cumulated vaccinations: <b>%yValue</b>\'',
+        opacity: 0.7,
+        marker:{
           type: 'circle',
-          outline_width: 0,
-          size: 12
+          outline_width:0,
+          size:12
         }
       },
-      palette: ['#32D9CB', '#A5E65A'],
       axisToZoom: 'xy',
+      legend_visible: false,
+      palette: ['#32D9CB', '#A5E65A'],
       legend: {
         template: '%icon %name',
         position: 'top right'
       },
-      yAxis: {
-        scale_type: 'auto',
-      },
-      xAxis: {
-        scale_type: 'auto',
-        crosshair_enabled: true
-      },
       series: [
         {
-          name: 'Relation Vaccination/Cases',
           points: null
         }
       ]
@@ -516,30 +514,26 @@ export default {
         let self = this;
         this.loading = true;
         await axios.get(`http://localhost:3000/visualization/${this.selectedVaccine}/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
-          console.log(response);
+          //console.log(response);
           self.loading = false;
           self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
           self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
           self.chartOptions4.series[2].points = response.data.data.cumulatedDeathsValues;
-          /*self.countries = response.data.data.countries
-          self.timeInterval = response.data.data.interval
-          self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
-          self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
-          self.chartOptions4.series[2].points = response.data.data.cumulatedDeathsValues;
-          self.chartOptions2.series[0].points = response.data.data.vaccinationsValues;
-          self.chartOptions2.series[1].points = response.data.data.cumulatedCasesValues;
-          self.chartOptions.series[0].points = response.data.data.casesValues;
-          self.chartOptions1.series[0].points = response.data.data.deathsValues;*/
+          self.chartOptions2.series[0].points = response.data.data.vaccinationValues;
+          self.chartOptions2.series[1].points = response.data.data.giveLogCasesValues;
+          self.chartOptions2.series[2].points = response.data.data.giveLogDeathsValues;
+          self.chartOptions.series[0].points = response.data.data.giveCasesValues;
+          self.chartOptions1.series[0].points = response.data.data.giveDeathsValues;
         }).catch(function (error) {
           console.log(error);
           self.loading = false;
         })
-        /*await axios.get(`http://localhost:3000/relation/${this.selectedCountry}`).then(function (response) {
-          //console.log(response.data.data.renamedData);
-          self.chartOptions3.series[0].points = response.data.data.renamedData;
+        await axios.get(`http://localhost:3000/relation/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
+          console.log(response.data.data.relation);
+          self.chartOptions3.series[0].points = response.data.data.relation;
         }).catch(function (error) {
           console.log(error);
-        })*/
+        })
       }
     }
   },
