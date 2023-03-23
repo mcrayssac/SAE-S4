@@ -64,7 +64,7 @@ exports.giveIntervals = async (vaccine, country, callback) => {
     if (vaccine && country){
         const path = "../Files/" + vaccine + ".json";
         let data = await giveJsonValue(path);
-        data = await giveIntervalValues(data[0], country);
+        data = await giveIntervalValues(data, country);
         if (data && data.length > 0) {
             return callback(null, data);
         } else {
