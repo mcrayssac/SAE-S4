@@ -39,6 +39,7 @@ If the data is already loaded when launching the node server, it should tell you
 npm run start_update
 ```
 *You can do the same thing with the top right button in the app*
+
 5. You can now launch both server:
 ```bash
 cd API
@@ -48,7 +49,7 @@ cd vuejs
 npm run serve
 ```
 
-5. Open a browser and navigate to **'http://localhost:8080'** to view the application.
+6. Open a browser and navigate to **'http://localhost:8080'** to view the application.
 
 That's it! 
 

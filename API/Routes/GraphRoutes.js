@@ -14,6 +14,8 @@ router.get('/visualization/:vaccine/:country/:intervalStart/:intervalEnd', graph
 
 router.get('/relation/:vaccine/:country', graphController.graphCaseVaccinationRelation)
 
+router.get('/heatmap/:vaccine', graphController.graphHeatMap)
+
 router.get('/prediction/:country/:transmission/:duration/:survival', graphController.graphPrediction)
 
 router.get('/worldMap', graphController.graphWorldMapCases)
