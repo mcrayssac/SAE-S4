@@ -424,7 +424,7 @@ export default {
     },
     chartOptionsMap: {
       type: "map solid",
-      mapping_base_layers: "US",
+      map : "world",
       series: null
     },
     chartHeatmap: {
@@ -484,6 +484,7 @@ export default {
       let self = this;
       await axios.get(`http://localhost:3000/countries/${this.selectedVaccine}`).then(function (response) {
         self.countries = response.data.data;
+        //console.log(response.data.data);
       }).catch(function (error) {
         console.log(error);
       })
@@ -492,6 +493,7 @@ export default {
       let self = this;
       await axios.get(`http://localhost:3000/intervals/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
         self.timeInterval = response.data.data;
+        //console.log(response.data.data);
       }).catch(function (error) {
         console.log(error);
       })
@@ -502,10 +504,10 @@ export default {
       const checkIntervalWeek = this.selectedIntervalStart.substring(6, 8) < this.selectedIntervalEnd.substring(6, 8)
       if (checkIntervalInfYears || (checkIntervalEqualYears && checkIntervalWeek)){
         let self = this;
-        await axios.get(`http://localhost:3000/vaccination/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
-          console.log(response.data);
-          self.countries = response.data.data.countries
-          self.timeInterval = response.data.data.interval
+        await axios.get(`http://localhost:3000/vaccination/${this.selectedVaccine}/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
+          //console.log(response.data.data);
+          //self.countries = response.data.data.countries;
+          //self.timeInterval = response.data.data.interval;
           self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
           self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
           self.chartOptions4.series[2].points = response.data.data.cumulatedDeathsValues;
@@ -516,8 +518,8 @@ export default {
         }).catch(function (error) {
           console.log(error);
         })
-        await axios.get(`http://localhost:3000/relation/${this.selectedCountry}`).then(function (response) {
-          //console.log(response.data.data.renamedData);
+        await axios.get(`http://localhost:3000/relation/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
+          console.log(response.data.data.renamedData);
           self.chartOptions3.series[0].points = response.data.data.renamedData;
         }).catch(function (error) {
           console.log(error);
@@ -533,7 +535,7 @@ export default {
       console.log(error);
     })
 
-    /*axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
+    /*axios.get(`http://localhost:3000/WorldMap/:vaccine`).then(function (response) {
       const codes = response.data.data.code;
       const mapCodes = codes.map(country => {
         return { map: country.toLowerCase() };

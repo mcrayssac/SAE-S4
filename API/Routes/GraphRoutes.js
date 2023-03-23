@@ -10,13 +10,13 @@ router.get('/countries/:vaccine', graphController.giveCountries)
 
 router.get('/intervals/:vaccine/:country', graphController.giveInterval)
 
-router.get('/vaccination/:country/:intervalStart/:intervalEnd', graphController.graphVaccination)
+router.get('/vaccination/:vaccine/:country/:intervalStart/:intervalEnd', graphController.graphVaccination)
 
-router.get('/relation/:country', graphController.graphCaseVaccinationRelation)
+router.get('/relation/:vaccine/:country', graphController.graphCaseVaccinationRelation)
 
 router.get('/prediction/:country/:transmission/:duration/:survival', graphController.graphPrediction)
 
-router.get('/worldMap', graphController.graphWorldMapCases)
+router.get('/worldMap/:vaccine', graphController.graphWorldMapCases)
 
 const dataRefresh = require("../DataRefresh/dataRefresh")
 router.get('/refresh', dataRefresh.routerUpdate)

@@ -266,8 +266,9 @@ async function giveIndicatorValues(country, intervalStart, intervalEnd, data, in
     return renamedData
 }
 
-exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callback) => {
-    let data = await giveJsonValue("../Files/full_df.json");
+exports.getVaccinationPays = async (vaccine, country, intervalStart, intervalEnd, callback) => {
+    let data = await giveJsonValue("../Files/"+vaccine+".json");
+    data = data[0];
     let casesValues = null;
     let deathsValues = null;
     let vaccinationsValues = null;
@@ -331,11 +332,13 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
 }
 
 
-exports.getCaseVaccinationRelation = async(country, callback) =>{
-    let data = await giveJsonValue("../Files/full_df.json");
+exports.getCaseVaccinationRelation = async(vaccine, country, callback) =>{
+    const path = "../Files/" + vaccine + ".json";
+    let data = await giveJsonValue(path);
+    data = data[0];
     //console.log(data);
     data = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths');
-    //console.log(data);
+    console.log(data);
     const filteredData = await data.map(({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, cumulative_count, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
     //console.log(filteredData);
     const mergedData = getTotalDoses(filteredData);
@@ -361,8 +364,10 @@ exports.getCaseVaccinationRelation = async(country, callback) =>{
 }
 
 
-exports.getWorldMapCases = async(callback) =>{
-    let data = await giveJsonValue("../Files/full_df.json");
+exports.getWorldMapCases = async(vaccine, callback) =>{
+    const path = "../Files/" + vaccine + ".json";
+    let data = await giveJsonValue(path);
+    data = data[0];
 
     const code = await giveCountryCodeValues(data);
     //console.log(countries)
