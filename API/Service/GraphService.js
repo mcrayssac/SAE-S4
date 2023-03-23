@@ -392,7 +392,7 @@ exports.getCaseVaccinationRelation = async(vaccine, country, callback) =>{
         }, {}));
 
         let relation = uniqueData.map(obj => {
-            return {x: obj.weekly_count, y: obj.TotalDoses};
+            return {x: obj.weekly_count, y: obj.TotalDoses, name: obj.YearWeekISO};
         });
         //console.log(renamedData);
         if (relation && relation.length > 0) {

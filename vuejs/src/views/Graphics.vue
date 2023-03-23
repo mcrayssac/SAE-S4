@@ -401,29 +401,23 @@ export default {
         }
       },
       defaultPoint: {
-        opacity: 0.8,
-        marker: {
+        tooltip: '<b>Week: %name</b><br>Deaths per week: <b>%xValue</b><br>Cumulated vaccinations: <b>%yValue</b>\'',
+        opacity: 0.7,
+        marker:{
           type: 'circle',
-          outline_width: 0,
-          size: 12
+          outline_width:0,
+          size:12
         }
       },
-      palette: ['#32D9CB', '#A5E65A'],
       axisToZoom: 'xy',
+      legend_visible: false,
+      palette: ['#32D9CB', '#A5E65A'],
       legend: {
         template: '%icon %name',
         position: 'top right'
       },
-      yAxis: {
-        scale_type: 'auto',
-      },
-      xAxis: {
-        scale_type: 'auto',
-        crosshair_enabled: true
-      },
       series: [
         {
-          name: 'Relation Vaccination/Cases',
           points: null
         }
       ]
@@ -535,6 +529,7 @@ export default {
           self.loading = false;
         })
         await axios.get(`http://localhost:3000/relation/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
+          console.log(response.data.data.relation);
           self.chartOptions3.series[0].points = response.data.data.relation;
         }).catch(function (error) {
           console.log(error);
