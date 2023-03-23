@@ -10,7 +10,7 @@
 
     <section class="Select">
       <v-banner color="#5F7174" rounded elevation="6">
-        <v-row>
+        <v-row v-if="!loading">
           <v-col cols="auto" align-self="center">
             <v-icon color="#32D9CB" size="36">
               mdi-map-search
@@ -23,16 +23,16 @@
           </v-col>
           <v-spacer/>
           <v-col v-if="vaccines && vaccines.length > 0" cols="auto" align-self="center">
-            <v-select color="#A5E65A" dark :items="vaccines" label="Vaccines" v-model="selectedVaccine" style="max-width: 150px;" @change="updateCountries" />
+            <v-select color="#A5E65A" dark :items="vaccines" label="Vaccines" v-model="selectedVaccine" style="max-width: 90px;" @change="updateCountries" />
           </v-col>
           <v-col v-if="countries && countries.length > 0" cols="auto" align-self="center">
-            <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 150px;" @change="updateInterval"/>
+            <v-select color="#A5E65A" dark :items="countries" label="Region" v-model="selectedCountry" style="max-width: 100px;" @change="updateInterval"/>
           </v-col>
           <v-col v-if="timeInterval && timeInterval.length > 0" cols="auto" align-self="center">
-            <v-select color="#A5E65A" dark :items="timeInterval" label="Interval start" v-model="selectedIntervalStart" style="max-width: 150px;" />
+            <v-select color="#A5E65A" dark :items="timeInterval" label="Interval start" v-model="selectedIntervalStart" style="max-width: 100px;" />
           </v-col>
           <v-col v-if="timeInterval && timeInterval.length > 0" cols="auto" align-self="center">
-            <v-select color="#A5E65A" dark :items="timeInterval" label="Interval end" v-model="selectedIntervalEnd" style="max-width: 150px;" />
+            <v-select color="#A5E65A" dark :items="timeInterval" label="Interval end" v-model="selectedIntervalEnd" style="max-width: 100px;" />
           </v-col>
           <v-col v-if="selectedCountry && selectedIntervalStart && selectedIntervalEnd" @click="updateVaccination" cols="auto" align-self="center">
             <v-btn fab text>
@@ -40,6 +40,11 @@
                 mdi-magnify
               </v-icon>
             </v-btn>
+          </v-col>
+        </v-row>
+        <v-row v-else>
+          <v-col cols="12" align="center" style="width: 100%;">
+            <Loading color="#32D9CB" />
           </v-col>
         </v-row>
       </v-banner>
@@ -236,6 +241,7 @@ export default {
     timeInterval: null,
     selectedIntervalStart: null,
     selectedIntervalEnd: null,
+    loading: false,
     chartOptions: {
       defaultSeries_type: 'radar polar area',
       defaultSeries: {
@@ -482,18 +488,24 @@ export default {
   methods:{
     async updateCountries(){
       let self = this;
+      this.loading = true;
       await axios.get(`http://localhost:3000/countries/${this.selectedVaccine}`).then(function (response) {
+        self.loading = false;
         self.countries = response.data.data;
       }).catch(function (error) {
         console.log(error);
+        self.loading = false;
       })
     },
     async updateInterval(){
       let self = this;
+      this.loading = true;
       await axios.get(`http://localhost:3000/intervals/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
+        self.loading = false;
         self.timeInterval = response.data.data;
       }).catch(function (error) {
         console.log(error);
+        self.loading = false;
       })
     },
     async updateVaccination(){
@@ -502,8 +514,10 @@ export default {
       const checkIntervalWeek = this.selectedIntervalStart.substring(6, 8) < this.selectedIntervalEnd.substring(6, 8)
       if (checkIntervalInfYears || (checkIntervalEqualYears && checkIntervalWeek)){
         let self = this;
+        this.loading = true;
         await axios.get(`http://localhost:3000/visualization/${this.selectedVaccine}/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
-          console.log(response.data);
+          console.log(response);
+          self.loading = false;
           self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
           self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
           self.chartOptions4.series[2].points = response.data.data.cumulatedDeathsValues;
@@ -518,6 +532,7 @@ export default {
           self.chartOptions1.series[0].points = response.data.data.deathsValues;*/
         }).catch(function (error) {
           console.log(error);
+          self.loading = false;
         })
         /*await axios.get(`http://localhost:3000/relation/${this.selectedCountry}`).then(function (response) {
           //console.log(response.data.data.renamedData);
