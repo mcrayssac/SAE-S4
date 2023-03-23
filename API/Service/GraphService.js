@@ -451,6 +451,47 @@ exports.getCaseVaccinationRelation = async(vaccine, country, callback) =>{
     }
 }
 
+function getPointsHeat(indicator, data){
+    let filteredData = data.filter(elt => elt.indicator && elt.indicator === indicator);
+
+    let mappedData =  filteredData.map(({ YearWeekISO, TargetGroup, weekly_count }) => ({ YearWeekISO, TargetGroup, weekly_count}));
+
+    let final = mappedData.map(
+        v => {
+            return {
+                x: v.YearWeekISO,
+                y: v.TargetGroup,
+                z: v.weekly_count,
+                attributes: {
+                    date: v.YearWeekISO,
+                    ageRange: v.TargetGroup,
+                    cases: v.weekly_count
+                }
+            }
+        }
+    )
+    return final;
+}
+
+exports.getHeatmapData = async(vaccine, callback)=>{
+    if (vaccine) {
+        const path = "../Files/" + vaccine + ".json";
+        let data = await giveJsonValue(path);
+        //console.log('Items number: ', data.length)
+
+        /* Bring it on */
+        let result = getPointsHeat('cases', data);
+        console.log(result);
+        if (result && result.length > 0) {
+            return callback(null, result);
+        } else {
+            return callback("Why am I still here ?");
+        }
+    } else {
+        return callback("ERROR: vaccine");
+    }
+}
+
 
 exports.getWorldMapCases = async(callback) =>{
     let data = await giveJsonValue("../Files/MOD.json");
