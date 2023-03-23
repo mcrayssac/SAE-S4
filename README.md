@@ -1,4 +1,4 @@
-# SAE-S4 : COVID-19 Data Analaysis Project
+# SAE-S4 : COVID-19 Data Analysis Project
 ## Introduction
 
 This project is a web-based data analysis application that allows the users to visualize graphs about a European database containing recent COVID-19 data from all European countries. 
@@ -29,21 +29,24 @@ LOCALHOST_PORT = "http://localhost:8080"
 ```
 4. Make sure to first load the data in the `API` directory (you will not be able to see anything without doing this, it might take a while but our lovely project leader had too much time to spare and made a timer that estimate how much time it would take you to load the data):
 ```bash
-# Load data 
 cd API
 npm run start
-
-# launch web server (in another terminal)
-cd vuejs
-npm run serve
 ```
-If the data is already loaded, it should tell you that you `All your files are up to date !
-`, but if for some reason you want to force and reload all the data, go to `API` and do: 
+If the data is already loaded when launching the node server, it should tell you that you `All your files are up to date ! 
+`, but if for some reason you want to force and reload all the data, go to `API` and do:
 ```bash
 # Force data refresh
 npm run start_update
 ```
 *You can do the same thing with the top right button in the app*
+5. You can now launch both server:
+```bash
+cd API
+npm run start
+
+cd vuejs
+npm run serve
+```
 
 5. Open a browser and navigate to **'http://localhost:8080'** to view the application.
 
