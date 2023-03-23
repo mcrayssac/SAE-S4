@@ -169,7 +169,8 @@ def concat_full():
                 tabConcat.append(Concat(elt2, elt1, elt).to_dict(orient="records"))
         #print("Dataframe shape : ")
         #print(len(tabConcat))
-        storage(tabConcat, "../Files/"+ elt +".json")
+        flattened_list = [elt for sublist in tabConcat for elt in sublist]
+        storage(flattened_list, "../Files/"+ elt +".json")
     #tabConcat.append(Concat(tabIndicator[0], tabTargetGroup[0], tabVaccine[0]))
     #df_concat_full = pd.concat(tabConcat)
     #df_concat_full = cleanFile.clean(df_concat_full)
@@ -181,11 +182,11 @@ def concat_full():
 
 #----- Storage File -----
 def storage(df, file):
-    print("Beginning storage")
+    #print("Beginning storage")
     out_file = open(file, "w")
     json.dump(df, out_file, ensure_ascii=False, indent=2)
     out_file.close()
-    print("Ending storage")
+    #print("Ending storage")
 
 #----- Variables -----
 fullDataframeFile = "../Files/full_df.json"

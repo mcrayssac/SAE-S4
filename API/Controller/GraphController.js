@@ -45,10 +45,11 @@ exports.giveInterval = async (req, res) => {
 }
 
 exports.graphVaccination = (req, res) => {
+    let vaccine = req.params.vaccine;
     let country = req.params.country;
     let intervalStart = req.params.intervalStart;
     let intervalEnd = req.params.intervalEnd;
-    graphService.getVaccinationPays(country, intervalStart, intervalEnd, (error, results)=>{
+    graphService.getVaccinationPays(vaccine, country, intervalStart, intervalEnd, (error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});

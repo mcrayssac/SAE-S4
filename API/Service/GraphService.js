@@ -44,7 +44,7 @@ exports.giveCountries = async (vaccine, callback) => {
     if (vaccine){
         const path = "../Files/" + vaccine + ".json";
         let data = await giveJsonValue(path);
-        data = await giveCountriesValues(data[0]);
+        data = await giveCountriesValues(data);
         if (data && data.length > 0) {
             return callback(null, data);
         } else {
@@ -104,6 +104,11 @@ async function giveCountriesValues(data) {
         return acc;
     }, []);
     return uniqueCountry;
+}
+
+async function giveVisualizationData(country, intervalStart, intervalEnd, data) {
+    let filterData = await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
+    console.log(filterData);
 }
 
 /**
@@ -266,8 +271,25 @@ async function giveIndicatorValues(country, intervalStart, intervalEnd, data, in
     return renamedData
 }
 
-exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callback) => {
-    let data = await giveJsonValue("../Files/full_df.json");
+exports.getVaccinationPays = async (vaccine, country, intervalStart, intervalEnd, callback) => {
+    if (vaccine && country && intervalStart && intervalEnd){
+        const path = "../Files/" + vaccine + ".json";
+        let data = await giveJsonValue(path);
+        data = await giveVisualizationData(country, intervalStart, intervalEnd, data);
+
+
+        if (data && data.length > 0) {
+            return callback(null, data);
+        } else {
+            return callback("ERROR: data");
+        }
+    } else {
+        return callback("ERROR: vaccine");
+    }
+
+
+
+    /*let data = await giveJsonValue("../Files/full_df.json");
     let casesValues = null;
     let deathsValues = null;
     let vaccinationsValues = null;
@@ -327,7 +349,8 @@ exports.getVaccinationPays = async (country, intervalStart, intervalEnd, callbac
             interval
         });
         else return callback("Country given not in database");
-    }
+    }*/
+    return callback("Country given not in database");
 }
 
 

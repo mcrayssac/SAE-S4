@@ -3,7 +3,7 @@
     <section class="Title">
       <v-row class="mt-10" align="center" no-gutters>
         <v-col class="mb-16" align="center" no-gutters>
-          <h1 class="page-title">Data Visualisation</h1>
+          <h1 class="page-title">Data Visualization</h1>
         </v-col>
       </v-row>
     </section>
@@ -502,9 +502,9 @@ export default {
       const checkIntervalWeek = this.selectedIntervalStart.substring(6, 8) < this.selectedIntervalEnd.substring(6, 8)
       if (checkIntervalInfYears || (checkIntervalEqualYears && checkIntervalWeek)){
         let self = this;
-        await axios.get(`http://localhost:3000/vaccination/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
+        await axios.get(`http://localhost:3000/visualization/${this.selectedVaccine}/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
           console.log(response.data);
-          self.countries = response.data.data.countries
+          /*self.countries = response.data.data.countries
           self.timeInterval = response.data.data.interval
           self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
           self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
@@ -512,16 +512,16 @@ export default {
           self.chartOptions2.series[0].points = response.data.data.vaccinationsValues;
           self.chartOptions2.series[1].points = response.data.data.cumulatedCasesValues;
           self.chartOptions.series[0].points = response.data.data.casesValues;
-          self.chartOptions1.series[0].points = response.data.data.deathsValues;
+          self.chartOptions1.series[0].points = response.data.data.deathsValues;*/
         }).catch(function (error) {
           console.log(error);
         })
-        await axios.get(`http://localhost:3000/relation/${this.selectedCountry}`).then(function (response) {
+        /*await axios.get(`http://localhost:3000/relation/${this.selectedCountry}`).then(function (response) {
           //console.log(response.data.data.renamedData);
           self.chartOptions3.series[0].points = response.data.data.renamedData;
         }).catch(function (error) {
           console.log(error);
-        })
+        })*/
       }
     }
   },
