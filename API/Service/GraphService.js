@@ -127,7 +127,7 @@ async function giveCountryCodeValues(data) {
     return uniqueCountry;
 }
 
-async function giveCumulatedValues(indicator, data, total) {
+async function giveCumulatedValues(indicator, data, total, log) {
     let filteredData = await data.filter(elt => elt.indicator && elt.indicator === indicator);
     //console.log('filteredData: ', filteredData.length);
 
@@ -150,20 +150,30 @@ async function giveCumulatedValues(indicator, data, total) {
     }
     //console.log('result: ', uniqueData.length);
 
-    let mergedData = uniqueData.map(d => ({
-        ...d,
-        weekly_count: Math.log10(d.weekly_count) > 0 ? Math.log10(d.weekly_count) : 0,
-        TotalVaccination: Math.log10(d.TotalVaccination) > 0 ? Math.log10(d.TotalVaccination) : 0,
-    }));
+    let mergedData;
+    if (log) {
+        mergedData = uniqueData.map(d => ({
+            ...d,
+            weekly_count: Math.log10(d.weekly_count) > 0 ? Math.log10(d.weekly_count) : 0,
+            TotalVaccination: Math.log10(d.TotalVaccination) > 0 ? Math.log10(d.TotalVaccination) : 0,
+        }));
+    } else {
+        total = false;
+         mergedData = uniqueData.map(d => ({
+            ...d,
+            weekly_count: d.weekly_count
+        }));
+    }
 
+    let renamedData;
     if (total) {
-        let renamedData = mergedData.map(obj => {
+        renamedData = mergedData.map(obj => {
             return {x: obj.YearWeekISO, y: obj.TotalVaccination};
         });
         //console.log('renamedData: ', renamedData.length);
         return renamedData;
     } else {
-        let renamedData = mergedData.map(obj => {
+        renamedData = mergedData.map(obj => {
             return {x: obj.YearWeekISO, y: obj.weekly_count};
         });
         //console.log('renamedData: ', renamedData.length);
@@ -312,32 +322,41 @@ exports.getVaccinationPays = async (vaccine, country, intervalStart, intervalEnd
 
         /* Total regional vaccinations, cases and deaths */
         let totalVaccinationValues = await giveTotalVaccinationValues(data, true);
-        console.log('totalVaccinationValues: ', totalVaccinationValues.length);
+        //console.log('totalVaccinationValues: ', totalVaccinationValues.length);
 
-        let cumulatedCasesValues = await giveCumulatedValues('cases', data, true);
-        console.log('cumulatedCasesValues: ', cumulatedCasesValues.length);
+        let cumulatedCasesValues = await giveCumulatedValues('cases', data, true, true);
+        //console.log('cumulatedCasesValues: ', cumulatedCasesValues.length);
 
-        let cumulatedDeathsValues = await giveCumulatedValues('deaths', data, true);
-        console.log('cumulatedDeathsValues: ', cumulatedDeathsValues.length);
+        let cumulatedDeathsValues = await giveCumulatedValues('deaths', data, true, true);
+        //console.log('cumulatedDeathsValues: ', cumulatedDeathsValues.length);
 
         /* Regional vaccinations, cases and deaths */
         let vaccinationValues = await giveTotalVaccinationValues(data, false);
-        console.log('vaccinationValues: ', vaccinationValues.length);
+        //console.log('vaccinationValues: ', vaccinationValues.length);
 
-        let giveCasesValues = await giveCumulatedValues('cases', data, false);
-        console.log('giveCasesValues: ', giveCasesValues.length);
+        let giveLogCasesValues = await giveCumulatedValues('cases', data, false, true);
+        //console.log('giveLogCasesValues: ', giveLogCasesValues.length);
 
-        let giveDeathsValues = await giveCumulatedValues('deaths', data, false);
-        console.log('giveDeathsValues: ', giveDeathsValues.length);
+        let giveLogDeathsValues = await giveCumulatedValues('deaths', data, false, true);
+        //console.log('giveLogDeathsValues: ', giveLogDeathsValues.length);
+
+        /* Regional cases and deaths */
+        let giveCasesValues = await giveCumulatedValues('cases', data, false, false);
+        //console.log('giveCasesValues: ', giveCasesValues.length);
+
+        let giveDeathsValues = await giveCumulatedValues('deaths', data, false, false);
+        //console.log('giveDeathsValues: ', giveDeathsValues.length);
 
         if (totalVaccinationValues && totalVaccinationValues.length > 0
             && cumulatedCasesValues && cumulatedCasesValues.length > 0
             && cumulatedDeathsValues && cumulatedDeathsValues.length > 0
             && vaccinationValues && vaccinationValues.length > 0
+            && giveLogCasesValues && giveLogCasesValues.length > 0
+            && giveLogDeathsValues && giveLogDeathsValues.length > 0
             && giveCasesValues && giveCasesValues.length > 0
             && giveDeathsValues && giveDeathsValues.length > 0
         ) return callback(null, {totalVaccinationValues, cumulatedCasesValues, cumulatedDeathsValues,
-            vaccinationValues, giveCasesValues, giveDeathsValues});
+            vaccinationValues, giveLogCasesValues, giveLogDeathsValues, giveCasesValues, giveDeathsValues});
         else return callback("No countries found");
     } else {
         return callback("ERROR: vaccine");
