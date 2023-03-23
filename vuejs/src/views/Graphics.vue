@@ -430,7 +430,7 @@ export default {
     },
     chartOptionsMap: {
       type: "map solid",
-      mapping_base_layers: "US",
+      mapping_base_layers: "europe",
       series: null
     },
     chartHeatmap: {
@@ -550,18 +550,24 @@ export default {
     }).catch(function (error) {
       console.log(error);
     })
-
-    /*axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
+    axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
       const codes = response.data.data.code;
       const mapCodes = codes.map(country => {
-        return { map: country.toLowerCase() };
+        return {
+          map: country.toLowerCase()
+        };
       });
       console.log([mapCodes]);
-      //self.chartOptionsMap.series = [...mapCodes];
+      self.chartOptionsMap.series = [...mapCodes];
+      /*self.chartOptionsMap.series = [
+        {
+          map: "europe",
+          points: mapCodes
+        }
+      ];*/
     }).catch(function (error) {
       console.log(error);
-    });*/
-
+    });
   }
 };
 </script>
