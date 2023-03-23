@@ -59,8 +59,9 @@ exports.graphVaccination = (req, res) => {
 }
 
 exports.graphCaseVaccinationRelation = (req, res) => {
+    let vaccine = req.params.vaccine;
     let country = req.params.country;
-    graphService.getCaseVaccinationRelation(country, (error, results)=>{
+    graphService.getCaseVaccinationRelation(vaccine, country, (error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});
@@ -70,7 +71,8 @@ exports.graphCaseVaccinationRelation = (req, res) => {
 }
 
 exports.graphWorldMapCases = (req, res) => {
-    graphService.getWorldMapCases((error, results)=>{
+    let vaccine = req.params.vaccine;
+    graphService.getWorldMapCases(vaccine,(error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});
