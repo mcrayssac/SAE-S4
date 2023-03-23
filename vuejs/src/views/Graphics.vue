@@ -504,6 +504,9 @@ export default {
         let self = this;
         await axios.get(`http://localhost:3000/visualization/${this.selectedVaccine}/${this.selectedCountry}/${this.selectedIntervalStart}/${this.selectedIntervalEnd}`).then(function (response) {
           console.log(response.data);
+          self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
+          self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
+          self.chartOptions4.series[2].points = response.data.data.cumulatedDeathsValues;
           /*self.countries = response.data.data.countries
           self.timeInterval = response.data.data.interval
           self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;

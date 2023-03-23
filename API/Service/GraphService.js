@@ -107,8 +107,7 @@ async function giveCountriesValues(data) {
 }
 
 async function giveVisualizationData(country, intervalStart, intervalEnd, data) {
-    let filterData = await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
-    console.log(filterData);
+    return await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
 }
 
 /**
@@ -128,24 +127,38 @@ async function giveCountryCodeValues(data) {
     return uniqueCountry;
 }
 
-async function giveCumulatedCasesValues(country, intervalStart, intervalEnd, indicator, data) {
-    let filteredData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === indicator && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
-    let mappedData = await filteredData.map(({ YearWeekISO, cumulative_count }) => ({ YearWeekISO, cumulative_count }));
-    const uniqueData = await mappedData.reduce((acc, obj) => {
-        const index = acc.findIndex(item => item.cumulative_count === obj.cumulative_count && item.YearWeekISO === obj.YearWeekISO);
-        if (index === -1) {
-            acc.push(obj);
+async function giveCumulatedCasesValues(indicator, data) {
+    let filteredData = await data.filter(elt => elt.indicator && elt.indicator === indicator);
+    //console.log('filteredData: ', filteredData.length);
+
+    let mappedData = await filteredData.map(({YearWeekISO, weekly_count}) => ({YearWeekISO, weekly_count}));
+    //console.log('mappedData: ', mappedData.length);
+
+    const uniqueData = Object.values(await mappedData.reduce((acc, curr) => {
+        const key = curr.YearWeekISO + curr.weekly_count;
+        if (!acc[key]) {
+            acc[key] = {YearWeekISO: curr.YearWeekISO, weekly_count: curr.weekly_count};
         }
         return acc;
-    }, []);
+    }, {}));
+    //console.log('uniqueData: ', uniqueData.length);
+
+    let TotalVaccination = 0;
+    for (let i in uniqueData) {
+        TotalVaccination = uniqueData[i].weekly_count + TotalVaccination;
+        uniqueData[i].TotalVaccination = TotalVaccination;
+    }
+    //console.log('result: ', uniqueData.length);
+
     let mergedData = uniqueData.map(d => ({
         ...d,
-        cumulative_count: Math.log10(d.cumulative_count),
+        TotalVaccination: Math.log10(d.TotalVaccination) > 0 ? Math.log10(d.TotalVaccination) : 0,
     }));
-    mappedData = await mergedData.map(obj => {
-        return { x: obj.YearWeekISO, y: obj.cumulative_count };
+    let renamedData = mergedData.map(obj => {
+        return {x: obj.YearWeekISO, y: obj.TotalVaccination};
     });
-    return mappedData;
+    //console.log('renamedData: ', renamedData);
+    return renamedData;
 }
 
 function verifyIntervalStart(elt, intervalStart) {
@@ -164,18 +177,16 @@ function getTotalDoses(data){
         SecondDose: isNaN(d.SecondDose) ? 0 : d.SecondDose,
         DoseAdditional1: isNaN(d.DoseAdditional1) ? 0 : d.DoseAdditional1,
         DoseAdditional2: isNaN(d.DoseAdditional2) ? 0 : d.DoseAdditional2,
-        DoseAdditional3: isNaN(d.DoseAdditional3) ? 0 : d.DoseAdditional3,
-        DoseUnk: isNaN(d.DoseUnk) ? 0 : d.DoseUnk
+        DoseAdditional3: isNaN(d.DoseAdditional3) ? 0 : d.DoseAdditional3
     }));
     let mergedData = cleanedData.map(d => ({
         ...d,
-        TotalDoses: d.FirstDose + d.SecondDose + d.DoseAdditional1 + d.DoseAdditional2 + d.DoseAdditional3 + d.DoseUnk,
+        TotalDoses: d.FirstDose + d.SecondDose + d.DoseAdditional1 + d.DoseAdditional2 + d.DoseAdditional3 ,
         FirstDose: d.FirstDose,
         SecondDose: d.SecondDose,
         DoseAdditional1: d.DoseAdditional1,
         DoseAdditional2: d.DoseAdditional2,
-        DoseAdditional3: d.DoseAdditional3,
-        DoseUnk: d.DoseUnk
+        DoseAdditional3: d.DoseAdditional3
     }));
     return mergedData;
 }
@@ -213,14 +224,13 @@ async function giveVaccinationsValues(country, intervalStart, intervalEnd, data)
     return renamedData;
 }
 
-async function giveTotalVaccinationValues(country, intervalStart, intervalEnd, data) {
-    let filterData = await data.filter(elt => elt.country && elt.country === country && elt.YearWeekISO && verifyIntervalStart(elt, intervalStart) && verifyIntervalEnd(elt, intervalEnd));
-    //console.log(filterData);
-    const filteredData = await filterData.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3, DoseUnk }));
-    //console.log(filteredData);
+async function giveTotalVaccinationValues(data) {
+    const filteredData = await data.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3 }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3 }));
+    //console.log('filteredData: ', filteredData.length);
 
-    let mergedData = getTotalDoses(filterData);
-    //console.log(mergedData);
+    let mergedData = getTotalDoses(filteredData);
+    //console.log('mergedData: ', mergedData.length);
+
     const uniqueData = Object.values(await mergedData.reduce((acc, curr) => {
         const key = curr.YearWeekISO + curr.TotalDoses;
         if (!acc[key]) {
@@ -228,7 +238,8 @@ async function giveTotalVaccinationValues(country, intervalStart, intervalEnd, d
         }
         return acc;
     }, {}));
-    //console.log(uniqueData.length);
+    //console.log('uniqueData: ', uniqueData.length);
+
     const result = await uniqueData.reduce((acc, obj) => {
         const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO);
         if (index === -1) {
@@ -243,15 +254,16 @@ async function giveTotalVaccinationValues(country, intervalStart, intervalEnd, d
         TotalVaccination = result[i].TotalDoses+TotalVaccination;
         result[i].TotalVaccination = TotalVaccination;
     }
-    //console.log(result.length);
+    //console.log('result: ', result.length);
+
     mergedData = result.map(d => ({
         ...d,
-        TotalVaccination: Math.log10(d.TotalVaccination),
+        TotalVaccination: Math.log10(d.TotalVaccination) > 0 ? Math.log10(d.TotalVaccination) : 0,
     }));
     let renamedData = await mergedData.map(obj => {
         return {x: obj.YearWeekISO, y: obj.TotalVaccination};
     });
-    //console.log(renamedData);
+    //console.log('renamedData: ', renamedData.length);
     return renamedData;
 }
 
@@ -272,17 +284,23 @@ async function giveIndicatorValues(country, intervalStart, intervalEnd, data, in
 }
 
 exports.getVaccinationPays = async (vaccine, country, intervalStart, intervalEnd, callback) => {
-    if (vaccine && country && intervalStart && intervalEnd){
+    if (vaccine && country && intervalStart && intervalEnd) {
         const path = "../Files/" + vaccine + ".json";
         let data = await giveJsonValue(path);
         data = await giveVisualizationData(country, intervalStart, intervalEnd, data);
+        //console.log('Items number: ', data.length)
 
+        let totalVaccinationValues = await giveTotalVaccinationValues(data);
+        console.log('totalVaccinationValues: ', totalVaccinationValues.length);
 
-        if (data && data.length > 0) {
-            return callback(null, data);
-        } else {
-            return callback("ERROR: data");
-        }
+        let cumulatedCasesValues = await giveCumulatedCasesValues('cases', data);
+        console.log('cumulatedCasesValues: ', cumulatedCasesValues.length);
+
+        let cumulatedDeathsValues = await giveCumulatedCasesValues('deaths', data);
+        console.log('cumulatedDeathsValues: ', cumulatedDeathsValues.length);
+
+        if (totalVaccinationValues && totalVaccinationValues.length > 0 && cumulatedCasesValues && cumulatedCasesValues.length > 0 && cumulatedDeathsValues && cumulatedDeathsValues.length > 0) return callback(null, {totalVaccinationValues, cumulatedCasesValues, cumulatedDeathsValues});
+        else return callback("No countries found");
     } else {
         return callback("ERROR: vaccine");
     }
