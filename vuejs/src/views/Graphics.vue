@@ -10,16 +10,16 @@
 
     <v-row align="center">
       <v-item-group v-model="window" class="shrink mr-6 group-button" mandatory tag="v-flex">
-        <v-item v-for="n in length" :key="n" v-slot="{ active, toggle }">
+        <v-item v-for="(item, index) in length" :key="index" v-slot="{ active, toggle }">
           <div>
             <v-tooltip color="#5F7174" right>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn x-large v-bind="attrs" v-on="on" :input-value="active" icon @click="toggle">
-                  <v-icon color="white" v-if="active" large>{{ n.icon }}</v-icon>
+                  <v-icon color="white" v-if="active" large>{{ item.icon }}</v-icon>
                   <v-icon color="#5F7174" v-else>mdi-record</v-icon>
                 </v-btn>
               </template>
-              <span class="tooltip-text">{{ n.tooltip }}</span>
+              <span class="tooltip-text">{{ item.tooltip }}</span>
             </v-tooltip>
           </div>
         </v-item>
@@ -27,8 +27,11 @@
 
       <v-col>
         <v-window v-model="window" class="elevation-1" vertical>
-          <v-window-item v-for="n in length" :key="n">
+          <v-window-item>
             <RegionalVaccinationCasesDeaths/>
+          </v-window-item>
+          <v-window-item>
+            <Map/>
           </v-window-item>
         </v-window>
       </v-col>
@@ -39,19 +42,20 @@
 
 <script>
 import RegionalVaccinationCasesDeaths from "@/components/RegionalVaccinationCasesDeaths";
+import Map from "@/components/Map";
 
 export default {
   name: 'Test',
   data: () => ({
     length: [
       {tooltip: "Regional vaccination cases deaths", icon: "mdi-bacteria-outline"},
-      {},
-      {},
+      {tooltip: "World Map of this dataset's countries", icon: "mdi-map-search"},
     ],
     window: 0,
   }),
   components: {
-    RegionalVaccinationCasesDeaths
+    RegionalVaccinationCasesDeaths,
+    Map
   },
   computed: {
 
