@@ -428,7 +428,8 @@ export default {
     },
     chartOptionsMap: {
       type: "map solid",
-      mapping_base_layers: "US",
+      mapping_base_layers: ["europe"],
+      color: "#858ED1",
       series: null
     },
     chartHeatmap: {
@@ -544,18 +545,32 @@ export default {
     }).catch(function (error) {
       console.log(error);
     })
-
-    /*axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
+    axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
+      // on veut pour chaque pays les cas et les morts cumulé sur un intervalle donnée
       const codes = response.data.data.code;
+      const info = response.data.data.tab;
       const mapCodes = codes.map(country => {
         return { map: country.toLowerCase() };
       });
       console.log([mapCodes]);
-      //self.chartOptionsMap.series = [...mapCodes];
+      self.chartOptionsMap.series = [...mapCodes];
+      self.chartOptionsMap.point = info;
+      self.chartOptionsMap.debug = true;
+      /*self.chartOptionsMap.series = [
+        {
+          map: "europe",
+          points: [
+            {
+              map: [...mapCodes],
+              color: "#00ff00"
+            }
+          ],
+          defaultPoint_events_click: console.log("click issue")
+        }
+      ];*/
     }).catch(function (error) {
       console.log(error);
-    });*/
-
+    });
   }
 };
 </script>
