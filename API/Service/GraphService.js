@@ -135,6 +135,25 @@ async function giveCountryCodeValues(data) {
     return uniqueCountry;
 }
 
+async function filterData(filterData) {
+    let filteredData = await filterData.map(({ YearWeekISO, weekly_count }) => ({ YearWeekISO, weekly_count }));
+    const lastData = filteredData[filteredData.length-1];
+    //console.log(filterData);
+    return lastData;
+}
+
+async function giveLastCumulatedCaseCountry(country, data) {
+    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
+    let filteredData = await filterData(filtersData);
+    return filteredData;
+}
+
+async function giveLastCumulatedDeathCountry(country, data) {
+    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'death');
+    let filteredData = await filterData(filtersData);
+    return filteredData;
+}
+
 async function giveCumulatedValues(indicator, data, total, log) {
     let filteredData = await data.filter(elt => elt.indicator && elt.indicator === indicator);
     //console.log('filteredData: ', filteredData.length);
@@ -434,17 +453,29 @@ exports.getCaseVaccinationRelation = async(vaccine, country, callback) =>{
 
 
 exports.getWorldMapCases = async(callback) =>{
-    let data = await giveJsonValue("../Files/full_df.json");
+    let data = await giveJsonValue("../Files/MOD.json");
 
     const code = await giveCountryCodeValues(data);
-    //console.log(countries)
-
+    //console.log(code)
+    let tab = [];
+    for(let i in code){
+        let regionNames = new Intl.DisplayNames(['en'], {type: 'region'});
+        const cases = await giveLastCumulatedCaseCountry(regionNames.of(code[i]), data);
+        const death = await giveLastCumulatedDeathCountry(regionNames.of(code[i]), data);
+        //console.log(cases+" et "+death);
+        tab.push(code[i],{cases, death});
+    }
+    console.log(tab);
     if (code && code.length > 0){
-        return callback(null, {code})
+        return callback(null, {code, tab});
     }
     else{
-        return callback("Woops something went wrong pal !");
+        return callback("Woops something went wrong pal !", null);
     };
+}
+
+exports.getCountryData = async(country, callback)=>{
+    let data = await giveJsonValue("../Files/MOD.json");
 }
 
 exports.accueil = async(callback) => {
@@ -456,7 +487,7 @@ exports.accueil = async(callback) => {
 }
 
 exports.getPredictionValue = async(country, transmission, duration, survival, callback) => {
-    let data = await giveJsonValue("../Files/full_df.json");
+    let data = await giveJsonValue("../Files/MOD.json");
     let array = await prediction(country, transmission, duration, survival)
     let array1 = await array.reduce((acc, obj) => {
         const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO && item.notSick === obj.notSick);
@@ -510,7 +541,7 @@ exports.getPredictionValue = async(country, transmission, duration, survival, ca
 }
 
 async function prediction(country, transmission, duration, survival){
-    let data = await giveJsonValue("../Files/full_df.json");
+    let data = await giveJsonValue("../Files/MOD.json");
     let sick = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
     sick = await sick.filter(elt => elt.TargetGroup && elt.TargetGroup === "ALL");
     const filteredSick = sick[sick.length-1];
