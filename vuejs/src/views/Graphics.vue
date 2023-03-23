@@ -535,8 +535,7 @@ export default {
           self.loading = false;
         })
         await axios.get(`http://localhost:3000/relation/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
-          console.log(response.data.data.renamedData);
-          self.chartOptions3.series[0].points = response.data.data.renamedData;
+          self.chartOptions3.series[0].points = response.data.data.relation;
         }).catch(function (error) {
           console.log(error);
         })
