@@ -97,7 +97,7 @@
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Regional vaccinations and cases
+                Regional vaccinations, cases and deaths
             </span>
           </v-col>
         </v-row>
@@ -125,7 +125,7 @@
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Total regional vaccinations and cases
+                Total regional vaccinations, cases and deaths
             </span>
           </v-col>
         </v-row>
@@ -306,7 +306,7 @@ export default {
       title: {
         position: 'center',
         label: {
-          text: 'Vaccination and accumulative cases number',
+          text: 'Vaccinations, cases and deaths number',
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
@@ -314,7 +314,7 @@ export default {
         template: '%icon %name',
         position: 'top right'
       },
-      palette: ['#32D9CB', '#A5E65A'],
+      palette: ['#32D9CB', '#A5E65A', '#5F7174'],
       defaultSeries: {
         shape_opacity: 0.2,
         defaultPoint_marker: {
@@ -341,6 +341,10 @@ export default {
         {
           name: 'Cases number',
           points: null
+        },
+        {
+          name: 'Deaths number',
+          points: null
         }
       ]
     },
@@ -349,7 +353,7 @@ export default {
       title: {
         position: 'center',
         label: {
-          text: 'Total Vaccination and accumulative cases number',
+          text: 'Total Vaccination and accumulative cases and deaths number',
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
@@ -357,7 +361,7 @@ export default {
         template: '%icon %name',
         position: 'top right'
       },
-      palette: ['#32D9CB', '#A5E65A', '#ff0000'],
+      palette: ['#32D9CB', '#A5E65A', '#5F7174'],
       defaultSeries: {
         shape_opacity: 0.2,
         defaultPoint_marker: {
@@ -382,11 +386,11 @@ export default {
           points: null
         },
         {
-          name: 'Cases number',
+          name: 'Accumulative cases number',
           points: null
         },
         {
-          name: 'Deaths number',
+          name: 'Accumulative deaths number',
           points: null
         }
       ]
@@ -521,6 +525,9 @@ export default {
           self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;
           self.chartOptions4.series[1].points = response.data.data.cumulatedCasesValues;
           self.chartOptions4.series[2].points = response.data.data.cumulatedDeathsValues;
+          self.chartOptions2.series[0].points = response.data.data.vaccinationValues;
+          self.chartOptions2.series[1].points = response.data.data.giveCasesValues;
+          self.chartOptions2.series[2].points = response.data.data.giveDeathsValues;
           /*self.countries = response.data.data.countries
           self.timeInterval = response.data.data.interval
           self.chartOptions4.series[0].points = response.data.data.totalVaccinationValues;

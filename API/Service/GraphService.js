@@ -127,7 +127,7 @@ async function giveCountryCodeValues(data) {
     return uniqueCountry;
 }
 
-async function giveCumulatedCasesValues(indicator, data) {
+async function giveCumulatedValues(indicator, data, total) {
     let filteredData = await data.filter(elt => elt.indicator && elt.indicator === indicator);
     //console.log('filteredData: ', filteredData.length);
 
@@ -152,13 +152,23 @@ async function giveCumulatedCasesValues(indicator, data) {
 
     let mergedData = uniqueData.map(d => ({
         ...d,
+        weekly_count: Math.log10(d.weekly_count) > 0 ? Math.log10(d.weekly_count) : 0,
         TotalVaccination: Math.log10(d.TotalVaccination) > 0 ? Math.log10(d.TotalVaccination) : 0,
     }));
-    let renamedData = mergedData.map(obj => {
-        return {x: obj.YearWeekISO, y: obj.TotalVaccination};
-    });
-    //console.log('renamedData: ', renamedData);
-    return renamedData;
+
+    if (total) {
+        let renamedData = mergedData.map(obj => {
+            return {x: obj.YearWeekISO, y: obj.TotalVaccination};
+        });
+        //console.log('renamedData: ', renamedData.length);
+        return renamedData;
+    } else {
+        let renamedData = mergedData.map(obj => {
+            return {x: obj.YearWeekISO, y: obj.weekly_count};
+        });
+        //console.log('renamedData: ', renamedData.length);
+        return renamedData;
+    }
 }
 
 function verifyIntervalStart(elt, intervalStart) {
@@ -224,7 +234,7 @@ async function giveVaccinationsValues(country, intervalStart, intervalEnd, data)
     return renamedData;
 }
 
-async function giveTotalVaccinationValues(data) {
+async function giveTotalVaccinationValues(data, total) {
     const filteredData = await data.map(({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3 }) => ({ YearWeekISO, FirstDose, SecondDose, DoseAdditional1, DoseAdditional2, DoseAdditional3 }));
     //console.log('filteredData: ', filteredData.length);
 
@@ -258,13 +268,23 @@ async function giveTotalVaccinationValues(data) {
 
     mergedData = result.map(d => ({
         ...d,
+        TotalDoses: Math.log10(d.TotalDoses) > 0 ? Math.log10(d.TotalDoses) : 0,
         TotalVaccination: Math.log10(d.TotalVaccination) > 0 ? Math.log10(d.TotalVaccination) : 0,
     }));
-    let renamedData = await mergedData.map(obj => {
-        return {x: obj.YearWeekISO, y: obj.TotalVaccination};
-    });
-    //console.log('renamedData: ', renamedData.length);
-    return renamedData;
+
+    if (total) {
+        let renamedData = await mergedData.map(obj => {
+            return {x: obj.YearWeekISO, y: obj.TotalVaccination};
+        });
+        //console.log('renamedData: ', renamedData.length);
+        return renamedData;
+    } else {
+        let renamedData = await mergedData.map(obj => {
+            return {x: obj.YearWeekISO, y: obj.TotalDoses};
+        });
+        //console.log('renamedData: ', renamedData.length);
+        return renamedData;
+    }
 }
 
 async function giveIndicatorValues(country, intervalStart, intervalEnd, data, indicator) {
@@ -290,16 +310,34 @@ exports.getVaccinationPays = async (vaccine, country, intervalStart, intervalEnd
         data = await giveVisualizationData(country, intervalStart, intervalEnd, data);
         //console.log('Items number: ', data.length)
 
-        let totalVaccinationValues = await giveTotalVaccinationValues(data);
+        /* Total regional vaccinations, cases and deaths */
+        let totalVaccinationValues = await giveTotalVaccinationValues(data, true);
         console.log('totalVaccinationValues: ', totalVaccinationValues.length);
 
-        let cumulatedCasesValues = await giveCumulatedCasesValues('cases', data);
+        let cumulatedCasesValues = await giveCumulatedValues('cases', data, true);
         console.log('cumulatedCasesValues: ', cumulatedCasesValues.length);
 
-        let cumulatedDeathsValues = await giveCumulatedCasesValues('deaths', data);
+        let cumulatedDeathsValues = await giveCumulatedValues('deaths', data, true);
         console.log('cumulatedDeathsValues: ', cumulatedDeathsValues.length);
 
-        if (totalVaccinationValues && totalVaccinationValues.length > 0 && cumulatedCasesValues && cumulatedCasesValues.length > 0 && cumulatedDeathsValues && cumulatedDeathsValues.length > 0) return callback(null, {totalVaccinationValues, cumulatedCasesValues, cumulatedDeathsValues});
+        /* Regional vaccinations, cases and deaths */
+        let vaccinationValues = await giveTotalVaccinationValues(data, false);
+        console.log('vaccinationValues: ', vaccinationValues.length);
+
+        let giveCasesValues = await giveCumulatedValues('cases', data, false);
+        console.log('giveCasesValues: ', giveCasesValues.length);
+
+        let giveDeathsValues = await giveCumulatedValues('deaths', data, false);
+        console.log('giveDeathsValues: ', giveDeathsValues.length);
+
+        if (totalVaccinationValues && totalVaccinationValues.length > 0
+            && cumulatedCasesValues && cumulatedCasesValues.length > 0
+            && cumulatedDeathsValues && cumulatedDeathsValues.length > 0
+            && vaccinationValues && vaccinationValues.length > 0
+            && giveCasesValues && giveCasesValues.length > 0
+            && giveDeathsValues && giveDeathsValues.length > 0
+        ) return callback(null, {totalVaccinationValues, cumulatedCasesValues, cumulatedDeathsValues,
+            vaccinationValues, giveCasesValues, giveDeathsValues});
         else return callback("No countries found");
     } else {
         return callback("ERROR: vaccine");
@@ -323,10 +361,10 @@ exports.getVaccinationPays = async (vaccine, country, intervalStart, intervalEnd
         deathsValues = await giveIndicatorValues(country, intervalStart, intervalEnd, data, 'deaths');
         //console.log(deathsValues);
 
-        cumulatedCasesValues = await giveCumulatedCasesValues(country, intervalStart, intervalEnd, 'cases', data);
+        cumulatedCasesValues = await giveCumulatedValues(country, intervalStart, intervalEnd, 'cases', data);
         //console.log(cumulatedCasesValues);
 
-        cumulatedDeathsValues = await giveCumulatedCasesValues(country, intervalStart, intervalEnd, 'deaths', data);
+        cumulatedDeathsValues = await giveCumulatedValues(country, intervalStart, intervalEnd, 'deaths', data);
         //console.log(cumulatedDeathsValues);
 
         vaccinationsValues = await giveVaccinationsValues(country, intervalStart, intervalEnd, data);
