@@ -453,9 +453,8 @@ exports.getCaseVaccinationRelation = async(vaccine, country, callback) =>{
 
 function getPointsHeat(indicator, data){
     let filteredData = data.filter(elt => elt.indicator && elt.indicator === indicator);
-
     let mappedData =  filteredData.map(({ YearWeekISO, TargetGroup, weekly_count }) => ({ YearWeekISO, TargetGroup, weekly_count}));
-
+    //console.log(mappedData);
     let final = mappedData.map(
         v => {
             return {
@@ -479,7 +478,6 @@ exports.getHeatmapData = async(vaccine, callback)=>{
         let data = await giveJsonValue(path);
         //console.log('Items number: ', data.length)
 
-        /* Bring it on */
         let result = getPointsHeat('cases', data);
         console.log(result);
         if (result && result.length > 0) {
@@ -577,7 +575,7 @@ exports.getPredictionValue = async(country, transmission, duration, survival, ca
             infected,
             removed
         });
-        else return callback("Country given not in database");
+        else return callback("Country not given in database");
     }
 }
 
