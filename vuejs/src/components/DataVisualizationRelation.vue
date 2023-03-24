@@ -78,7 +78,8 @@
       <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
         <v-row>
           <v-col cols="12" align="center" style="width: 100%; ">
-            <JSCharting :options="chartHeatmap" style="width: 100%; height: 500px;"/>
+            <JSCharting v-if="chartHeatmap.series[0].points && chartHeatmap.series[0].points.length > 0" :options="chartHeatmap" style="width: 100%; height: 500px;"/>
+            <Loading v-else color="#32D9CB" />
           </v-col>
         </v-row>
       </v-banner>
@@ -175,7 +176,7 @@ export default {
         position: 'top right',
         layout: 'vertical'
       },
-      series: null
+      series: [{points: null}]
     }
   }),
   components: {
@@ -201,6 +202,14 @@ export default {
         //console.log(response);
         self.loading = false;
         self.chartOptions3.series[0].points = response.data.data.relation;
+      }).catch(function (error) {
+        console.log(error);
+        self.loading = false;
+      })
+      await axios.get(`http://localhost:3000/heatmap/${this.selectedVaccine}`).then(function (response) {
+        console.log(response.data.data[0]);
+        self.loading = false;
+        self.chartHeatmap.series[0].points = response.data.data;
       }).catch(function (error) {
         console.log(error);
         self.loading = false;
