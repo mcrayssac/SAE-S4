@@ -6,7 +6,11 @@ router.get('/', graphController.accueil)
 
 router.get('/vaccines', graphController.giveVaccine)
 
-router.get('/countries/:vaccine', graphController.giveCountries)
+//router.get('/vaccines/:country', graphController.graphVaccination)
+
+router.get('/countries', graphController.giveCountries)
+
+router.get('/countries/:vaccine', graphController.giveCountriesVaccine)
 
 router.get('/intervals/:vaccine/:country', graphController.giveInterval)
 

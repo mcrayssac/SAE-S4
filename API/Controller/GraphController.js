@@ -21,9 +21,9 @@ exports.giveVaccine = async (req, res) => {
     });
 }
 
-exports.giveCountries = async (req, res) => {
+exports.giveCountriesVaccine = async (req, res) => {
     let vaccine = req.params.vaccine
-    await graphService.giveCountries(vaccine, (error, results)=>{
+    await graphService.giveCountriesVaccine(vaccine, (error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});
@@ -50,6 +50,16 @@ exports.graphVaccination = (req, res) => {
     let intervalStart = req.params.intervalStart;
     let intervalEnd = req.params.intervalEnd;
     graphService.getVaccinationPays(vaccine, country, intervalStart, intervalEnd, (error, results)=>{
+        if(error){
+            console.log(error);
+            return res.status(400).send({success: 0, data: error});
+        }
+        return res.status(200).send({success: 1, data: results})
+    });
+}
+
+exports.giveCountries = (req, res) => {
+    graphService.giveCountries((error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});
