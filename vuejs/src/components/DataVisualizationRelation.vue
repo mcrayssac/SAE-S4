@@ -170,6 +170,7 @@ export default {
         legendEntry_visible: false,
         outline: { color: 'white', width: 2 }
       },
+      minValue:0,
       toolbar_visible: false,
       legend: {
         template: '%icon %name',

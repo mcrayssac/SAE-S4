@@ -454,7 +454,6 @@ exports.getCaseVaccinationRelation = async(vaccine, country, callback) =>{
 function getPointsHeat(indicator, data){
     let filteredData = data.filter(elt => elt.indicator && elt.indicator === indicator);
     let mappedData =  filteredData.map(({ YearWeekISO, TargetGroup, weekly_count }) => ({ YearWeekISO, TargetGroup, weekly_count}));
-    //console.log(mappedData);
     let final = mappedData.map(
         v => {
             return {
@@ -472,14 +471,60 @@ function getPointsHeat(indicator, data){
     return final;
 }
 
+function getPointsHeat2(indicator, data) {
+    let filteredData = data.filter((elt) => elt.indicator && elt.indicator === indicator);
+    let mappedData = filteredData.map(({ YearWeekISO, TargetGroup, weekly_count }) => ({
+        YearWeekISO,
+        TargetGroup,
+        weekly_count,
+    }));
+    let groupedData = mappedData.reduce((acc, { YearWeekISO, TargetGroup, weekly_count }) => {
+        if (!acc[TargetGroup]) {
+            acc[TargetGroup] = [];
+        }
+        acc[TargetGroup].push({ YearWeekISO, weekly_count });
+        return acc;
+    }, {});
+    let final = [];
+    for (const [TargetGroup, groupData] of Object.entries(groupedData)) {
+        let chunkedData = chunk(groupData, 15);
+        for (let i = 0; i < chunkedData.length; i++) {
+            let chunk = chunkedData[i];
+            let sum = chunk.reduce((acc, { weekly_count }) => acc + weekly_count, 0);
+            let firstWeek = chunk[0].YearWeekISO;
+            let lastWeek = chunk[chunk.length - 1].YearWeekISO;
+            let x = `${firstWeek} - ${lastWeek}`;
+            final.push({
+                x,
+                y: TargetGroup,
+                z: sum,
+                attributes: {
+                    date: x,
+                    ageRange: TargetGroup,
+                    cases: sum,
+                },
+            });
+        }
+    }
+    return final;
+}
+
+function chunk(array, size) {
+    const chunked = [];
+    for (let i = 0; i < array.length; i += size) {
+        chunked.push(array.slice(i, i + size));
+    }
+    return chunked;
+}
+
 exports.getHeatmapData = async(vaccine, callback)=>{
     if (vaccine) {
         const path = "../Files/" + vaccine + ".json";
         let data = await giveJsonValue(path);
         //console.log('Items number: ', data.length)
 
-        let result = getPointsHeat('cases', data);
-        console.log(result);
+        let result = getPointsHeat2('cases', data);
+        //  console.log(result);
         if (result && result.length > 0) {
             return callback(null, result);
         } else {
