@@ -6,7 +6,7 @@ router.get('/', graphController.accueil)
 
 router.get('/vaccines', graphController.giveVaccine)
 
-//router.get('/vaccines/:country', graphController.graphVaccination)
+router.get('/vaccines/:country', graphController.graphVaccinationCountries)
 
 router.get('/countries', graphController.giveCountries)
 

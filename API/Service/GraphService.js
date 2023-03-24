@@ -57,6 +57,66 @@ exports.giveCountriesVaccine = async (vaccine, callback) => {
 }
 
 /**
+ * Give country vaccinations
+ * @returns {Promise<*>}
+ */
+exports.giveVaccinationCountries = async (country, callback) => {
+    if (country){
+        let path = "../Files/Vaccine.json"
+        let data = await giveJsonValue(path);
+        data = JSON.parse(data)
+
+        let listData = [];
+        for await (const elt of data) {
+            path = "../Files/" + elt + ".json";
+            let temp = await giveJsonValue(path);
+            listData.push({vaccine: elt, data: temp});
+        }
+
+        if (listData.length > 0) {
+            await listData.forEach(elt => {
+                elt.data.splice(0, elt.data.length, ...elt.data.filter(elt2 => elt2.country && elt2.country === country));
+            });
+
+            await listData.forEach(elt => {
+                elt.data.splice(0, elt.data.length, ...elt.data.map(d => ({
+                    YearWeekISO: d.YearWeekISO,
+                    FirstDose: d.FirstDose,
+                    SecondDose: d.SecondDose,
+                    DoseAdditional1: d.DoseAdditional1,
+                    DoseAdditional2: d.DoseAdditional2,
+                    DoseAdditional3: d.DoseAdditional3,
+                    TotalDoses: d.FirstDose + d.SecondDose + d.DoseAdditional1 + d.DoseAdditional2 + d.DoseAdditional3
+                })));
+            });
+
+            await listData.forEach(elt => {
+                elt.data = elt.data.reduce((acc, curr) => {
+                    acc.TotalDoses += curr.TotalDoses;
+                    return acc;
+                }, {TotalDoses: 0});
+            });
+            console.log(listData);
+
+            listData.splice(0, listData.length, ...listData.map(d => ({
+                x: d.vaccine,
+                y: Math.log10(d.data.TotalDoses) > 0 ? Math.log10(d.data.TotalDoses) : 0,
+            })));
+            console.log(listData);
+        }
+
+        if (listData && listData.length > 0) {
+            return callback(null, listData)
+        } else {
+            return callback("ERROR: countries")
+        }
+    } else {
+        return callback("ERROR: vaccine");
+    }
+
+}
+
+/**
  * Give countries values
  * @returns {Promise<*>}
  */
@@ -81,7 +141,7 @@ exports.giveCountries = async (callback) => {
     if (res && res.length > 0) {
         return callback(null, res)
     } else {
-        return callback("ERROR: data")
+        return callback("ERROR: countries")
     }
 }
 
