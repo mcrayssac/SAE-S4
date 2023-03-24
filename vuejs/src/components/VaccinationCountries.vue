@@ -66,7 +66,7 @@
          </v-col>
          <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Vaccinations repartition per countries
+                Doses type of vaccines repartition per region
             </span>
          </v-col>
        </v-row>
@@ -107,7 +107,6 @@ export default {
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
-
       palette: ['#32D9CB', '#A5E65A', '#5F7174'],
       yAxis: {
         label_text: 'Logarithm'
@@ -118,22 +117,35 @@ export default {
       series: [
         {
           name: null,
-          palette: ['#32D9CB', '#A5E65A', '#5F7174', '#FBC02D', '#EF6C00', '#BA68C8', '#2196F3', '#F44336', '#673AB7',
-            '#00E676', '#FFC107', '#3F51B5', '#FF9800', '#9C27B0', '#8BC34A', '#9E9E9E', '#E91E63', '#795548', '#CDDC39', '#607D8B'],
+          palette: ['#32D9CB', '#A5E65A', '#5F7174', '#FBC02D',
+            '#EF6C00', '#BA68C8', '#2196F3', '#F44336', '#673AB7',
+            '#00E676', '#FFC107', '#3F51B5', '#FF9800', '#9C27B0',
+            '#8BC34A', '#9E9E9E', '#E91E63', '#795548', '#CDDC39', '#607D8B'],
           points: null
         }
       ]
     },
     chartOptions1: {
       defaultSeries_type: 'column',
+      defaultSeries: {
+        opacity: 0.7,
+      },
+      title: {
+        position: 'center',
+        label: {
+          text: null,
+          style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
+        }
+      },
       legend: {
         template: '%icon %name',
         position: 'top right'
       },
-      title_label_text: 'Acme Tool Sales',
-      yAxis: { label_text: 'Units Sold' },
+      palette: ['#32D9CB', '#A5E65A', '#5F7174', '#9E9E9E',
+        '#673AB7'],
+      yAxis: { label_text: 'Logarithm' },
       xAxis: {
-        label_text: 'Quarter',
+        label_text: 'Doses type of vaccines',
         categories: null
       },
       series: []
@@ -161,7 +173,6 @@ export default {
         self.chartOptions1.series.push(response.data.data.listData2.DoseAdditional1);
         self.chartOptions1.series.push(response.data.data.listData2.DoseAdditional2);
         self.chartOptions1.series.push(response.data.data.listData2.DoseAdditional3);
-        //self.chartOptions1.series.push(response.data.data.listData2.TotalDoses);
         self.loading = false;
       }).catch(function (error) {
         console.log(error);
