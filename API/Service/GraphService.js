@@ -40,7 +40,7 @@ exports.giveVaccines = async (callback) => {
  * Give countries values from vaccine
  * @returns {Promise<*>}
  */
-exports.giveCountries = async (vaccine, callback) => {
+exports.giveCountriesVaccine = async (vaccine, callback) => {
     if (vaccine){
         const path = "../Files/" + vaccine + ".json";
         let data = await giveJsonValue(path);
@@ -54,6 +54,63 @@ exports.giveCountries = async (vaccine, callback) => {
         return callback("ERROR: vaccine");
     }
 
+}
+
+/**
+ * Give countries values
+ * @returns {Promise<*>}
+ */
+exports.giveCountries = async (callback) => {
+    let path = "../Files/Vaccine.json"
+    let data = await giveJsonValue(path);
+    data = JSON.parse(data)
+
+    let listData = [];
+    for await (const elt of data) {
+        path = "../Files/" + elt + ".json";
+        let temp = await giveJsonValue(path);
+        temp = await giveCountriesValues(temp);
+        listData.push(temp);
+    }
+
+    let res = null;
+    if (listData.length > 0) {
+        res = searchManyLists(...listData);
+    }
+
+    if (res && res.length > 0) {
+        return callback(null, res)
+    } else {
+        return callback("ERROR: data")
+    }
+}
+
+/**
+ * Search if elements exists in many lists
+ * @param lists
+ * @returns {*[]}
+ */
+function searchManyLists(...lists) {
+    const elementOccurrences = {};
+    const elementsCommuns = [];
+
+    lists.forEach(function(liste) {
+        liste.forEach(function(element) {
+            if (!elementOccurrences[element]) {
+                elementOccurrences[element] = 1;
+            } else {
+                elementOccurrences[element]++;
+            }
+        });
+    });
+
+    for (let element in elementOccurrences) {
+        if (elementOccurrences[element] === lists.length) {
+            elementsCommuns.push(element);
+        }
+    }
+
+    return elementsCommuns;
 }
 
 /**

@@ -31,6 +31,9 @@
             <RegionalVaccinationCasesDeaths/>
           </v-window-item>
           <v-window-item>
+            <VaccinationCountries/>
+          </v-window-item>
+          <v-window-item>
             <DataVisualizationRelation/>
           </v-window-item>
           <v-window-item>
@@ -47,12 +50,14 @@
 import RegionalVaccinationCasesDeaths from "@/components/RegionalVaccinationCasesDeaths";
 import Map from "@/components/Map";
 import DataVisualizationRelation from "@/components/DataVisualizationRelation";
+import VaccinationCountries from "@/components/VaccinationCountries";
 
 export default {
   name: 'Test',
   data: () => ({
     length: [
       {tooltip: "Regional vaccination cases deaths", icon: "mdi-bacteria-outline"},
+      {tooltip: "Vaccinations repartition per countries", icon: "mdi-needle"},
       {tooltip: "Relation between vaccinations and cases", icon: "mdi-virus-outline"},
       {tooltip: "World Map of this dataset's countries", icon: "mdi-map-search"},
     ],
@@ -62,6 +67,7 @@ export default {
     RegionalVaccinationCasesDeaths,
     Map,
     DataVisualizationRelation,
+    VaccinationCountries,
   },
   computed: {
 
@@ -79,7 +85,7 @@ export default {
 .group-button{
   position: fixed;
   left: 1%;
-  top: 50%;
+  top: 40%;
   bottom: 50%;
 }
 
