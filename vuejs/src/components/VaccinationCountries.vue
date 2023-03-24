@@ -66,7 +66,7 @@
          </v-col>
          <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                Each type of vaccines doses repartition per countries
+                Vaccinations repartition per countries
             </span>
          </v-col>
        </v-row>
@@ -75,7 +75,7 @@
      <v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
        <v-row>
          <v-col cols="12" align="center" style="width: 100%; ">
-           <JSCharting v-if="!loading && chartOptions.series[1].points && chartOptions.series[1].points.length > 0" :options="chartOptions" style="width: 100%; height: 500px;"/>
+           <JSCharting v-if="!loading && chartOptions1.series.length >= 5 && chartOptions1.xAxis.categories" :options="chartOptions1" style="width: 100%; height: 500px;"/>
            <Loading v-else color="#32D9CB" />
          </v-col>
        </v-row>
@@ -107,9 +107,7 @@ export default {
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
-      legend: {
-        template: null,
-      },
+
       palette: ['#32D9CB', '#A5E65A', '#5F7174'],
       yAxis: {
         label_text: 'Logarithm'
@@ -128,35 +126,18 @@ export default {
     },
     chartOptions1: {
       defaultSeries_type: 'column',
-      defaultSeries: {
-        opacity: 0.7,
-      },
-      title: {
-        position: 'center',
-        label: {
-          text: null,
-          style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
-        }
-      },
       legend: {
-        template: null,
+        template: '%icon %name',
+        position: 'top right'
       },
-      palette: ['#32D9CB', '#A5E65A', '#5F7174'],
-      yAxis: {
-        label_text: 'Logarithm'
-      },
+      title_label_text: 'Acme Tool Sales',
+      yAxis: { label_text: 'Units Sold' },
       xAxis: {
-        label_text: null,
+        label_text: 'Quarter',
+        categories: null
       },
-      series: [
-        {
-          name: null,
-          palette: ['#32D9CB', '#A5E65A', '#5F7174', '#FBC02D', '#EF6C00', '#BA68C8', '#2196F3', '#F44336', '#673AB7',
-            '#00E676', '#FFC107', '#3F51B5', '#FF9800', '#9C27B0', '#8BC34A', '#9E9E9E', '#E91E63', '#795548', '#CDDC39', '#607D8B'],
-          points: null
-        }
-      ]
-    },
+      series: []
+    }
   }),
   components: {
     JSCharting,
@@ -166,12 +147,21 @@ export default {
     updateBoxChart(){
       let self = this;
       this.loading = true;
-      axios.get(`http://localhost:3000/vaccines/${this.selectedCountry}`).then(function (response) {
+      axios.get(`http://localhost:3000/vaccines/${this.selectedCountry}`).then(async function (response) {
         //console.log(response.data.data);
         self.chartOptions.series[0].name = `Vaccines in ${self.selectedCountry !== undefined ? self.selectedCountry : null}`;
         self.chartOptions.xAxis.label_text = `Vaccines in ${self.selectedCountry !== undefined ? self.selectedCountry : null}`;
         self.chartOptions.title.label.text = `All vaccines repartition in ${self.selectedCountry !== undefined ? self.selectedCountry : null}`;
-        self.chartOptions.series[0].points = response.data.data
+        self.chartOptions.series[0].points = response.data.data.listData
+
+        self.chartOptions1.series = [];
+        self.chartOptions1.xAxis.categories = response.data.data.listData2.vaccine
+        self.chartOptions1.series.push(response.data.data.listData2.FirstDose);
+        self.chartOptions1.series.push(response.data.data.listData2.SecondDose);
+        self.chartOptions1.series.push(response.data.data.listData2.DoseAdditional1);
+        self.chartOptions1.series.push(response.data.data.listData2.DoseAdditional2);
+        self.chartOptions1.series.push(response.data.data.listData2.DoseAdditional3);
+        //self.chartOptions1.series.push(response.data.data.listData2.TotalDoses);
         self.loading = false;
       }).catch(function (error) {
         console.log(error);

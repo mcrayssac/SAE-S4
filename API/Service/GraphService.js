@@ -89,6 +89,39 @@ exports.giveVaccinationCountries = async (country, callback) => {
                     TotalDoses: d.FirstDose + d.SecondDose + d.DoseAdditional1 + d.DoseAdditional2 + d.DoseAdditional3
                 })));
             });
+            let listData2 = JSON.parse(JSON.stringify(listData));
+
+            await listData2.forEach(elt => {
+                elt.data = elt.data.reduce((acc, curr) => {
+                    acc.FirstDose += curr.FirstDose;
+                    acc.SecondDose += curr.SecondDose;
+                    acc.DoseAdditional1 += curr.DoseAdditional1;
+                    acc.DoseAdditional2 += curr.DoseAdditional2;
+                    acc.DoseAdditional3 += curr.DoseAdditional3;
+                    acc.TotalDoses += curr.TotalDoses;
+                    return acc;
+                }, {FirstDose: 0, SecondDose: 0, DoseAdditional1: 0, DoseAdditional2: 0, DoseAdditional3: 0, TotalDoses: 0});
+            });
+            //console.log(listData2);
+
+            listData2 = await listData2.reduce((acc, curr) => {
+                acc.vaccine.push(curr.vaccine);
+                acc.FirstDose.points.push(Math.log10(curr.data.FirstDose) > 0 ? Math.log10(curr.data.FirstDose) : 0);
+                acc.SecondDose.points.push(Math.log10(curr.data.SecondDose) > 0 ? Math.log10(curr.data.SecondDose) : 0);
+                acc.DoseAdditional1.points.push(Math.log10(curr.data.DoseAdditional1) > 0 ? Math.log10(curr.data.DoseAdditional1) : 0);
+                acc.DoseAdditional2.points.push(Math.log10(curr.data.DoseAdditional2) > 0 ? Math.log10(curr.data.DoseAdditional2) : 0);
+                acc.DoseAdditional3.points.push(Math.log10(curr.data.DoseAdditional3) > 0 ? Math.log10(curr.data.DoseAdditional3) : 0);
+                acc.TotalDoses.points.push(Math.log10(curr.data.TotalDoses) > 0 ? Math.log10(curr.data.TotalDoses) : 0);
+                return acc;
+            }, { vaccine: [],
+                FirstDose: { name: 'FirstDose', points: [] },
+                SecondDose: { name: 'SecondDose', points: [] },
+                DoseAdditional1: { name: 'DoseAdditional1', points: [] },
+                DoseAdditional2: { name: 'DoseAdditional2', points: [] },
+                DoseAdditional3: { name: 'DoseAdditional3', points: [] },
+                TotalDoses: { name: 'TotalDoses', points: [] }
+            });
+            //console.log(listData2);
 
             await listData.forEach(elt => {
                 elt.data = elt.data.reduce((acc, curr) => {
@@ -96,19 +129,23 @@ exports.giveVaccinationCountries = async (country, callback) => {
                     return acc;
                 }, {TotalDoses: 0});
             });
-            console.log(listData);
+            //console.log(listData);
 
             listData.splice(0, listData.length, ...listData.map(d => ({
                 x: d.vaccine,
                 y: Math.log10(d.data.TotalDoses) > 0 ? Math.log10(d.data.TotalDoses) : 0,
             })));
-            console.log(listData);
-        }
+            console.log(listData2);
 
-        if (listData && listData.length > 0) {
-            return callback(null, listData)
+            if (listData && listData.length > 0 && listData2 && listData2.vaccine
+                && listData2.FirstDose && listData2.SecondDose && listData2.DoseAdditional1 && listData2.DoseAdditional2
+                && listData2.DoseAdditional3 && listData2.TotalDoses) {
+                return callback(null, {listData, listData2})
+            } else {
+                return callback("ERROR: countries")
+            }
         } else {
-            return callback("ERROR: countries")
+            return callback("ERROR: vaccine");
         }
     } else {
         return callback("ERROR: vaccine");
