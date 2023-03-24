@@ -604,7 +604,7 @@ exports.getWorldMapCases = async(callback) =>{
         const cases = await giveLastCumulatedCaseCountry(regionNames.of(code[i]), data);
         const death = await giveLastCumulatedDeathCountry(regionNames.of(code[i]), data);
         //console.log(cases+" et "+death);
-        tab.push(code[i],{cases, death});
+        tab.push([code[i],{cases, death}]);
     }
     console.log(tab);
     if (code && code.length > 0){

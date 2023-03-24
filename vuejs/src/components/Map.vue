@@ -37,8 +37,7 @@ export default {
     loading: true,
     chartOptionsMap: {
       type: "map solid",
-      mapping_base_layers: ["europe"],
-      color: "#858ED1",
+      mapping_base_layers: "europe",
       series: null
     },
   }),
@@ -46,32 +45,27 @@ export default {
     JSCharting,
     Loading,
   },
+  methods: {
+    async selectionChange(){
+      console.log("there's a psycho in my heeeeeeeaaaaaaaaaaaaaaaaaaaaaaaaaaad");
+    }
+  },
   mounted() {
     let self = this;
     axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
       // on veut pour chaque pays les cas et les morts cumulé sur un intervalle donnée
-      const codes = response.data.data.code;
       const info = response.data.data.tab;
-      const mapCodes = codes.map(country => {
-        return { map: country.toLowerCase() };
+      const mapCodes = info.map(data => {
+        return {
+          map: "europe."+data[0]
+          //label_text: data[1].cases.YearWeekISO+","+data[1].cases.weekly_count
+        };
       });
-      console.log([mapCodes]);
-      self.chartOptionsMap.series = [...mapCodes];
-      self.chartOptionsMap.point = info;
+      self.chartOptionsMap.series = [{points: [...mapCodes], color: "##858ED1"}];
       self.chartOptionsMap.debug = true;
+      self.chartOptionsMap.events_pointSelectionChanged = self.selectionChange();
+      self.pointSelection = true;
       self.loading = false;
-      /*self.chartOptionsMap.series = [
-        {
-          map: "europe",
-          points: [
-            {
-              map: [...mapCodes],
-              color: "#00ff00"
-            }
-          ],
-          defaultPoint_events_click: console.log("click issue")
-        }
-      ];*/
     }).catch(function (error) {
       console.log(error);
     });
