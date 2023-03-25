@@ -649,34 +649,13 @@ function getPointsHeat(indicator, data, grouping) {
     return final;
 }
 
-function getPointsHeatDetailed(indicator, data){
-    let filteredData = data.filter(elt => elt.indicator && elt.indicator === indicator);
-    let mappedData =  filteredData.map(({ YearWeekISO, TargetGroup, weekly_count }) => ({ YearWeekISO, TargetGroup, weekly_count}));
-    //console.log(mappedData);
-    let final = mappedData.map(
-        v => {
-            return {
-                x: v.YearWeekISO,
-                y: v.TargetGroup,
-                z: v.weekly_count,
-                attributes: {
-                    date: v.YearWeekISO,
-                    ageRange: v.TargetGroup,
-                    cases: v.weekly_count
-                }
-            }
-        }
-    )
-    return final;
-}
-
-exports.getHeatmapData = async(vaccine, callback)=>{
+exports.getHeatmapData = async(vaccine, grouping, callback)=>{
     if (vaccine) {
         const path = "../Files/" + vaccine + ".json";
         let data = await giveJsonValue(path);
         //console.log('Items number: ', data.length)
 
-        let result = getPointsHeat('cases', data, 10);
+        let result = getPointsHeat('cases', data, grouping);
         console.log(result.length);
         if (result && result.length > 0) {
             return callback(null, result);
@@ -687,25 +666,6 @@ exports.getHeatmapData = async(vaccine, callback)=>{
         return callback("ERROR: vaccine");
     }
 }
-
-exports.getHeatmapDataDetailed = async(vaccine, callback)=>{
-    if (vaccine) {
-        const path = "../Files/" + vaccine + ".json";
-        let data = await giveJsonValue(path);
-        //console.log('Items number: ', data.length)
-
-        let result = getPointsHeatDetailed('cases', data);
-        console.log(result.length);
-        if (result && result.length > 0) {
-            return callback(null, result);
-        } else {
-            return callback("Why am I still here ?");
-        }
-    } else {
-        return callback("ERROR: vaccine");
-    }
-}
-
 
 exports.getWorldMapCases = async(callback) =>{
     let data = await giveJsonValue("../Files/MOD.json");

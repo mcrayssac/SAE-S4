@@ -181,11 +181,15 @@ export default {
         layout: 'horizontal'
       },
       series: [{points: null}],
-      scaleVisible: false
+      scaleVisible: false,
+      zAxis: [
+        {
+          range:{min:0}
+        }
+      ]
     },
     chartHeatmap2: {
       type: "heatmap solid",
-      debug: true,
       annotations: [
         {
           label: {
