@@ -172,6 +172,7 @@ export default {
         self.loading = false;
       })
     },
+
     async updateVaccination(){
       let self = this;
       this.loading = true;
@@ -183,7 +184,7 @@ export default {
         console.log(error);
         self.loading = false;
       })
-      await axios.get(`http://localhost:3000/heatmap/${this.selectedVaccine}`).then(function (response) {
+      await axios.get(`http://localhost:3000/heatmap/${this.selectedVaccine}/${this.selectedCountry}`).then(function (response) {
         console.log(response.data.data[0]);
         self.loading = false;
         self.chartHeatmap.series[0].points = response.data.data;

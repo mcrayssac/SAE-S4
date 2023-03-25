@@ -605,9 +605,9 @@ exports.getCaseVaccinationRelation = async(vaccine, country, callback) =>{
     }
 }
 
-function getPointsHeat(indicator, data, grouping) {
+function getPointsHeat(indicator, country, data, grouping) {
     // Filter data by indicator
-    let filteredData = data.filter(elt => elt.indicator && elt.indicator === indicator);
+    let filteredData = data.filter(elt => elt.indicator && elt.indicator === indicator && elt.country && elt.country === country);
 
     // Map data to required format and group by YearWeekISO in intervals of x weeks (x being the value inside grouping)
     let groupedData = filteredData.reduce((acc, val) => {
@@ -649,13 +649,13 @@ function getPointsHeat(indicator, data, grouping) {
     return final;
 }
 
-exports.getHeatmapData = async(vaccine, callback)=>{
+exports.getHeatmapData = async(vaccine,country, callback)=>{
     if (vaccine) {
         const path = "../Files/" + vaccine + ".json";
         let data = await giveJsonValue(path);
         //console.log('Items number: ', data.length)
 
-        let result = getPointsHeat('cases', data, 10);
+        let result = getPointsHeat('cases',country, data, 10);
         console.log(result.length);
         if (result && result.length > 0) {
             return callback(null, result);
