@@ -165,7 +165,7 @@ export default {
       annotations: [
         {
           label: {
-            text: 'COVID-19 situation in Europe<br>Results by vaccine and country (2020-2023)',
+            text: 'COVID-19 situation in Europe<br>Results by vaccine in all Europe (2020-2023)',
             style_fontSize: 16
           },
           position: 'top left'
@@ -193,7 +193,7 @@ export default {
       annotations: [
         {
           label: {
-            text: 'COVID-19 situation in Europe<br>Results by vaccine and country (2020-2023)',
+            text: 'COVID-19 situation in Europe<br>Results by vaccine in all Europe (2020-2023)',
             style_fontSize: 16
           },
           position: 'top left'

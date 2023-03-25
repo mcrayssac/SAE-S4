@@ -622,7 +622,6 @@ function getPointsHeat(indicator, data, grouping) {
         if (!acc[isoStartWeek][targetGroup]) {
             acc[isoStartWeek][targetGroup] = { weekly_count: 0 };
         }
-
         acc[isoStartWeek][targetGroup].weekly_count += val.weekly_count;
         acc[isoStartWeek][targetGroup].targetGroup = targetGroup;
 
@@ -653,10 +652,7 @@ exports.getHeatmapData = async(vaccine, grouping, callback)=>{
     if (vaccine) {
         const path = "../Files/" + vaccine + ".json";
         let data = await giveJsonValue(path);
-        //console.log('Items number: ', data.length)
-
         let result = getPointsHeat('cases', data, grouping);
-        console.log(result.length);
         if (result && result.length > 0) {
             return callback(null, result);
         } else {
