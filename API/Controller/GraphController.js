@@ -126,3 +126,14 @@ exports.graphHeatMap = (req, res) => {
         return res.status(200).send({success: 1, data: results})
     });
 }
+
+exports.graphHeatMapDetailed = (req, res) => {
+    let vaccine = req.params.vaccine;
+    graphService.getHeatmapDataDetailed(vaccine, (error, results)=>{
+        if(error){
+            console.log(error);
+            return res.status(400).send({success: 0, data: error});
+        }
+        return res.status(200).send({success: 1, data: results})
+    });
+}
