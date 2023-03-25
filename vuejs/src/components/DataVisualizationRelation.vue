@@ -133,51 +133,27 @@ export default {
     },
     chartHeatmap: {
       type: "heatmap solid",
+      debug: true,
       annotations: [
         {
           label: {
-            text: 'COVID-19 situation in Europe<br>Results by country (2020-2023)',
+            text: 'COVID-19 situation in Europe<br>Results by vaccine and country (2020-2023)',
             style_fontSize: 16
           },
           position: 'top left'
         }
       ],
-      defaultAxis: {
-        defaultTick: {
-          line_visible: false,
-          gridLine_visible: false
-        },
-        line_visible: false
-      },
-      xAxis: [
-        {
-          /* The main axis */
-          id: 'x1',
-          orientation: 'top',
-          defaultTick_label: {
-            text: '<b>%value</b>',
-            offset: '8,5'
-          },
-          scale_interval: { unit: 'YearWeekISO', multiplier: 4 }
-        }
-      ],
-      yAxis: {
-        scale_invert: true,
-        line_visible: false,
-        defaultTick_label_offset: '4,0'
-      },
       defaultPoint: {
-        legendEntry_visible: false,
-        outline: { color: 'white', width: 2 }
+        outline: { color: '#5F7174', width: 1 },
+        tooltip: '<b>%date</b> <br>Target group : <b>%ageRange</b><br>COVID cases : <b>%cases</b>'
       },
-      minValue:0,
-      toolbar_visible: false,
       legend: {
         template: '%icon %name',
         position: 'top right',
-        layout: 'vertical'
+        layout: 'horizontal'
       },
-      series: [{points: null}]
+      series: [{points: null}],
+      scaleVisible: false
     }
   }),
   components: {

@@ -609,13 +609,11 @@ function getPointsHeat(indicator, data, grouping) {
     // Filter data by indicator
     let filteredData = data.filter(elt => elt.indicator && elt.indicator === indicator);
 
-    // Map data to required format and group by YearWeekISO in intervals of 10 weeks
+    // Map data to required format and group by YearWeekISO in intervals of x weeks (x being the value inside grouping)
     let groupedData = filteredData.reduce((acc, val) => {
         const [year, week] = val.YearWeekISO.split("-W");
         const startWeek = parseInt(week) - ((parseInt(week) - 1) % grouping);
-        const endWeek = startWeek + (grouping - 1);
         const isoStartWeek = `${year}-W${startWeek < 10 ? `0${startWeek}` : startWeek}`;
-        const isoEndWeek = `${year}-W${endWeek < 10 ? `0${endWeek}` : endWeek}`;
         const targetGroup = val.TargetGroup;
 
         if (!acc[isoStartWeek]) {
@@ -657,7 +655,7 @@ exports.getHeatmapData = async(vaccine, callback)=>{
         let data = await giveJsonValue(path);
         //console.log('Items number: ', data.length)
 
-        let result = getPointsHeat('cases', data, 15);
+        let result = getPointsHeat('cases', data, 10);
         console.log(result.length);
         if (result && result.length > 0) {
             return callback(null, result);
