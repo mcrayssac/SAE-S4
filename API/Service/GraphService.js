@@ -605,70 +605,50 @@ exports.getCaseVaccinationRelation = async(vaccine, country, callback) =>{
     }
 }
 
-function getPointsHeat(indicator, data){
+function getPointsHeat(indicator, data, grouping) {
+    // Filter data by indicator
     let filteredData = data.filter(elt => elt.indicator && elt.indicator === indicator);
-    let mappedData =  filteredData.map(({ YearWeekISO, TargetGroup, weekly_count }) => ({ YearWeekISO, TargetGroup, weekly_count}));
-    let final = mappedData.map(
-        v => {
-            return {
-                x: v.YearWeekISO,
-                y: v.TargetGroup,
-                z: v.weekly_count,
-                attributes: {
-                    date: v.YearWeekISO,
-                    ageRange: v.TargetGroup,
-                    cases: v.weekly_count
-                }
-            }
-        }
-    )
-    return final;
-}
 
-function getPointsHeat2(indicator, data) {
-    let filteredData = data.filter((elt) => elt.indicator && elt.indicator === indicator);
-    let mappedData = filteredData.map(({ YearWeekISO, TargetGroup, weekly_count }) => ({
-        YearWeekISO,
-        TargetGroup,
-        weekly_count,
-    }));
-    let groupedData = mappedData.reduce((acc, { YearWeekISO, TargetGroup, weekly_count }) => {
-        if (!acc[TargetGroup]) {
-            acc[TargetGroup] = [];
+    // Map data to required format and group by YearWeekISO in intervals of 10 weeks
+    let groupedData = filteredData.reduce((acc, val) => {
+        const [year, week] = val.YearWeekISO.split("-W");
+        const startWeek = parseInt(week) - ((parseInt(week) - 1) % grouping);
+        const endWeek = startWeek + (grouping - 1);
+        const isoStartWeek = `${year}-W${startWeek < 10 ? `0${startWeek}` : startWeek}`;
+        const isoEndWeek = `${year}-W${endWeek < 10 ? `0${endWeek}` : endWeek}`;
+        const targetGroup = val.TargetGroup;
+
+        if (!acc[isoStartWeek]) {
+            acc[isoStartWeek] = {};
         }
-        acc[TargetGroup].push({ YearWeekISO, weekly_count });
+        if (!acc[isoStartWeek][targetGroup]) {
+            acc[isoStartWeek][targetGroup] = { weekly_count: 0 };
+        }
+
+        acc[isoStartWeek][targetGroup].weekly_count += val.weekly_count;
+        acc[isoStartWeek][targetGroup].targetGroup = targetGroup;
+
         return acc;
     }, {});
-    let final = [];
-    for (const [TargetGroup, groupData] of Object.entries(groupedData)) {
-        let chunkedData = chunk(groupData, 15);
-        for (let i = 0; i < chunkedData.length; i++) {
-            let chunk = chunkedData[i];
-            let sum = chunk.reduce((acc, { weekly_count }) => acc + weekly_count, 0);
-            let firstWeek = chunk[0].YearWeekISO;
-            let lastWeek = chunk[chunk.length - 1].YearWeekISO;
-            let x = `${firstWeek} - ${lastWeek}`;
-            final.push({
-                x,
-                y: TargetGroup,
-                z: sum,
-                attributes: {
-                    date: x,
-                    ageRange: TargetGroup,
-                    cases: sum,
-                },
-            });
-        }
-    }
-    return final;
-}
 
-function chunk(array, size) {
-    const chunked = [];
-    for (let i = 0; i < array.length; i += size) {
-        chunked.push(array.slice(i, i + size));
-    }
-    return chunked;
+    // Flatten data and convert to required format
+    let final = [];
+    Object.entries(groupedData).forEach(([yearWeekISO, targetGroupObj]) => {
+        Object.entries(targetGroupObj).forEach(([targetGroup, { weekly_count }]) => {
+            final.push({
+                x: yearWeekISO,
+                y: targetGroup,
+                z: weekly_count,
+                attributes: {
+                    date: yearWeekISO,
+                    ageRange: targetGroup,
+                    cases: weekly_count
+                }
+            });
+        });
+    });
+
+    return final;
 }
 
 exports.getHeatmapData = async(vaccine, callback)=>{
@@ -677,8 +657,8 @@ exports.getHeatmapData = async(vaccine, callback)=>{
         let data = await giveJsonValue(path);
         //console.log('Items number: ', data.length)
 
-        let result = getPointsHeat2('cases', data);
-        //  console.log(result);
+        let result = getPointsHeat('cases', data, 15);
+        console.log(result.length);
         if (result && result.length > 0) {
             return callback(null, result);
         } else {
