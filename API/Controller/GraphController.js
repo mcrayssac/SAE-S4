@@ -118,8 +118,7 @@ exports.graphPrediction = (req, res) => {
 
 exports.graphHeatMap = (req, res) => {
     let vaccine = req.params.vaccine;
-    let country = req.params.country;
-    graphService.getHeatmapData(vaccine,country, (error, results)=>{
+    graphService.getHeatmapData(vaccine, (error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});
