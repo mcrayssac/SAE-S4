@@ -119,6 +119,7 @@ export default {
       self.loading = false;
       //###################################################
       const mapCodesDeath = info.map(data => {
+        console.log(data[1]);
         return {
           map: "europe."+data[0],
           z: data[1].death.weekly_count

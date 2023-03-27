@@ -303,7 +303,7 @@ async function giveLastCumulatedCaseCountry(country, data) {
 }
 
 async function giveLastCumulatedDeathCountry(country, data) {
-    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'death');
+    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths');
     let filteredData = await filterData(filtersData);
     return filteredData;
 }
