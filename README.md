@@ -63,6 +63,7 @@ That's it!
 - [Vaccines documentation](https://www.ecdc.europa.eu/sites/default/files/documents/Variable_Dictionary_VaccineTracker-7-october-2022.pdf)
   *You can find there aliases of the vaccines used in this project for example*
 - [COVID cases/deaths documentation](https://www.ecdc.europa.eu/sites/default/files/documents/2022-06-23_Variable_Dictionary_and_Disclaimer_national_weekly_data.pdf)
+- [COVID cases/deaths documentation archived](https://www.ecdc.europa.eu/sites/default/files/documents/Description-and-disclaimer_daily_reporting.pdf))
 
 ## Authors
 
