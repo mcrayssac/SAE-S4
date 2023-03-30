@@ -135,7 +135,7 @@ exports.giveVaccinationCountries = async (country, callback) => {
                 x: d.vaccine,
                 y: Math.log10(d.data.TotalDoses) > 0 ? Math.log10(d.data.TotalDoses) : 0,
             })));
-            console.log(listData2);
+            //console.log(listData2);
 
             if (listData && listData.length > 0 && listData2 && listData2.vaccine
                 && listData2.FirstDose && listData2.SecondDose && listData2.DoseAdditional1 && listData2.DoseAdditional2
