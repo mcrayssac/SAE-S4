@@ -297,14 +297,26 @@ async function filterData(filterData) {
 }
 
 async function giveLastCumulatedCaseCountry(country, data) {
-    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases');
+    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases' && elt.YearWeekISO && elt.YearWeekISO === '2023-W09');
     let filteredData = await filterData(filtersData);
+    for(let i in filteredData){
+        console.log(filteredData);
+        if(filteredData[i] === undefined){
+            filteredData.splice(i,1);
+        }
+    }
     return filteredData;
 }
 
 async function giveLastCumulatedDeathCountry(country, data) {
-    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths');
+    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths'&& elt.YearWeekISO && elt.YearWeekISO === '2023-W09');
     let filteredData = await filterData(filtersData);
+    for(let i in filteredData){
+        console.log(filteredData[i]);
+        if(filteredData[i] === undefined){
+            filteredData.splice(i,1);
+        }
+    }
     return filteredData;
 }
 
@@ -694,7 +706,6 @@ exports.accueil = async(callback) => {
 }
 
 
-
 exports.getPredictionValue = async(country, transmission, duration, survival, callback) => {
     let data = await giveJsonValue("../Files/MOD.json");
     let array = await prediction(country, transmission, duration, survival)
@@ -731,19 +742,32 @@ exports.getPredictionValue = async(country, transmission, duration, survival, ca
         return {x: obj.YearWeekISO, y: obj.removed};
     });
     let removed = array1;
+    array1 = await array.reduce((acc, obj) => {
+        const index = acc.findIndex(item => item.YearWeekISO === obj.YearWeekISO && item.healed === obj.healed);
+        if (index === -1) {
+            acc.push(obj);
+        }
+        return acc;
+    }, []);
+    array1 = await array1.map(obj => {
+        return {x: obj.YearWeekISO, y: obj.healed};
+    });
+    let healed = array1;
     const countries = await giveCountriesValues(data);
     if (array && array.length > 0) {
         if (countries && countries.length > 0 ) return callback(null, {
             notSick,
             infected,
-            removed
+            removed,
+            healed
         });
         else return callback("No countries found");
     } else {
         if (countries && countries.length > 0 ) return callback(null, {
             notSick,
             infected,
-            removed
+            removed,
+            healed
         });
         else return callback("Country not given in database");
     }
@@ -761,11 +785,13 @@ async function prediction(country, transmission, duration, survival){
     let sick0 = filteredSick.weekly_count;
     let removed0 = filteredDeath.weekly_count;
     let notSick0 = population0 - (sick0 + removed0);
+    let healed0 = 0;
     let results = [];
     results.push({YearWeekISO: filteredSick.YearWeekISO,
         infected: sick0,
         removed: removed0,
         notSick: notSick0,
+        healed: healed0,
         population: population0});
     let year = Number(results[0].YearWeekISO.split('-')[0]);
     let week = 0;
@@ -782,10 +808,11 @@ async function prediction(country, transmission, duration, survival){
             i = 1;
             YearWeekISO = year+"-W"+(week+i);
         }
-        let notSick = Math.round(notSick0 + (-transmission*notSick0*sick0/population0) + duration*sick0*(1-survival));
+        let notSick = Math.round(notSick0 + (-transmission*notSick0*sick0/population0));
         let infected= Math.round(sick0 + ((transmission*notSick0*sick0/population0) - duration*sick0));
         let removed= Math.round(removed0 + duration*sick0*survival);
-        if(infected === sick0 || notSick === notSick0 ){
+        let healed = Math.round(healed0 + duration*sick0*(1-survival));
+        if(infected === sick0 || notSick === notSick0 || healed === healed0){
             stagnation++;
         }
         if(removed >= population0){
@@ -793,10 +820,12 @@ async function prediction(country, transmission, duration, survival){
         }
         infected = infected > 0 ? infected : 0;
         notSick = notSick > 0 ? notSick : 0;
-        results.push({YearWeekISO,infected, removed, notSick, population0});
+        healed = healed > 0 ? healed : 0;
+        results.push({YearWeekISO,infected, removed, notSick, healed, population0});
         sick0 = infected;
         removed0 = removed;
         notSick0 = notSick;
+        healed0 = healed;
         i++;
         //console.log('YearWeek: ', YearWeekISO,', Sick: ', sick0, ', Removed: ', removed0, ', Not sick: ', notSick0, ', i:', i)
     }while(notSick0 > 0 && removed0 < population0 && sick0 > 0 && stagnation < 10)

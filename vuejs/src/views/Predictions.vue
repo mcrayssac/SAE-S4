@@ -62,7 +62,7 @@
           </v-col>
           <v-spacer/>
           <v-col class="py-10 px-5" cols="8" align-self="center">
-            <v-slider hide-details :thumb-size="24" thumb-color="#00A6C0" color="#32D9CB" track-color="white" min="0.1" max="1" v-model="duration" step="0.01" thumb-label="always" @change="updatePrediction">force de l'infection</v-slider>
+            <v-slider hide-details :thumb-size="24" thumb-color="#00A6C0" color="#32D9CB" track-color="white" min="0.1" max="0.9" v-model="duration" step="0.01" thumb-label="always" @change="updatePrediction">force de l'infection</v-slider>
           </v-col>
         </v-row>
         <v-row>
@@ -78,7 +78,7 @@
           </v-col>
           <v-spacer/>
           <v-col class="py-10 px-5" cols="8" align-self="center">
-            <v-slider hide-details :thumb-size="24" thumb-color="#00A6C0" color="#32D9CB" track-color="white" min="0" max="1" v-model="survival" step="0.01" thumb-label="always" @change="updatePrediction">Transmission</v-slider>
+            <v-slider hide-details :thumb-size="24" thumb-color="#00A6C0" color="#32D9CB" track-color="white" min="0" max="0.1" v-model="survival" step="0.001" thumb-label="always" @change="updatePrediction">Transmission</v-slider>
           </v-col>
         </v-row>
       </v-banner>
@@ -140,7 +140,7 @@ export default {
         template: '%icon %name',
         position: 'top right'
       },
-      palette: ['#32D9CB', '#A5E65A', '#5F7174'],
+      palette: ['#32D9CB', '#A5E65A', '#858ED1','#5F7174'],
       defaultSeries: {
         shape_opacity: 0.2,
         defaultPoint_marker: {
@@ -161,15 +161,19 @@ export default {
       ],
       series: [
         {
-          name: 'not sick population',
+          name: 'susceptible',
           points: null
         },
         {
-          name: 'sick population',
+          name: 'infecté',
           points: null
         },
         {
-          name: 'dead population',
+          name: 'rétabli',
+          points: null
+        },
+        {
+          name: 'mort',
           points: null
         }
       ]
@@ -194,10 +198,13 @@ export default {
       self.chartOption0.series[0].points = null;
       self.chartOption0.series[1].points = null;
       self.chartOption0.series[2].points = null;
+      self.chartOption0.series[3].points = null;
       await axios.get(`http://localhost:3000/prediction/${this.selectedCountry}/${this.transmission}/${this.duration}/${this.survival}`).then(function (response) {
+        console.log(response.data.data);
         self.chartOption0.series[0].points = response.data.data.notSick;
         self.chartOption0.series[1].points = response.data.data.infected;
-        self.chartOption0.series[2].points = response.data.data.removed;
+        self.chartOption0.series[2].points = response.data.data.healed;
+        self.chartOption0.series[3].points = response.data.data.removed;
       }).catch(function (error) {
         console.log(error);
       })
