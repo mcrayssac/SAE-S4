@@ -168,14 +168,14 @@ export default {
             return p.options('z');
           },
           stops: [
-            [maxD/8, '#858ED8'],
-            [2*maxD/8, '#858ED5'],
-            [3*maxD/8, '#858ED1'],
-            [4*maxD/8, '#658ED1'],
-            [5*maxD/8, '#458ED1'],
-            [6*maxD/8, '#238ED1'],
-            [7*maxD/8, '#138ED1'],
-            [maxD, '#008ED1']
+            [maxD/8, '#858ED1'],
+            [2*maxD/8, '#857AD1'],
+            [3*maxD/8, '#8578D1'],
+            [4*maxD/8, '#8575D1'],
+            [5*maxD/8, '#8554D1'],
+            [6*maxD/8, '#8544D1'],
+            [7*maxD/8, '#8532D1'],
+            [maxD, '#8511D1']
           ],
           colorBar: {
             width: 20,
