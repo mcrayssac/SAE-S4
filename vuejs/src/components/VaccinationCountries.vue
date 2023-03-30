@@ -145,7 +145,7 @@ export default {
         '#673AB7'],
       yAxis: { label_text: 'Logarithm' },
       xAxis: {
-        label_text: 'Doses type of vaccines',
+        label_text: 'Type of vaccines doses',
         categories: null
       },
       series: []

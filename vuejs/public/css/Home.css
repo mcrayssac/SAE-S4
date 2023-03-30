@@ -6,6 +6,23 @@
     letter-spacing: 2px !important;
 }
 
+.page-title2{
+    color: #32D9CB !important;
+    font-size: 1.5em !important;
+    font-family: "Montserrat Medium" !important;
+    font-weight: bold !important;
+    letter-spacing: 2px !important;
+}
+
+.page-body{
+    text-indent: 20px;
+    color: white !important;
+    font-size: 1em !important;
+    font-family: "Montserrat Medium" !important;
+    font-weight: bold !important;
+    letter-spacing: 2px !important;
+}
+
 .choose-perso-title{
     color: #D6FFF6 !important;
     font-size: 1.3em !important;
@@ -32,4 +49,8 @@
 
 .persoselect {
     background-color: lightgray;
+}
+
+.expansion_panel{
+    background-color: #5F7174 !important;
 }
