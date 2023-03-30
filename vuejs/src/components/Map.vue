@@ -81,6 +81,13 @@ export default {
     axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
       const info = response.data.data.tab;
       const mapCodes = info.map(data => {
+        console.log(data);
+        if(data[1].cases.weekly_count === undefined){
+          return {
+            map: "europe."+data[0],
+            z: "no data"
+          }
+        }
         return {
           map: "europe."+data[0],
           z: data[1].cases.weekly_count
@@ -112,6 +119,7 @@ export default {
       self.loading = false;
       //###################################################
       const mapCodesDeath = info.map(data => {
+        console.log(data);
         return {
           map: "europe."+data[0],
           z: data[1].death.weekly_count
@@ -123,8 +131,8 @@ export default {
           return p.options('z');
         },
         stops: [
-          [500, '#AD8ED1'],
-          [1000, '#9A8ED1'],
+          [500, '#858ED8'],
+          [1000, '#858ED5'],
           [1500, '#858ED1'],
           [2000, '#658ED1'],
           [3000, '#458ED1'],
