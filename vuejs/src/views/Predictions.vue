@@ -41,7 +41,7 @@
           </v-col>
           <v-col class="pb-1" cols="auto" align-self="center">
               <span class="select-bar">
-                  force de l'infection
+                  Contagion rate
               </span>
           </v-col>
           <v-spacer/>
@@ -57,7 +57,7 @@
           </v-col>
           <v-col class="pb-1" cols="auto" align-self="center">
               <span class="select-bar">
-                  taux de guérison
+                  Recovery rate
               </span>
           </v-col>
           <v-spacer/>
@@ -73,7 +73,7 @@
           </v-col>
           <v-col class="pb-1" cols="auto" align-self="center">
               <span class="select-bar">
-                  taux de létalité
+                  Lethality rate
               </span>
           </v-col>
           <v-spacer/>
@@ -132,7 +132,7 @@ export default {
       title: {
         position: 'center',
         label: {
-          text: 'Prediction of cases and death',
+          text: 'Insight of COVID deaths and cases based on modified SIR model',
           style: { fontSize: 20, fontWeight: 'bold', fontFamily: 'Montserrat', color: '#5F7174' }
         }
       },
@@ -161,19 +161,19 @@ export default {
       ],
       series: [
         {
-          name: 'susceptible',
+          name: 'vulnerable',
           points: null
         },
         {
-          name: 'infecté',
+          name: 'infected',
           points: null
         },
         {
-          name: 'rétabli',
+          name: 'recovered',
           points: null
         },
         {
-          name: 'mort',
+          name: 'dead',
           points: null
         }
       ]
