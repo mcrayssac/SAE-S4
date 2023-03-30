@@ -70,24 +70,17 @@ export default {
       type: "map solid",
       mapping_base_layers: "europe",
       series: null
-    },
+    }
   }),
   components: {
     JSCharting,
     Loading,
   },
-  methods: {
-    async selectionChange(){
-      console.log("there's a psycho in my heeeeeeeaaaaaaaaaaaaaaaaaaaaaaaaaaad");
-    }
-  },
   mounted() {
     let self = this;
     axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
-      // on veut pour chaque pays les cas et les morts cumulé sur un intervalle donnée
       const info = response.data.data.tab;
       const mapCodes = info.map(data => {
-        console.log(data[1].cases.YearWeekISO);
         return {
           map: "europe."+data[0],
           z: data[1].cases.weekly_count
@@ -119,7 +112,6 @@ export default {
       self.loading = false;
       //###################################################
       const mapCodesDeath = info.map(data => {
-        console.log(data[1]);
         return {
           map: "europe."+data[0],
           z: data[1].death.weekly_count
@@ -146,7 +138,6 @@ export default {
         }
       };
       self.chartOptionsMap2.debug = true;
-      self.chartOptionsMap2.events_pointSelectionChanged = self.selectionChange();
     }).catch(function (error) {
       console.log(error);
     });

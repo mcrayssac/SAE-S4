@@ -41,7 +41,7 @@
           </v-col>
           <v-col class="pb-1" cols="auto" align-self="center">
               <span class="select-bar">
-                  Transmission
+                  force de l'infection
               </span>
           </v-col>
           <v-spacer/>
@@ -57,12 +57,12 @@
           </v-col>
           <v-col class="pb-1" cols="auto" align-self="center">
               <span class="select-bar">
-                  Duration
+                  taux de guérison
               </span>
           </v-col>
           <v-spacer/>
           <v-col class="py-10 px-5" cols="8" align-self="center">
-            <v-slider hide-details :thumb-size="24" thumb-color="#00A6C0" color="#32D9CB" track-color="white" min="0.1" max="1" v-model="duration" step="0.01" thumb-label="always" @change="updatePrediction">Transmission</v-slider>
+            <v-slider hide-details :thumb-size="24" thumb-color="#00A6C0" color="#32D9CB" track-color="white" min="0.1" max="1" v-model="duration" step="0.01" thumb-label="always" @change="updatePrediction">force de l'infection</v-slider>
           </v-col>
         </v-row>
         <v-row>
@@ -73,7 +73,7 @@
           </v-col>
           <v-col class="pb-1" cols="auto" align-self="center">
               <span class="select-bar">
-                  Survival rate
+                  taux de létalité
               </span>
           </v-col>
           <v-spacer/>

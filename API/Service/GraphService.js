@@ -693,6 +693,8 @@ exports.accueil = async(callback) => {
     }
 }
 
+
+
 exports.getPredictionValue = async(country, transmission, duration, survival, callback) => {
     let data = await giveJsonValue("../Files/MOD.json");
     let array = await prediction(country, transmission, duration, survival)
@@ -780,9 +782,9 @@ async function prediction(country, transmission, duration, survival){
             i = 1;
             YearWeekISO = year+"-W"+(week+i);
         }
-        let notSick = Math.round(notSick0 + (-transmission*notSick0*sick0/population0) + duration*sick0*survival);
+        let notSick = Math.round(notSick0 + (-transmission*notSick0*sick0/population0) + duration*sick0*(1-survival));
         let infected= Math.round(sick0 + ((transmission*notSick0*sick0/population0) - duration*sick0));
-        let removed= Math.round(removed0 + duration*sick0*(1-survival));
+        let removed= Math.round(removed0 + duration*sick0*survival);
         if(infected === sick0 || notSick === notSick0 ){
             stagnation++;
         }
