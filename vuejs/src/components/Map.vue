@@ -79,35 +79,41 @@ export default {
   mounted() {
     let self = this;
     axios.get(`http://localhost:3000/WorldMap`).then(function (response) {
-      const info = response.data.data.tab;
+      let info = response.data.data.tab;
+      console.log(info);
+      info = info.filter(function(value){
+        return value[1].cases !== undefined && value[1].death !== undefined;
+      })
       const mapCodes = info.map(data => {
-        console.log(data);
-        if(data[1].cases.weekly_count === undefined){
-          return {
-            map: "europe."+data[0],
-            z: "no data"
-          }
-        }
         return {
           map: "europe."+data[0],
           z: data[1].cases.weekly_count
         };
       });
+      let maxC = 0;
+      let maxD = 0;
+      for(let num in info){
+        if(info[num][1].cases.weekly_count > maxC){
+          maxC = info[num][1].cases.weekly_count;
+        }
+        if(info[num][1].death.weekly_count > maxD){
+          maxD = info[num][1].death.weekly_count;
+        }
+      }
       self.chartOptionsMap.series = [{points: [...mapCodes]}];
       self.chartOptionsMap.palette= {
         pointValue: function(p){
           return p.options('z');
         },
         stops: [
-          //[1000, '#858ED1'],
-          [2000, '#ffffe5'],
-          [5000, '#fff7bc'],
-          [10000, '#fee391'],
-          [25000, '#fec44f'],
-          [50000, '#ec7014'],
-          [75000, '#cc4c02'],
-          [100000, '#993404'],
-          [200000, '#662506']
+          [maxC/8, '#ffffe5'],
+          [2*maxC/8, '#fff7bc'],
+          [3*maxC/8, '#fee391'],
+          [4*maxC/8, '#fec44f'],
+          [5*maxC/8, '#ec7014'],
+          [6*maxC/8, '#cc4c02'],
+          [7*maxC/8, '#993404'],
+          [maxC, '#662506']
         ],
         colorBar: {
           width: 20,
@@ -131,14 +137,14 @@ export default {
           return p.options('z');
         },
         stops: [
-          [500, '#858ED8'],
-          [1000, '#858ED5'],
-          [1500, '#858ED1'],
-          [2000, '#658ED1'],
-          [3000, '#458ED1'],
-          [4000, '#238ED1'],
-          [5000, '#138ED1'],
-          [6000, '#008ED1']
+          [maxD/8, '#858ED8'],
+          [2*maxD/8, '#858ED5'],
+          [3*maxD/8, '#858ED1'],
+          [4*maxD/8, '#658ED1'],
+          [5*maxD/8, '#458ED1'],
+          [6*maxD/8, '#238ED1'],
+          [7*maxD/8, '#138ED1'],
+          [maxD, '#008ED1']
         ],
         colorBar: {
           width: 20,

@@ -297,7 +297,7 @@ async function filterData(filterData) {
 }
 
 async function giveLastCumulatedCaseCountry(country, data) {
-    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases' && elt.YearWeekISO && elt.YearWeekISO === '2023-W09');
+    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases' && elt.YearWeekISO && elt.YearWeekISO === '2022-W01');
     let filteredData = await filterData(filtersData);
     for(let i in filteredData){
         console.log(filteredData);
@@ -309,7 +309,7 @@ async function giveLastCumulatedCaseCountry(country, data) {
 }
 
 async function giveLastCumulatedDeathCountry(country, data) {
-    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths'&& elt.YearWeekISO && elt.YearWeekISO === '2023-W09');
+    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths'&& elt.YearWeekISO && elt.YearWeekISO === '2022-W01');
     let filteredData = await filterData(filtersData);
     for(let i in filteredData){
         console.log(filteredData[i]);
