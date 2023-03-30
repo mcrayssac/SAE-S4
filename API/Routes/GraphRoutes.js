@@ -24,7 +24,7 @@ router.get('/heatmap2/:vaccine', graphController.graphHeatMapDetailed)
 
 router.get('/prediction/:country/:transmission/:duration/:survival', graphController.graphPrediction)
 
-router.get('/worldMap', graphController.graphWorldMapCases)
+router.get('/worldMap/:date', graphController.graphWorldMapCases)
 
 const dataRefresh = require("../DataRefresh/dataRefresh")
 router.get('/refresh', dataRefresh.routerUpdate)

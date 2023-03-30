@@ -92,7 +92,8 @@ exports.graphCaseVaccinationRelation = (req, res) => {
 }
 
 exports.graphWorldMapCases = (req, res) => {
-    graphService.getWorldMapCases((error, results)=>{
+    let date = req.params.date;
+    graphService.getWorldMapCases(date,(error, results)=>{
         if(error){
             console.log(error);
             return res.status(400).send({success: 0, data: error});

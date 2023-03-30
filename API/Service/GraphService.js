@@ -296,8 +296,8 @@ async function filterData(filterData) {
     return lastData;
 }
 
-async function giveLastCumulatedCaseCountry(country, data) {
-    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases' && elt.YearWeekISO && elt.YearWeekISO === '2022-W01');
+async function giveLastCumulatedCaseCountry(date,country, data) {
+    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'cases' && elt.YearWeekISO && elt.YearWeekISO === date);
     let filteredData = await filterData(filtersData);
     for(let i in filteredData){
         console.log(filteredData);
@@ -308,8 +308,8 @@ async function giveLastCumulatedCaseCountry(country, data) {
     return filteredData;
 }
 
-async function giveLastCumulatedDeathCountry(country, data) {
-    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths'&& elt.YearWeekISO && elt.YearWeekISO === '2022-W01');
+async function giveLastCumulatedDeathCountry(date,country, data) {
+    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths'&& elt.YearWeekISO && elt.YearWeekISO === date);
     let filteredData = await filterData(filtersData);
     for(let i in filteredData){
         console.log(filteredData[i]);
@@ -675,7 +675,7 @@ exports.getHeatmapData = async(vaccine, grouping, callback)=>{
     }
 }
 
-exports.getWorldMapCases = async(callback) =>{
+exports.getWorldMapCases = async(date,callback) =>{
     let data = await giveJsonValue("../Files/MOD.json");
 
     const code = await giveCountryCodeValues(data);
@@ -683,8 +683,8 @@ exports.getWorldMapCases = async(callback) =>{
     let tab = [];
     for(let i in code){
         let regionNames = new Intl.DisplayNames(['en'], {type: 'region'});
-        const cases = await giveLastCumulatedCaseCountry(regionNames.of(code[i]), data);
-        const death = await giveLastCumulatedDeathCountry(regionNames.of(code[i]), data);
+        const cases = await giveLastCumulatedCaseCountry(date,regionNames.of(code[i]), data);
+        const death = await giveLastCumulatedDeathCountry(date,regionNames.of(code[i]), data);
         //console.log(cases+" et "+death);
         tab.push([code[i],{cases, death}]);
     }
