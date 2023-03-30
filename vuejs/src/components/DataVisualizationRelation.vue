@@ -69,7 +69,7 @@
           </v-col>
           <v-col class="pb-0" cols="auto" align-self="center">
             <span class="select-bar">
-                World Map of this dataset's countries
+                COVID-19 European Heatmap
             </span>
           </v-col>
         </v-row>
@@ -84,7 +84,35 @@
         </v-row>
       </v-banner>
     </section>
-  </v-container>
+
+<v-divider class="my-10"/>
+
+<section class="Graph">
+<v-banner color="#5F7174" rounded elevation="6">
+  <v-row>
+    <v-col cols="auto" align-self="center">
+      <v-icon color="#32D9CB" size="36">
+        mdi-chart-scatter-plot
+      </v-icon>
+    </v-col>
+    <v-col class="pb-0" cols="auto" align-self="center">
+            <span class="select-bar">
+                COVID-19 European Heatmap (fully detailed)
+            </span>
+    </v-col>
+  </v-row>
+</v-banner>
+
+<v-banner class="mt-5 pe-3" color="#5F7174" rounded elevation="6">
+  <v-row>
+    <v-col cols="12" align="center" style="width: 100%; ">
+      <JSCharting v-if="chartHeatmap2.series[0].points && chartHeatmap2.series[0].points.length > 0" :options="chartHeatmap2" style="width: 100%; height: 500px;"/>
+      <Loading v-else color="#32D9CB" />
+    </v-col>
+  </v-row>
+</v-banner>
+</section>
+</v-container>
 </template>
 
 <script>
@@ -133,51 +161,55 @@ export default {
     },
     chartHeatmap: {
       type: "heatmap solid",
+      debug: true,
       annotations: [
         {
           label: {
-            text: 'COVID-19 situation in Europe<br>Results by country (2020-2023)',
+            text: 'COVID-19 situation in Europe<br>Results by vaccine in all Europe (2020-2023)',
             style_fontSize: 16
           },
           position: 'top left'
         }
       ],
-      defaultAxis: {
-        defaultTick: {
-          line_visible: false,
-          gridLine_visible: false
-        },
-        line_visible: false
-      },
-      xAxis: [
-        {
-          /* The main axis */
-          id: 'x1',
-          orientation: 'top',
-          defaultTick_label: {
-            text: '<b>%value</b>',
-            offset: '8,5'
-          },
-          scale_interval: { unit: 'YearWeekISO', multiplier: 4 }
-        }
-      ],
-      yAxis: {
-        scale_invert: true,
-        line_visible: false,
-        defaultTick_label_offset: '4,0'
-      },
       defaultPoint: {
-        legendEntry_visible: false,
-        outline: { color: 'white', width: 2 }
+        outline: { color: '#5F7174', width: 1 },
+        tooltip: '<b>%date</b> <br>Target group : <b>%ageRange</b><br>COVID cases : <b>%cases</b>'
       },
-      minValue:0,
-      toolbar_visible: false,
       legend: {
         template: '%icon %name',
         position: 'top right',
-        layout: 'vertical'
+        layout: 'horizontal'
       },
-      series: [{points: null}]
+      series: [{points: null}],
+      scaleVisible: false,
+      zAxis: [
+        {
+          range:{min:0}
+        }
+      ]
+    },
+    chartHeatmap2: {
+      type: "heatmap solid",
+      annotations: [
+        {
+          label: {
+            text: 'COVID-19 situation in Europe<br>Results by vaccine in all Europe (2020-2023)',
+            style_fontSize: 16
+          },
+          position: 'top left'
+        }
+      ],
+      defaultPoint: {
+        outline: { color: '#5F7174', width: 1 },
+        tooltip: '<b>%date</b> <br>Target group : <b>%ageRange</b><br>COVID cases : <b>%cases</b>'
+      },
+      legend: {
+        template: '%icon %name',
+        position: 'top right',
+        layout: 'horizontal'
+      },
+      series: [{points: null}],
+      scaleVisible: false
     }
   }),
   components: {
@@ -211,6 +243,14 @@ export default {
         console.log(response.data.data[0]);
         self.loading = false;
         self.chartHeatmap.series[0].points = response.data.data;
+      }).catch(function (error) {
+        console.log(error);
+        self.loading = false;
+      })
+      await axios.get(`http://localhost:3000/heatmap2/${this.selectedVaccine}`).then(function (response) {
+        console.log(response.data.data[0]);
+        self.loading = false;
+        self.chartHeatmap2.series[0].points = response.data.data;
       }).catch(function (error) {
         console.log(error);
         self.loading = false;

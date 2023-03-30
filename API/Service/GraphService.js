@@ -303,7 +303,7 @@ async function giveLastCumulatedCaseCountry(country, data) {
 }
 
 async function giveLastCumulatedDeathCountry(country, data) {
-    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'death');
+    let filtersData = await data.filter(elt => elt.country && elt.country === country && elt.indicator && elt.indicator === 'deaths');
     let filteredData = await filterData(filtersData);
     return filteredData;
 }
@@ -605,80 +605,54 @@ exports.getCaseVaccinationRelation = async(vaccine, country, callback) =>{
     }
 }
 
-function getPointsHeat(indicator, data){
+function getPointsHeat(indicator, data, grouping) {
+    // Filter data by indicator
     let filteredData = data.filter(elt => elt.indicator && elt.indicator === indicator);
-    let mappedData =  filteredData.map(({ YearWeekISO, TargetGroup, weekly_count }) => ({ YearWeekISO, TargetGroup, weekly_count}));
-    let final = mappedData.map(
-        v => {
-            return {
-                x: v.YearWeekISO,
-                y: v.TargetGroup,
-                z: v.weekly_count,
-                attributes: {
-                    date: v.YearWeekISO,
-                    ageRange: v.TargetGroup,
-                    cases: v.weekly_count
-                }
-            }
-        }
-    )
-    return final;
-}
 
-function getPointsHeat2(indicator, data) {
-    let filteredData = data.filter((elt) => elt.indicator && elt.indicator === indicator);
-    let mappedData = filteredData.map(({ YearWeekISO, TargetGroup, weekly_count }) => ({
-        YearWeekISO,
-        TargetGroup,
-        weekly_count,
-    }));
-    let groupedData = mappedData.reduce((acc, { YearWeekISO, TargetGroup, weekly_count }) => {
-        if (!acc[TargetGroup]) {
-            acc[TargetGroup] = [];
+    // Map data to required format and group by YearWeekISO in intervals of x weeks (x being the value inside grouping)
+    let groupedData = filteredData.reduce((acc, val) => {
+        const [year, week] = val.YearWeekISO.split("-W");
+        const startWeek = parseInt(week) - ((parseInt(week) - 1) % grouping);
+        const isoStartWeek = `${year}-W${startWeek < 10 ? `0${startWeek}` : startWeek}`;
+        const targetGroup = val.TargetGroup;
+
+        if (!acc[isoStartWeek]) {
+            acc[isoStartWeek] = {};
         }
-        acc[TargetGroup].push({ YearWeekISO, weekly_count });
+        if (!acc[isoStartWeek][targetGroup]) {
+            acc[isoStartWeek][targetGroup] = { weekly_count: 0 };
+        }
+        acc[isoStartWeek][targetGroup].weekly_count += val.weekly_count;
+        acc[isoStartWeek][targetGroup].targetGroup = targetGroup;
+
         return acc;
     }, {});
+
+    // Flatten data and convert to required format
     let final = [];
-    for (const [TargetGroup, groupData] of Object.entries(groupedData)) {
-        let chunkedData = chunk(groupData, 15);
-        for (let i = 0; i < chunkedData.length; i++) {
-            let chunk = chunkedData[i];
-            let sum = chunk.reduce((acc, { weekly_count }) => acc + weekly_count, 0);
-            let firstWeek = chunk[0].YearWeekISO;
-            let lastWeek = chunk[chunk.length - 1].YearWeekISO;
-            let x = `${firstWeek} - ${lastWeek}`;
+    Object.entries(groupedData).forEach(([yearWeekISO, targetGroupObj]) => {
+        Object.entries(targetGroupObj).forEach(([targetGroup, { weekly_count }]) => {
             final.push({
-                x,
-                y: TargetGroup,
-                z: sum,
+                x: yearWeekISO,
+                y: targetGroup,
+                z: weekly_count,
                 attributes: {
-                    date: x,
-                    ageRange: TargetGroup,
-                    cases: sum,
-                },
+                    date: yearWeekISO,
+                    ageRange: targetGroup,
+                    cases: weekly_count
+                }
             });
-        }
-    }
+        });
+    });
+
     return final;
 }
 
-function chunk(array, size) {
-    const chunked = [];
-    for (let i = 0; i < array.length; i += size) {
-        chunked.push(array.slice(i, i + size));
-    }
-    return chunked;
-}
-
-exports.getHeatmapData = async(vaccine, callback)=>{
+exports.getHeatmapData = async(vaccine, grouping, callback)=>{
     if (vaccine) {
         const path = "../Files/" + vaccine + ".json";
         let data = await giveJsonValue(path);
-        //console.log('Items number: ', data.length)
-
-        let result = getPointsHeat2('cases', data);
-        //  console.log(result);
+        let result = getPointsHeat('cases', data, grouping);
         if (result && result.length > 0) {
             return callback(null, result);
         } else {
@@ -688,7 +662,6 @@ exports.getHeatmapData = async(vaccine, callback)=>{
         return callback("ERROR: vaccine");
     }
 }
-
 
 exports.getWorldMapCases = async(callback) =>{
     let data = await giveJsonValue("../Files/MOD.json");
@@ -712,10 +685,6 @@ exports.getWorldMapCases = async(callback) =>{
     };
 }
 
-exports.getCountryData = async(country, callback)=>{
-    let data = await giveJsonValue("../Files/MOD.json");
-}
-
 exports.accueil = async(callback) => {
     try{
         callback(null, "I'm testing guys chill, and you know, our root's route (get it ;3) is working just fine~");
@@ -723,6 +692,8 @@ exports.accueil = async(callback) => {
         callback(err);
     }
 }
+
+
 
 exports.getPredictionValue = async(country, transmission, duration, survival, callback) => {
     let data = await giveJsonValue("../Files/MOD.json");
@@ -811,9 +782,9 @@ async function prediction(country, transmission, duration, survival){
             i = 1;
             YearWeekISO = year+"-W"+(week+i);
         }
-        let notSick = Math.round(notSick0 + (-transmission*notSick0*sick0/population0) + duration*sick0*survival);
+        let notSick = Math.round(notSick0 + (-transmission*notSick0*sick0/population0) + duration*sick0*(1-survival));
         let infected= Math.round(sick0 + ((transmission*notSick0*sick0/population0) - duration*sick0));
-        let removed= Math.round(removed0 + duration*sick0*(1-survival));
+        let removed= Math.round(removed0 + duration*sick0*survival);
         if(infected === sick0 || notSick === notSick0 ){
             stagnation++;
         }
