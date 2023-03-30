@@ -685,10 +685,6 @@ exports.getWorldMapCases = async(callback) =>{
     };
 }
 
-exports.getCountryData = async(country, callback)=>{
-    let data = await giveJsonValue("../Files/MOD.json");
-}
-
 exports.accueil = async(callback) => {
     try{
         callback(null, "I'm testing guys chill, and you know, our root's route (get it ;3) is working just fine~");
